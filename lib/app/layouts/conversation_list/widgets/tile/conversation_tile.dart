@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/message/typing/typing_indicator.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/app/layouts/conversation_list/pages/conversation_list.dart';
@@ -30,8 +29,10 @@ class ConversationTileController extends StatefulController {
   final bool inSelectMode;
   final Widget? subtitle;
 
-  bool get isSelected => listController.selectedChats
-      .firstWhereOrNull((e) => e.guid == chat.guid) != null;
+  bool get isSelected =>
+      listController.selectedChats
+          .firstWhereOrNull((e) => e.guid == chat.guid) !=
+      null;
 
   ConversationTileController({
     Key? key,
@@ -43,9 +44,11 @@ class ConversationTileController extends StatefulController {
   });
 
   void onTap(BuildContext context) {
-    if ((inSelectMode || listController.selectedChats.isNotEmpty) && onSelect != null) {
+    if ((inSelectMode || listController.selectedChats.isNotEmpty) &&
+        onSelect != null) {
       onLongPress();
-    } else if ((!kIsDesktop && !kIsWeb) || cm.activeChat?.chat.guid != chat.guid) {
+    } else if ((!kIsDesktop && !kIsWeb) ||
+        cm.activeChat?.chat.guid != chat.guid) {
       ns.pushAndRemoveUntil(
         context,
         ConversationView(
@@ -61,7 +64,8 @@ class ConversationTileController extends StatefulController {
     }
   }
 
-  Future<void> onSecondaryTap(BuildContext context, TapUpDetails details) async {
+  Future<void> onSecondaryTap(
+      BuildContext context, TapUpDetails details) async {
     if (kIsWeb) {
       (await html.document.onContextMenu.first).preventDefault();
     }
@@ -80,7 +84,7 @@ class ConversationTileController extends StatefulController {
     onSelected();
     HapticFeedback.lightImpact();
   }
-  
+
   void onSelected() {
     onSelect!.call(!isSelected);
     if (ss.settings.skin.value == Skins.Material) {
@@ -100,22 +104,30 @@ class ConversationTile extends CustomStateful<ConversationTileController> {
     Function(bool)? onSelect,
     bool inSelectMode = false,
     Widget? subtitle,
-  }) : super(parentController: !inSelectMode && Get.isRegistered<ConversationTileController>(tag: chat.guid)
-      ? Get.find<ConversationTileController>(tag: chat.guid)
-      : Get.put(ConversationTileController(
-        chat: chat,
-        listController: controller,
-        onSelect: onSelect,
-        inSelectMode: inSelectMode,
-        subtitle: subtitle,
-      ), tag: inSelectMode ? randomString(8) : chat.guid, permanent: kIsDesktop || kIsWeb)
-  );
+  }) : super(
+          parentController: !inSelectMode &&
+                  Get.isRegistered<ConversationTileController>(tag: chat.guid)
+              ? Get.find<ConversationTileController>(tag: chat.guid)
+              : Get.put(
+                  ConversationTileController(
+                    chat: chat,
+                    listController: controller,
+                    onSelect: onSelect,
+                    inSelectMode: inSelectMode,
+                    subtitle: subtitle,
+                  ),
+                  tag: inSelectMode ? randomString(8) : chat.guid,
+                  permanent: kIsDesktop || kIsWeb,
+                ),
+        );
 
   @override
   State<ConversationTile> createState() => _ConversationTileState();
 }
 
-class _ConversationTileState extends CustomState<ConversationTile, void, ConversationTileController> with AutomaticKeepAliveClientMixin {
+class _ConversationTileState
+    extends CustomState<ConversationTile, void, ConversationTileController>
+    with AutomaticKeepAliveClientMixin {
   ConversationListController get listController => controller.listController;
 
   @override
@@ -168,7 +180,8 @@ class _ConversationTileState extends CustomState<ConversationTile, void, Convers
 }
 
 class ChatTitle extends CustomStateful<ConversationTileController> {
-  const ChatTitle({Key? key, required super.parentController, required this.style});
+  const ChatTitle(
+      {Key? key, required super.parentController, required this.style});
 
   final TextStyle style;
 
@@ -176,7 +189,8 @@ class ChatTitle extends CustomStateful<ConversationTileController> {
   State<StatefulWidget> createState() => _ChatTitleState();
 }
 
-class _ChatTitleState extends CustomState<ChatTitle, void, ConversationTileController> {
+class _ChatTitleState
+    extends CustomState<ChatTitle, void, ConversationTileController> {
   String title = "Unknown";
   StreamSubscription? sub;
   String? cachedDisplayName = "";
@@ -195,16 +209,19 @@ class _ChatTitleState extends CustomState<ChatTitle, void, ConversationTileContr
     // run query after render has completed
     if (!kIsWeb) {
       updateObx(() {
-        final titleQuery = Database.chats.query(Chat_.guid.equals(controller.chat.guid))
+        final titleQuery = Database.chats
+            .query(Chat_.guid.equals(controller.chat.guid))
             .watch();
         sub = titleQuery.listen((Query<Chat> query) async {
-          final chat = controller.chat.id == null ? null : await runAsync(() {
-            return Database.chats.get(controller.chat.id!);
-          });
+          final chat = controller.chat.id == null
+              ? null
+              : await runAsync(() {
+                  return Database.chats.get(controller.chat.id!);
+                });
           if (chat == null) return;
           // check if we really need to update this widget
-          if (chat.displayName != cachedDisplayName
-              || chat.handles.length != cachedParticipants.length) {
+          if (chat.displayName != cachedDisplayName ||
+              chat.handles.length != cachedParticipants.length) {
             final newTitle = chat.getTitle();
             if (newTitle != title) {
               setState(() {
@@ -224,7 +241,8 @@ class _ChatTitleState extends CustomState<ChatTitle, void, ConversationTileContr
           for (Handle h in controller.chat.participants) {
             if (event.item2.first.contains(h.contactRelation.targetId)) {
               changed = true;
-              h.contactRelation.target = Database.contacts.get(h.contactRelation.targetId);
+              h.contactRelation.target =
+                  Database.contacts.get(h.contactRelation.targetId);
             }
             if (event.item2.last.contains(h.id)) {
               changed = true;
@@ -245,8 +263,8 @@ class _ChatTitleState extends CustomState<ChatTitle, void, ConversationTileContr
       sub = WebListeners.chatUpdate.listen((chat) {
         if (chat.guid == controller.chat.guid) {
           // check if we really need to update this widget
-          if (chat.displayName != cachedDisplayName
-              || chat.participants.length != cachedParticipants.length) {
+          if (chat.displayName != cachedDisplayName ||
+              chat.participants.length != cachedParticipants.length) {
             final newTitle = chat.getTitle();
             if (newTitle != title) {
               setState(() {
@@ -270,10 +288,13 @@ class _ChatTitleState extends CustomState<ChatTitle, void, ConversationTileContr
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final hideInfo = ss.settings.redactedMode.value && ss.settings.hideContactInfo.value;
+      final hideInfo =
+          ss.settings.redactedMode.value && ss.settings.hideContactInfo.value;
       String _title = title;
       if (hideInfo) {
-        _title = controller.chat.participants.length > 1 ? "Group Chat" : controller.chat.participants[0].fakeName;
+        _title = controller.chat.participants.length > 1
+            ? "Group Chat"
+            : controller.chat.participants[0].fakeName;
       }
 
       return RichText(
@@ -290,7 +311,8 @@ class _ChatTitleState extends CustomState<ChatTitle, void, ConversationTileContr
 }
 
 class ChatSubtitle extends CustomStateful<ConversationTileController> {
-  const ChatSubtitle({Key? key, required super.parentController, required this.style});
+  const ChatSubtitle(
+      {Key? key, required super.parentController, required this.style});
 
   final TextStyle style;
 
@@ -298,7 +320,8 @@ class ChatSubtitle extends CustomStateful<ConversationTileController> {
   State<StatefulWidget> createState() => _ChatSubtitleState();
 }
 
-class _ChatSubtitleState extends CustomState<ChatSubtitle, void, ConversationTileController> {
+class _ChatSubtitleState
+    extends CustomState<ChatSubtitle, void, ConversationTileController> {
   String subtitle = "Unknown";
   String fakeText = faker.lorem.words(1).join(" ");
   StreamSubscription? sub;
@@ -319,37 +342,46 @@ class _ChatSubtitleState extends CustomState<ChatSubtitle, void, ConversationTil
     cachedLatestMessageGuid = controller.chat.latestMessage.guid!;
     cachedDateEdited = controller.chat.latestMessage.dateEdited;
     isFromMe = controller.chat.latestMessage.isFromMe!;
-    isDelivered = controller.chat.isGroup || !isFromMe || controller.chat.latestMessage.dateDelivered != null
-        || controller.chat.latestMessage.dateRead != null;
+    isDelivered = controller.chat.isGroup ||
+        !isFromMe ||
+        controller.chat.latestMessage.dateDelivered != null ||
+        controller.chat.latestMessage.dateRead != null;
     fakeText = faker.lorem.words(subtitle.split(" ").length).join(" ");
     // run query after render has completed
     if (!kIsWeb) {
       updateObx(() {
-        final latestMessageQuery = (Database.messages.query(Message_.dateDeleted.isNull())
-          ..link(Message_.chat, Chat_.guid.equals(controller.chat.guid))
-          ..order(Message_.dateCreated, flags: Order.descending))
-            .watch();
+        final latestMessageQuery =
+            (Database.messages.query(Message_.dateDeleted.isNull())
+                  ..link(Message_.chat, Chat_.guid.equals(controller.chat.guid))
+                  ..order(Message_.dateCreated, flags: Order.descending))
+                .watch();
 
         sub = latestMessageQuery.listen((Query<Message> query) async {
           final message = await runAsync(() {
             return query.findFirst();
           });
           isFromMe = message?.isFromMe ?? false;
-          isDelivered = controller.chat.isGroup || !isFromMe || message?.dateDelivered != null || message?.dateRead != null;
+          isDelivered = controller.chat.isGroup ||
+              !isFromMe ||
+              message?.dateDelivered != null ||
+              message?.dateRead != null;
           // check if we really need to update this widget
-          if (message != null && (message.guid != cachedLatestMessageGuid || message.dateEdited != cachedDateEdited)) {
+          if (message != null &&
+              (message.guid != cachedLatestMessageGuid ||
+                  message.dateEdited != cachedDateEdited)) {
             message.handle = message.getHandle();
             String newSubtitle = MessageHelper.getNotificationText(message);
             if (newSubtitle != subtitle) {
               setState(() {
                 subtitle = newSubtitle;
-                fakeText = faker.lorem.words(subtitle.split(" ").length).join(" ");
+                fakeText =
+                    faker.lorem.words(subtitle.split(" ").length).join(" ");
               });
             }
-          } else if (!controller.chat.isGroup
-              && message != null
-              && message.isFromMe!
-              && (message.dateDelivered != null || message.dateRead != null)) {
+          } else if (!controller.chat.isGroup &&
+              message != null &&
+              message.isFromMe! &&
+              (message.dateDelivered != null || message.dateRead != null)) {
             // update delivered status
             setState(() {});
           }
@@ -362,31 +394,40 @@ class _ChatSubtitleState extends CustomState<ChatSubtitle, void, ConversationTil
       eventDispatcher.stream.listen((event) {
         if (event.item1 != 'update-contacts') return;
         if (event.item2.isNotEmpty) {
-          String newSubtitle = MessageHelper.getNotificationText(controller.chat.latestMessage);
+          String newSubtitle =
+              MessageHelper.getNotificationText(controller.chat.latestMessage);
           if (newSubtitle != subtitle) {
             setState(() {
               subtitle = newSubtitle;
-              fakeText = faker.lorem.words(subtitle.split(" ").length).join(" ");
+              fakeText =
+                  faker.lorem.words(subtitle.split(" ").length).join(" ");
             });
           }
         }
       });
       sub = WebListeners.newMessage.listen((tuple) {
         final message = tuple.item1;
-        if (tuple.item2?.guid == controller.chat.guid && (cachedDateCreated == null || message.dateCreated!.isAfter(cachedDateCreated!))) {
+        if (tuple.item2?.guid == controller.chat.guid &&
+            (cachedDateCreated == null ||
+                message.dateCreated!.isAfter(cachedDateCreated!))) {
           isFromMe = message.isFromMe ?? false;
-          isDelivered = controller.chat.isGroup || !isFromMe || message.dateDelivered != null || message.dateRead != null;
-          if (message.guid != cachedLatestMessageGuid || message.dateEdited != cachedDateEdited) {
+          isDelivered = controller.chat.isGroup ||
+              !isFromMe ||
+              message.dateDelivered != null ||
+              message.dateRead != null;
+          if (message.guid != cachedLatestMessageGuid ||
+              message.dateEdited != cachedDateEdited) {
             String newSubtitle = MessageHelper.getNotificationText(message);
             if (newSubtitle != subtitle) {
               setState(() {
                 subtitle = newSubtitle;
-                fakeText = faker.lorem.words(subtitle.split(" ").length).join(" ");
+                fakeText =
+                    faker.lorem.words(subtitle.split(" ").length).join(" ");
               });
             }
-          } else if (!controller.chat.isGroup
-              && message.isFromMe!
-              && (message.dateDelivered != null || message.dateRead != null)) {
+          } else if (!controller.chat.isGroup &&
+              message.isFromMe! &&
+              (message.dateDelivered != null || message.dateRead != null)) {
             // update delivered status
             setState(() {});
           }
@@ -407,19 +448,32 @@ class _ChatSubtitleState extends CustomState<ChatSubtitle, void, ConversationTil
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final hideContent = ss.settings.redactedMode.value && ss.settings.hideMessageContent.value;
-      final hideContacts = ss.settings.redactedMode.value && ss.settings.hideContactInfo.value;
-      String _subtitle = hideContent ? fakeText : hideContacts && !kIsWeb ? MessageHelper.getNotificationText(Message.findOne(guid: cachedLatestMessageGuid!)!) : subtitle;
+      final hideContent = ss.settings.redactedMode.value &&
+          ss.settings.hideMessageContent.value;
+      final hideContacts =
+          ss.settings.redactedMode.value && ss.settings.hideContactInfo.value;
+      String _subtitle = hideContent
+          ? fakeText
+          : hideContacts && !kIsWeb
+              ? MessageHelper.getNotificationText(
+                  Message.findOne(guid: cachedLatestMessageGuid!)!,
+                )
+              : subtitle;
 
       return RichText(
         text: TextSpan(
           children: MessageHelper.buildEmojiText(
             "${!iOS && isFromMe ? "You: " : ""}$_subtitle",
-            widget.style.copyWith(fontStyle: !iOS && !isDelivered ? FontStyle.italic : null),
+            widget.style.copyWith(
+                fontStyle: !iOS && !isDelivered ? FontStyle.italic : null),
           ),
         ),
         overflow: TextOverflow.ellipsis,
-        maxLines: ss.settings.denseChatTiles.value ? 1 : material ? 3 : 2,
+        maxLines: ss.settings.denseChatTiles.value
+            ? 1
+            : material
+                ? 3
+                : 2,
       );
     });
   }
@@ -436,41 +490,43 @@ class ChatLeading extends StatefulWidget {
 }
 
 class ChatLeadingState extends OptimizedState<ChatLeading> {
-
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (widget.unreadIcon != null && iOS)
-          widget.unreadIcon!,
+        if (widget.unreadIcon != null && iOS) widget.unreadIcon!,
         Obx(() {
-          final showTypingIndicator = cvc(widget.controller.chat).showTypingIndicator.value;
-          double height = Theme.of(context).textTheme.labelLarge!.fontSize! * 1.25;
+          final showTypingIndicator =
+              cvc(widget.controller.chat).showTypingIndicator.value;
+          double height =
+              Theme.of(context).textTheme.labelLarge!.fontSize! * 1.25;
           return Stack(
             clipBehavior: Clip.none,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 2, right: 2),
-                child: widget.controller.isSelected ? Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: context.theme.colorScheme.primary,
-                  ),
-                  width: 40,
-                  height: 40,
-                  child: Center(
-                    child: Icon(
-                      Icons.check,
-                      color: context.theme.colorScheme.onPrimary,
-                      size: 20,
-                    ),
-                  ),
-                ) : ContactAvatarGroupWidget(
-                  chat: widget.controller.chat,
-                  size: 40,
-                  editable: false,
-                ),
+                child: widget.controller.isSelected
+                    ? Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: context.theme.colorScheme.primary,
+                        ),
+                        width: 40,
+                        height: 40,
+                        child: Center(
+                          child: Icon(
+                            Icons.check,
+                            color: context.theme.colorScheme.onPrimary,
+                            size: 20,
+                          ),
+                        ),
+                      )
+                    : ContactAvatarGroupWidget(
+                        chat: widget.controller.chat,
+                        size: 40,
+                        editable: false,
+                      ),
               ),
               if (showTypingIndicator)
                 Positioned(

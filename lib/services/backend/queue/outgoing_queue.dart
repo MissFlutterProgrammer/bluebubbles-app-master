@@ -1,15 +1,17 @@
-import 'dart:async';
+// ignore_for_file: no_wildcard_variable_uses
 
+import 'dart:async';
 import 'package:bluebubbles/database/models.dart';
 import 'package:bluebubbles/services/services.dart';
 import 'package:bluebubbles/utils/logger/logger.dart';
 import 'package:bluebubbles/services/backend/queue/queue_impl.dart';
 import 'package:get/get.dart';
 
-OutgoingQueue outq = Get.isRegistered<OutgoingQueue>() ? Get.find<OutgoingQueue>() : Get.put(OutgoingQueue());
+OutgoingQueue outq = Get.isRegistered<OutgoingQueue>()
+    ? Get.find<OutgoingQueue>()
+    : Get.put(OutgoingQueue());
 
 class OutgoingQueue extends Queue {
-
   @override
   Future<dynamic> prepItem(QueueItem _) async {
     assert(_ is OutgoingItem);
@@ -18,7 +20,10 @@ class OutgoingQueue extends Queue {
     switch (item.type) {
       case QueueType.sendMultipart:
       case QueueType.sendMessage:
-        return await ah.prepMessage(item.chat, item.message, item.selected, item.reaction, clearNotificationsIfFromMe: !(item.customArgs?['notifReply'] ?? false));
+        return await ah.prepMessage(
+            item.chat, item.message, item.selected, item.reaction,
+            clearNotificationsIfFromMe:
+                !(item.customArgs?['notifReply'] ?? false));
       case QueueType.sendAttachment:
         return await ah.prepAttachment(item.chat, item.message);
       default:
@@ -59,13 +64,22 @@ class OutgoingQueue extends Queue {
 
     switch (item.type) {
       case QueueType.sendMessage:
-        await handleSend(() => ah.sendMessage(item.chat, item.message, item.selected, item.reaction), item.chat);
+        await handleSend(
+            () => ah.sendMessage(
+                item.chat, item.message, item.selected, item.reaction),
+            item.chat);
         break;
       case QueueType.sendMultipart:
-        await handleSend(() => ah.sendMultipart(item.chat, item.message, item.selected, item.reaction), item.chat);
+        await handleSend(
+            () => ah.sendMultipart(
+                item.chat, item.message, item.selected, item.reaction),
+            item.chat);
         break;
       case QueueType.sendAttachment:
-        await handleSend(() => ah.sendAttachment(item.chat, item.message, item.customArgs?['audio'] ?? false), item.chat);
+        await handleSend(
+            () => ah.sendAttachment(
+                item.chat, item.message, item.customArgs?['audio'] ?? false),
+            item.chat);
         break;
       default:
         Logger.info("Unhandled queue event: ${item.type.name}");

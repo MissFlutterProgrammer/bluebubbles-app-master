@@ -15,10 +15,12 @@ class SamsungHeader extends CustomStateful<ConversationListController> {
   State<StatefulWidget> createState() => _SamsungHeaderState();
 }
 
-class _SamsungHeaderState extends CustomState<SamsungHeader, void, ConversationListController> {
-  Color get backgroundColor => ss.settings.windowEffect.value == WindowEffect.disabled
-      ? headerColor
-      : Colors.transparent;
+class _SamsungHeaderState
+    extends CustomState<SamsungHeader, void, ConversationListController> {
+  Color get backgroundColor =>
+      ss.settings.windowEffect.value == WindowEffect.disabled
+          ? headerColor
+          : Colors.transparent;
   bool get showArchived => controller.showArchivedChats;
   bool get showUnknown => controller.showUnknownSenders;
 
@@ -29,14 +31,18 @@ class _SamsungHeaderState extends CustomState<SamsungHeader, void, ConversationL
       if (ns.isAvatarOnly(context)) {
         return SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.all(10.0).add(const EdgeInsets.only(top: 30)),
+            padding:
+                const EdgeInsets.all(10.0).add(const EdgeInsets.only(top: 30)),
             child: Material(
               color: Colors.transparent,
               shape: const CircleBorder(),
               clipBehavior: Clip.antiAlias,
               child: SizedBox(
                 width: 40,
-                child: OverflowMenu(extraItems: true, controller: controller),
+                child: OverflowMenu(
+                  extraItems: true,
+                  controller: controller,
+                ),
               ),
             ),
           ),
@@ -54,7 +60,11 @@ class _SamsungHeaderState extends CustomState<SamsungHeader, void, ConversationL
         automaticallyImplyLeading: false,
         flexibleSpace: LayoutBuilder(
           builder: (context, constraints) {
-            final double expandRatio = ((constraints.maxHeight - (kToolbarHeight + (kIsDesktop ? 20 : 0))) / (context.height / 3 - (kToolbarHeight + (kIsDesktop ? 20 : 0)))).clamp(0, 1);
+            final double expandRatio = ((constraints.maxHeight -
+                        (kToolbarHeight + (kIsDesktop ? 20 : 0))) /
+                    (context.height / 3 -
+                        (kToolbarHeight + (kIsDesktop ? 20 : 0))))
+                .clamp(0, 1);
             final animation = AlwaysStoppedAnimation(expandRatio);
 
             return Stack(
@@ -63,19 +73,32 @@ class _SamsungHeaderState extends CustomState<SamsungHeader, void, ConversationL
                 FadeTransition(
                   opacity: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                     parent: animation,
-                    curve: const Interval(0.3, 1.0, curve: Curves.easeIn),
+                    curve: const Interval(
+                      0.3,
+                      1.0,
+                      curve: Curves.easeIn,
+                    ),
                   )),
-                  child: Center(child: ExpandedHeaderText(parentController: controller)),
+                  child: Center(
+                    child: ExpandedHeaderText(
+                      parentController: controller,
+                    ),
+                  ),
                 ),
                 FadeTransition(
                   opacity: Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
                     parent: animation,
-                    curve: const Interval(0.0, 0.7, curve: Curves.easeOut),
+                    curve: const Interval(
+                      0.0,
+                      0.7,
+                      curve: Curves.easeOut,
+                    ),
                   )),
                   child: Align(
                     alignment: Alignment.bottomLeft,
                     child: Container(
-                      padding: EdgeInsets.only(left: showArchived || showUnknown ? 60 : 16),
+                      padding: EdgeInsets.only(
+                          left: showArchived || showUnknown ? 60 : 16),
                       height: (kToolbarHeight + (kIsDesktop ? 20 : 0)),
                       child: Align(
                         alignment: Alignment.centerLeft,
@@ -84,7 +107,10 @@ class _SamsungHeaderState extends CustomState<SamsungHeader, void, ConversationL
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            HeaderText(controller: controller, fontSize: 20),
+                            HeaderText(
+                              controller: controller,
+                              fontSize: 20,
+                            ),
                             SyncIndicator(),
                           ],
                         ),
@@ -103,11 +129,11 @@ class _SamsungHeaderState extends CustomState<SamsungHeader, void, ConversationL
                         children: [
                           if (showArchived || showUnknown)
                             IconButton(
-                                onPressed: () async {
-                                  Navigator.of(context).pop();
-                                },
-                                padding: EdgeInsets.zero,
-                                icon: buildBackButton(context)
+                              onPressed: () async {
+                                Navigator.of(context).pop();
+                              },
+                              padding: EdgeInsets.zero,
+                              icon: buildBackButton(context),
                             ),
                           if (!showArchived && !showUnknown)
                             const SizedBox.shrink(),
@@ -124,9 +150,11 @@ class _SamsungHeaderState extends CustomState<SamsungHeader, void, ConversationL
                                     },
                                     icon: Icon(
                                       Icons.camera_alt_outlined,
-                                      color: context.theme.colorScheme.properOnSurface,
+                                      color: context
+                                          .theme.colorScheme.properOnSurface,
                                     ),
-                                  )),
+                                  ),
+                                ),
                               if (!showArchived && !showUnknown)
                                 IconButton(
                                   onPressed: () async {
@@ -137,8 +165,10 @@ class _SamsungHeaderState extends CustomState<SamsungHeader, void, ConversationL
                                   },
                                   icon: Icon(
                                     Icons.search,
-                                    color: context.theme.colorScheme.properOnSurface,
-                                  )),
+                                    color: context
+                                        .theme.colorScheme.properOnSurface,
+                                  ),
+                                ),
                               if (!showArchived && !showUnknown)
                                 const Padding(
                                   padding: EdgeInsets.only(right: 8.0),
@@ -175,22 +205,25 @@ class ExpandedHeaderText extends CustomStateful<ConversationListController> {
   State<StatefulWidget> createState() => _ExpandedHeaderTextState();
 }
 
-class _ExpandedHeaderTextState extends CustomState<ExpandedHeaderText, void, ConversationListController> {
+class _ExpandedHeaderTextState
+    extends CustomState<ExpandedHeaderText, void, ConversationListController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       final unreadChats = GlobalChatService.unreadCount.value;
       return Text(
-          controller.selectedChats.isNotEmpty
-              ? "${controller.selectedChats.length} selected"
-              : controller.showArchivedChats
-              ? "Archived"
-              : controller.showUnknownSenders
-              ? "Unknown Senders"
-              : unreadChats > 0
-              ? "$unreadChats unread message${unreadChats > 1 ? "s" : ""}"
-              : "Messages",
-          style: context.theme.textTheme.displaySmall!.copyWith(color: context.theme.colorScheme.onBackground),
+        controller.selectedChats.isNotEmpty
+            ? "${controller.selectedChats.length} selected"
+            : controller.showArchivedChats
+                ? "Archived"
+                : controller.showUnknownSenders
+                    ? "Unknown Senders"
+                    : unreadChats > 0
+                        ? "$unreadChats unread message${unreadChats > 1 ? "s" : ""}"
+                        : "Messages",
+        style: context.theme.textTheme.displaySmall!.copyWith(
+          color: context.theme.colorScheme.onSurface,
+        ),
         textAlign: TextAlign.center,
       );
     });

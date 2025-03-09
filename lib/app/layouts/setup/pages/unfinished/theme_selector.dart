@@ -18,7 +18,8 @@ class ThemeSelectorController extends GetxController {
   void onInit() {
     setMessagesView();
     ever(selectedTheme, (_) {
-      AdaptiveTheme.of(Get.context!).setThemeMode(AdaptiveThemeMode.values[selectedTheme.value - 1]);
+      AdaptiveTheme.of(Get.context!)
+          .setThemeMode(AdaptiveThemeMode.values[selectedTheme.value - 1]);
     });
     ever(selectedSkin, (_) {
       ss.settings.skin.value = Skins.values[selectedSkin.value - 1];
@@ -164,10 +165,14 @@ class ThemeSelector extends StatelessWidget {
       builder: (_) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
-            systemNavigationBarColor: ss.settings.immersiveMode.value ? Colors.transparent : context.theme.colorScheme.background, // navigation bar color
-            systemNavigationBarIconBrightness: context.theme.colorScheme.brightness.opposite,
+            systemNavigationBarColor: ss.settings.immersiveMode.value
+                ? Colors.transparent
+                : context.theme.colorScheme.surface, // navigation bar color
+            systemNavigationBarIconBrightness:
+                context.theme.colorScheme.brightness.opposite,
             statusBarColor: Colors.transparent, // status bar color
-            statusBarIconBrightness: context.theme.colorScheme.brightness.opposite,
+            statusBarIconBrightness:
+                context.theme.colorScheme.brightness.opposite,
           ),
           child: Scaffold(
             backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -176,502 +181,689 @@ class ThemeSelector extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
                       "Select your app theme and skin",
-                      style: Theme.of(context).textTheme.bodyMedium!.apply(fontSizeFactor: 1.5),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .apply(fontSizeFactor: 1.5),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Container(height: 50.0),
-                  Obx(() => Container(
-                    width: 350,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                controller.selectedTheme.value = 1;
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(3),
-                                height: 200,
-                                width: 100,
-                                decoration: controller.selectedTheme.value == 1 ? BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ) : null,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(17),
-                                  child: AbsorbPointer(
-                                    absorbing: true,
-                                    child: SizedBox.expand(
+                  Container(height: 50),
+                  Obx(
+                    () => Container(
+                      width: 350,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  controller.selectedTheme.value = 1;
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(3),
+                                  height: 200,
+                                  width: 100,
+                                  decoration: controller.selectedTheme.value ==
+                                          1
+                                      ? BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                        )
+                                      : null,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(17),
+                                    child: AbsorbPointer(
+                                      absorbing: true,
+                                      child: SizedBox.expand(
                                         child: FittedBox(
-                                            fit: BoxFit.fitHeight,
-                                            alignment: Alignment.centerLeft,
-                                            child: SizedBox(
-                                              width: MediaQuery.of(context).size.width,
-                                              height: MediaQuery.of(context).size.height,
-                                              child: Theme(
-                                                data: ts.whiteLightTheme,
-                                                child: Container(
-                                                  color: ts.whiteLightTheme.colorScheme.background,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(bottom: 28.0),
-                                                    child: Skin(
-                                                      skin: Skins.values[controller.selectedSkin.value - 1],
-                                                      child: Builder(
-                                                          builder: (context) {
-                                                            return Scaffold(
-                                                                appBar: buildConversationViewHeader(context, Chat(
-                                                                    id: 69,
-                                                                    guid: 'theme-selector',
-                                                                    displayName: "Sample Chat",
-                                                                    participants: [
-                                                                      Handle(
+                                          fit: BoxFit.fitHeight,
+                                          alignment: Alignment.centerLeft,
+                                          child: SizedBox(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height,
+                                            child: Theme(
+                                              data: ts.whiteLightTheme,
+                                              child: Container(
+                                                color: ts.whiteLightTheme
+                                                    .colorScheme.surface,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    bottom: 28,
+                                                  ),
+                                                  child: Skin(
+                                                    skin: Skins.values[
+                                                        controller.selectedSkin
+                                                                .value -
+                                                            1],
+                                                    child: Builder(
+                                                        builder: (context) {
+                                                      return Scaffold(
+                                                        appBar:
+                                                            buildConversationViewHeader(
+                                                                    context,
+                                                                    Chat(
+                                                                      id: 69,
+                                                                      guid:
+                                                                          'theme-selector',
+                                                                      displayName:
+                                                                          "Sample Chat",
+                                                                      participants: [
+                                                                        Handle(
                                                                           id: -1,
-                                                                          address: "John Doe"
-                                                                      ),
-                                                                      Handle(
+                                                                          address:
+                                                                              "John Doe",
+                                                                        ),
+                                                                        Handle(
                                                                           id: -2,
-                                                                          address: "Jane Doe"
-                                                                      ),
-                                                                      Handle(
+                                                                          address:
+                                                                              "Jane Doe",
+                                                                        ),
+                                                                        Handle(
                                                                           id: -3,
-                                                                          address: "You"
-                                                                      ),
-                                                                    ]
-                                                                ), ts.whiteLightTheme) as PreferredSizeWidget?,
-                                                                body: controller.messagesView
-                                                            );
-                                                          }
-                                                      ),
-                                                    ),
+                                                                          address:
+                                                                              "You",
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    ts.whiteLightTheme)
+                                                                as PreferredSizeWidget?,
+                                                        body: controller
+                                                            .messagesView,
+                                                      );
+                                                    }),
                                                   ),
                                                 ),
                                               ),
-                                            )
-                                        )
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Light"),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                controller.selectedTheme.value = 2;
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(3),
-                                height: 200,
-                                width: 100,
-                                decoration: controller.selectedTheme.value == 2 ? BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ) : null,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(17),
-                                  child: AbsorbPointer(
-                                    absorbing: true,
-                                    child: SizedBox.expand(
+                              const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Text("Light"),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  controller.selectedTheme.value = 2;
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(3),
+                                  height: 200,
+                                  width: 100,
+                                  decoration: controller.selectedTheme.value ==
+                                          2
+                                      ? BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                        )
+                                      : null,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(17),
+                                    child: AbsorbPointer(
+                                      absorbing: true,
+                                      child: SizedBox.expand(
                                         child: FittedBox(
-                                            fit: BoxFit.fitHeight,
-                                            alignment: Alignment.centerLeft,
-                                            child: SizedBox(
-                                              width: MediaQuery.of(context).size.width,
-                                              height: MediaQuery.of(context).size.height,
-                                              child: Theme(
-                                                data: ts.oledDarkTheme,
-                                                child: Container(
-                                                  color: ts.oledDarkTheme.colorScheme.background,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(bottom: 28.0),
-                                                    child: Skin(
-                                                      skin: Skins.values[controller.selectedSkin.value - 1],
-                                                      child: Builder(
-                                                          builder: (context) {
-                                                            return Scaffold(
-                                                                backgroundColor: ts.oledDarkTheme.colorScheme.background,
-                                                                appBar: buildConversationViewHeader(context, Chat(
-                                                                    id: 69,
-                                                                    guid: 'theme-selector',
-                                                                    displayName: "Sample Chat",
-                                                                    participants: [
-                                                                      Handle(
+                                          fit: BoxFit.fitHeight,
+                                          alignment: Alignment.centerLeft,
+                                          child: SizedBox(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height,
+                                            child: Theme(
+                                              data: ts.oledDarkTheme,
+                                              child: Container(
+                                                color: ts.oledDarkTheme
+                                                    .colorScheme.surface,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    bottom: 28,
+                                                  ),
+                                                  child: Skin(
+                                                    skin: Skins.values[
+                                                        controller.selectedSkin
+                                                                .value -
+                                                            1],
+                                                    child: Builder(
+                                                        builder: (context) {
+                                                      return Scaffold(
+                                                        backgroundColor: ts
+                                                            .oledDarkTheme
+                                                            .colorScheme
+                                                            .surface,
+                                                        appBar:
+                                                            buildConversationViewHeader(
+                                                                    context,
+                                                                    Chat(
+                                                                      id: 69,
+                                                                      guid:
+                                                                          'theme-selector',
+                                                                      displayName:
+                                                                          "Sample Chat",
+                                                                      participants: [
+                                                                        Handle(
                                                                           id: -1,
-                                                                          address: "John Doe"
-                                                                      ),
-                                                                      Handle(
+                                                                          address:
+                                                                              "John Doe",
+                                                                        ),
+                                                                        Handle(
                                                                           id: -2,
-                                                                          address: "Jane Doe"
-                                                                      ),
-                                                                      Handle(
+                                                                          address:
+                                                                              "Jane Doe",
+                                                                        ),
+                                                                        Handle(
                                                                           id: -3,
-                                                                          address: "You"
-                                                                      ),
-                                                                    ]
-                                                                ), ts.oledDarkTheme) as PreferredSizeWidget?,
-                                                                body: controller.messagesView
-                                                            );
-                                                          }
-                                                      ),
-                                                    ),
+                                                                          address:
+                                                                              "You",
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    ts.oledDarkTheme)
+                                                                as PreferredSizeWidget?,
+                                                        body: controller
+                                                            .messagesView,
+                                                      );
+                                                    }),
                                                   ),
                                                 ),
                                               ),
-                                            )
-                                        )
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Dark"),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                controller.selectedTheme.value = 3;
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(3),
-                                height: 200,
-                                width: 100,
-                                decoration: controller.selectedTheme.value == 3 ? BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ) : null,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(17),
-                                  child: Skin(
-                                    skin: Skins.values[controller.selectedSkin.value - 1],
-                                    child: Stack(
+                              const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Text("Dark"),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  controller.selectedTheme.value = 3;
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(3),
+                                  height: 200,
+                                  width: 100,
+                                  decoration: controller.selectedTheme.value ==
+                                          3
+                                      ? BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                        )
+                                      : null,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(17),
+                                    child: Skin(
+                                      skin: Skins.values[
+                                          controller.selectedSkin.value - 1],
+                                      child: Stack(
                                         children: [
                                           Material(
-                                            shape: TriangleBorder(section: Section.TOP),
+                                            shape: TriangleBorder(
+                                              section: Section.TOP,
+                                            ),
                                             clipBehavior: Clip.antiAlias,
-                                            color: ts.whiteLightTheme.colorScheme.background,
+                                            color: ts.whiteLightTheme
+                                                .colorScheme.surface,
                                             child: AbsorbPointer(
                                               absorbing: true,
                                               child: SizedBox.expand(
-                                                  child: FittedBox(
-                                                      fit: BoxFit.fitHeight,
-                                                      alignment: Alignment.centerLeft,
-                                                      child: SizedBox(
-                                                        width: MediaQuery.of(context).size.width,
-                                                        height: MediaQuery.of(context).size.height,
-                                                        child: Theme(
-                                                          data: ts.whiteLightTheme,
-                                                          child: Container(
-                                                            color: ts.whiteLightTheme.colorScheme.background,
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.only(bottom: 28.0),
-                                                              child: Builder(
-                                                                  builder: (context) {
-                                                                    return Scaffold(
-                                                                        backgroundColor: ts.whiteLightTheme.colorScheme.background,
-                                                                        appBar: buildConversationViewHeader(context, Chat(
-                                                                            id: 69,
-                                                                            guid: 'theme-selector',
-                                                                            displayName: "Sample Chat",
-                                                                            participants: [
-                                                                              Handle(
-                                                                                  id: -1,
-                                                                                  address: "John Doe"
-                                                                              ),
-                                                                              Handle(
-                                                                                  id: -2,
-                                                                                  address: "Jane Doe"
-                                                                              ),
-                                                                              Handle(
-                                                                                  id: -3,
-                                                                                  address: "You"
-                                                                              ),
-                                                                            ]
-                                                                        ), ts.whiteLightTheme) as PreferredSizeWidget?,
-                                                                        body: controller.messagesView
-                                                                    );
-                                                                  }
-                                                              ),
-                                                            ),
+                                                child: FittedBox(
+                                                  fit: BoxFit.fitHeight,
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .height,
+                                                    child: Theme(
+                                                      data: ts.whiteLightTheme,
+                                                      child: Container(
+                                                        color: ts
+                                                            .whiteLightTheme
+                                                            .colorScheme
+                                                            .surface,
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            bottom: 28,
                                                           ),
+                                                          child: Builder(
+                                                              builder:
+                                                                  (context) {
+                                                            return Scaffold(
+                                                              backgroundColor: ts
+                                                                  .whiteLightTheme
+                                                                  .colorScheme
+                                                                  .surface,
+                                                              appBar:
+                                                                  buildConversationViewHeader(
+                                                                          context,
+                                                                          Chat(
+                                                                            id: 69,
+                                                                            guid:
+                                                                                'theme-selector',
+                                                                            displayName:
+                                                                                "Sample Chat",
+                                                                            participants: [
+                                                                              Handle(id: -1, address: "John Doe"),
+                                                                              Handle(id: -2, address: "Jane Doe"),
+                                                                              Handle(id: -3, address: "You"),
+                                                                            ],
+                                                                          ),
+                                                                          ts.whiteLightTheme)
+                                                                      as PreferredSizeWidget?,
+                                                              body: controller
+                                                                  .messagesView,
+                                                            );
+                                                          }),
                                                         ),
-                                                      )
-                                                  )
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
                                           Material(
-                                            shape: TriangleBorder(section: Section.BOTTOM),
+                                            shape: TriangleBorder(
+                                              section: Section.BOTTOM,
+                                            ),
                                             clipBehavior: Clip.antiAlias,
-                                            color: ts.oledDarkTheme.colorScheme.background,
+                                            color: ts.oledDarkTheme.colorScheme
+                                                .surface,
                                             child: AbsorbPointer(
                                               absorbing: true,
                                               child: SizedBox.expand(
-                                                  child: FittedBox(
-                                                      fit: BoxFit.fitHeight,
-                                                      alignment: Alignment.centerLeft,
-                                                      child: SizedBox(
-                                                        width: MediaQuery.of(context).size.width,
-                                                        height: MediaQuery.of(context).size.height,
-                                                        child: Theme(
-                                                          data: ts.oledDarkTheme,
-                                                          child: Container(
-                                                            color: ts.oledDarkTheme.colorScheme.background,
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.only(bottom: 28.0),
-                                                              child: Builder(
-                                                                  builder: (context) {
-                                                                    return Scaffold(
-                                                                        backgroundColor: ts.oledDarkTheme.colorScheme.background,
-                                                                        appBar: buildConversationViewHeader(context, Chat(
-                                                                            id: 69,
-                                                                            guid: 'theme-selector',
-                                                                            displayName: "Sample Chat",
-                                                                            participants: [
-                                                                              Handle(
-                                                                                  id: -1,
-                                                                                  address: "John Doe"
-                                                                              ),
-                                                                              Handle(
-                                                                                  id: -2,
-                                                                                  address: "Jane Doe"
-                                                                              ),
-                                                                              Handle(
-                                                                                  id: -3,
-                                                                                  address: "You"
-                                                                              ),
-                                                                            ]
-                                                                        ), ts.oledDarkTheme) as PreferredSizeWidget?,
-                                                                        body: controller.messagesView
-                                                                    );
-                                                                  }
-                                                              ),
-                                                            ),
+                                                child: FittedBox(
+                                                  fit: BoxFit.fitHeight,
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .height,
+                                                    child: Theme(
+                                                      data: ts.oledDarkTheme,
+                                                      child: Container(
+                                                        color: ts
+                                                            .oledDarkTheme
+                                                            .colorScheme
+                                                            .surface,
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            bottom: 28,
                                                           ),
+                                                          child: Builder(
+                                                              builder:
+                                                                  (context) {
+                                                            return Scaffold(
+                                                              backgroundColor: ts
+                                                                  .oledDarkTheme
+                                                                  .colorScheme
+                                                                  .surface,
+                                                              appBar:
+                                                                  buildConversationViewHeader(
+                                                                context,
+                                                                Chat(
+                                                                  id: 69,
+                                                                  guid:
+                                                                      'theme-selector',
+                                                                  displayName:
+                                                                      "Sample Chat",
+                                                                  participants: [
+                                                                    Handle(
+                                                                      id: -1,
+                                                                      address:
+                                                                          "John Doe",
+                                                                    ),
+                                                                    Handle(
+                                                                      id: -2,
+                                                                      address:
+                                                                          "Jane Doe",
+                                                                    ),
+                                                                    Handle(
+                                                                      id: -3,
+                                                                      address:
+                                                                          "You",
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                ts.oledDarkTheme,
+                                                              ) as PreferredSizeWidget?,
+                                                              body: controller
+                                                                  .messagesView,
+                                                            );
+                                                          }),
                                                         ),
-                                                      )
-                                                  )
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
                                           Positioned(
-                                            top: 5, left: 5,
-                                            child: Icon(Icons.light_mode, color: Theme.of(context).primaryColor),
+                                            top: 5,
+                                            left: 5,
+                                            child: Icon(Icons.light_mode,
+                                                color: Theme.of(context)
+                                                    .primaryColor),
                                           ),
                                           Positioned(
-                                            bottom: 5, right: 5,
-                                            child: Icon(Icons.dark_mode, color: Theme.of(context).primaryColor),
+                                            bottom: 5,
+                                            right: 5,
+                                            child: Icon(
+                                              Icons.dark_mode,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            ),
                                           ),
-                                        ]
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("System"),
-                            ),
-                          ],
-                        )
-                      ],
+                              const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Text("System"),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                  )),
-                  Container(height: 50.0, child: const Divider(height: 2, color: Colors.grey,), padding: const EdgeInsets.symmetric(horizontal: 15)),
-                  Obx(() =>  Container(
-                    width: 250,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                controller.selectedSkin.value = 1;
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(3),
-                                height: 200,
-                                width: 100,
-                                decoration: controller.selectedSkin.value == 1 ? BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ) : null,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(17),
-                                  child: AbsorbPointer(
-                                    absorbing: true,
-                                    child: SizedBox.expand(
+                  ),
+                  Container(
+                    height: 50,
+                    child: const Divider(
+                      height: 2,
+                      color: Colors.grey,
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                  ),
+                  Obx(
+                    () => Container(
+                      width: 250,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  controller.selectedSkin.value = 1;
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(3),
+                                  height: 200,
+                                  width: 100,
+                                  decoration: controller.selectedSkin.value == 1
+                                      ? BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                        )
+                                      : null,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(17),
+                                    child: AbsorbPointer(
+                                      absorbing: true,
+                                      child: SizedBox.expand(
                                         child: FittedBox(
-                                            fit: BoxFit.fitHeight,
-                                            alignment: Alignment.centerLeft,
-                                            child: SizedBox(
-                                              width: MediaQuery.of(context).size.width,
-                                              height: MediaQuery.of(context).size.height,
-                                              child: Theme(
-                                                  data: Theme.of(context),
-                                                  child: Skin(
-                                                    skin: Skins.iOS,
-                                                    child: Container(
-                                                      color: Theme.of(context).colorScheme.background,
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.only(bottom: 28.0),
-                                                        child: Builder(
-                                                            builder: (context) {
-                                                              return Scaffold(
-                                                                  backgroundColor: Theme.of(context).colorScheme.background,
-                                                                  appBar: buildConversationViewHeader(context, Chat(
+                                          fit: BoxFit.fitHeight,
+                                          alignment: Alignment.centerLeft,
+                                          child: SizedBox(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height,
+                                            child: Theme(
+                                              data: Theme.of(context),
+                                              child: Skin(
+                                                skin: Skins.iOS,
+                                                child: Container(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .surface,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      bottom: 28,
+                                                    ),
+                                                    child: Builder(
+                                                        builder: (context) {
+                                                      return Scaffold(
+                                                        backgroundColor:
+                                                            Theme.of(context)
+                                                                .colorScheme
+                                                                .surface,
+                                                        appBar:
+                                                            buildConversationViewHeader(
+                                                                    context,
+                                                                    Chat(
                                                                       id: 69,
-                                                                      guid: 'theme-selector',
-                                                                      displayName: "Sample Chat",
+                                                                      guid:
+                                                                          'theme-selector',
+                                                                      displayName:
+                                                                          "Sample Chat",
                                                                       participants: [
                                                                         Handle(
-                                                                            id: -1,
-                                                                            address: "John Doe"
+                                                                          id: -1,
+                                                                          address:
+                                                                              "John Doe",
                                                                         ),
                                                                         Handle(
-                                                                            id: -2,
-                                                                            address: "Jane Doe"
+                                                                          id: -2,
+                                                                          address:
+                                                                              "Jane Doe",
                                                                         ),
                                                                         Handle(
-                                                                            id: -3,
-                                                                            address: "You"
+                                                                          id: -3,
+                                                                          address:
+                                                                              "You",
                                                                         ),
-                                                                      ]
-                                                                  ), Theme.of(context)) as PreferredSizeWidget?,
-                                                                  body: controller.messagesView
-                                                              );
-                                                            }
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )
+                                                                      ],
+                                                                    ),
+                                                                    Theme.of(
+                                                                        context))
+                                                                as PreferredSizeWidget?,
+                                                        body: controller
+                                                            .messagesView,
+                                                      );
+                                                    }),
+                                                  ),
+                                                ),
                                               ),
-                                            )
-                                        )
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("iOS"),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                controller.selectedSkin.value = 2;
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(3),
-                                height: 200,
-                                width: 100,
-                                decoration: controller.selectedSkin.value == 2 ? BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ) : null,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(17),
-                                  child: AbsorbPointer(
-                                    absorbing: true,
-                                    child: SizedBox.expand(
+                              const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Text("iOS"),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  controller.selectedSkin.value = 2;
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(3),
+                                  height: 200,
+                                  width: 100,
+                                  decoration: controller.selectedSkin.value == 2
+                                      ? BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                        )
+                                      : null,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(17),
+                                    child: AbsorbPointer(
+                                      absorbing: true,
+                                      child: SizedBox.expand(
                                         child: FittedBox(
-                                            fit: BoxFit.fitHeight,
-                                            alignment: Alignment.centerLeft,
-                                            child: SizedBox(
-                                              width: MediaQuery.of(context).size.width,
-                                              height: MediaQuery.of(context).size.height,
-                                              child: Theme(
-                                                  data: Theme.of(context),
-                                                  child: Skin(
-                                                    skin: Skins.Material,
-                                                    child: Container(
-                                                      color: Theme.of(context).colorScheme.background,
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.only(bottom: 28.0),
-                                                        child: Builder(
-                                                            builder: (context) {
-                                                              return Scaffold(
-                                                                  backgroundColor: Theme.of(context).colorScheme.background,
-                                                                  appBar: buildConversationViewHeader(context, Chat(
-                                                                      id: 69,
-                                                                      guid: 'theme-selector',
-                                                                      displayName: "Sample Chat",
-                                                                      participants: [
-                                                                        Handle(
-                                                                            id: -1,
-                                                                            address: "John Doe"
-                                                                        ),
-                                                                        Handle(
-                                                                            id: -2,
-                                                                            address: "Jane Doe"
-                                                                        ),
-                                                                        Handle(
-                                                                            id: -3,
-                                                                            address: "You"
-                                                                        ),
-                                                                      ]
-                                                                  ), Theme.of(context)) as PreferredSizeWidget?,
-                                                                  body: controller.messagesView
-                                                              );
-                                                            }
-                                                        ),
-                                                      ),
+                                          fit: BoxFit.fitHeight,
+                                          alignment: Alignment.centerLeft,
+                                          child: SizedBox(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height,
+                                            child: Theme(
+                                              data: Theme.of(context),
+                                              child: Skin(
+                                                skin: Skins.Material,
+                                                child: Container(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .surface,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      bottom: 28,
                                                     ),
-                                                  )
+                                                    child: Builder(
+                                                        builder: (context) {
+                                                      return Scaffold(
+                                                          backgroundColor:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .surface,
+                                                          appBar:
+                                                              buildConversationViewHeader(
+                                                                      context,
+                                                                      Chat(
+                                                                        id: 69,
+                                                                        guid:
+                                                                            'theme-selector',
+                                                                        displayName:
+                                                                            "Sample Chat",
+                                                                        participants: [
+                                                                          Handle(
+                                                                              id: -1,
+                                                                              address: "John Doe"),
+                                                                          Handle(
+                                                                              id: -2,
+                                                                              address: "Jane Doe"),
+                                                                          Handle(
+                                                                              id: -3,
+                                                                              address: "You"),
+                                                                        ],
+                                                                      ),
+                                                                      Theme.of(
+                                                                          context))
+                                                                  as PreferredSizeWidget?,
+                                                          body: controller
+                                                              .messagesView);
+                                                    }),
+                                                  ),
+                                                ),
                                               ),
-                                            )
-                                        )
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Material"),
-                            ),
-                          ],
-                        ),
-                      ],
+                              const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Text("Material"),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  )),
-                  Container(height: 20.0),
+                  ),
+                  Container(height: 20),
                   ClipOval(
                     child: Material(
                       color: Theme.of(context).primaryColor, // button color
                       child: InkWell(
-                        child: const SizedBox(width: 60, height: 60, child: Icon(Icons.check, color: Colors.white)),
+                        child: const SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: Icon(
+                            Icons.check,
+                            color: Colors.white,
+                          ),
+                        ),
                         onTap: () async {
                           goToNextPage();
                         },
@@ -709,7 +901,7 @@ class Skin extends InheritedWidget {
   bool updateShouldNotify(Skin oldWidget) => false;
 }
 
-enum Section {TOP, BOTTOM}
+enum Section { TOP, BOTTOM }
 
 class TriangleBorder extends ShapeBorder {
   final Section section;
@@ -733,7 +925,7 @@ class TriangleBorder extends ShapeBorder {
   Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
     var size = rect.size;
     var path = Path();
-    if (section == Section.TOP){
+    if (section == Section.TOP) {
       path.lineTo(size.width - 3, 0);
       path.lineTo(0, size.height - 3);
     } else {
@@ -749,16 +941,19 @@ class TriangleBorder extends ShapeBorder {
   void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {}
 }
 
-Widget buildConversationViewHeader(BuildContext context, Chat chat, ThemeData theme) {
-  Color backgroundColor = theme.colorScheme.background;
+Widget buildConversationViewHeader(
+    BuildContext context, Chat chat, ThemeData theme) {
+  Color backgroundColor = theme.colorScheme.surface;
   Color? fontColor = theme.textTheme.headlineMedium!.color;
   String? title = chat.title ?? chat.displayName;
   Skins skin = Skin.of(context)!.skin;
-  if (skin == Skins.Material ||
-      skin == Skins.Samsung) {
+  if (skin == Skins.Material || skin == Skins.Samsung) {
     return AppBar(
-      systemOverlayStyle: ThemeData.estimateBrightnessForColor(theme.colorScheme.background) == Brightness.dark
-          ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+      systemOverlayStyle:
+          ThemeData.estimateBrightnessForColor(theme.colorScheme.surface) ==
+                  Brightness.dark
+              ? SystemUiOverlayStyle.light
+              : SystemUiOverlayStyle.dark,
       elevation: 0.0,
       title: Text(
         title!,
@@ -777,7 +972,7 @@ Widget buildConversationViewHeader(BuildContext context, Chat chat, ThemeData th
       iconTheme: IconThemeData(color: theme.primaryColor),
       actions: [
         Padding(
-          padding: const EdgeInsets.only(right: 8.0),
+          padding: const EdgeInsets.only(right: 8),
           child: GestureDetector(
             child: Icon(
               Icons.more_vert,
@@ -800,7 +995,8 @@ Widget buildConversationViewHeader(BuildContext context, Chat chat, ThemeData th
         child: CircleAvatar(
           radius: 20,
           backgroundColor: theme.colorScheme.secondary,
-          child: ContactAvatarWidget(handle: participant, borderThickness: 0.1, editable: false),
+          child: ContactAvatarWidget(
+              handle: participant, borderThickness: 0.1, editable: false),
         ),
       ),
     );
@@ -812,7 +1008,8 @@ Widget buildConversationViewHeader(BuildContext context, Chat chat, ThemeData th
   if (distance <= -30.0 && distance > -60) distance = -30.0;
   if (distance <= -60.0) distance = -35.0;
 
-  return const SizedBox.shrink();/*CupertinoNavigationBar(
+  return const SizedBox
+      .shrink(); /*CupertinoNavigationBar(
       backgroundColor: theme.colorScheme.secondary.withAlpha(125),
       border: Border(
         bottom: BorderSide(color: Colors.white.withOpacity(0.2), width: 0.2),
@@ -831,7 +1028,7 @@ Widget buildConversationViewHeader(BuildContext context, Chat chat, ThemeData th
               if (ChatBloc().unreads.value > 0)
                 Container(
                   width: 25.0,
-                  height: 20.0,
+                  height: 20,
                   decoration: BoxDecoration(
                       color: theme.primaryColor,
                       shape: BoxShape.rectangle,

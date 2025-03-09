@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/database/models.dart';
 import 'package:bluebubbles/services/services.dart';
@@ -81,7 +80,8 @@ class Database {
       // So long as migrations succeed, we can update the database version
       await ss.prefs.setInt('dbVersion', version);
     } catch (e, s) {
-      Logger.error("Failed to perform database migrations!", error: e, trace: s);
+      Logger.error("Failed to perform database migrations!",
+          error: e, trace: s);
     }
 
     initComplete.complete();
@@ -92,8 +92,10 @@ class Database {
   }
 
   static Future<void> _initDatabaseMobile({bool? storeOpenStatus}) async {
-    Directory objectBoxDirectory = Directory(join(fs.appDocDir.path, 'objectbox'));
-    final isStoreOpen = storeOpenStatus ?? Store.isOpen(objectBoxDirectory.path);
+    Directory objectBoxDirectory =
+        Directory(join(fs.appDocDir.path, 'objectbox'));
+    final isStoreOpen =
+        storeOpenStatus ?? Store.isOpen(objectBoxDirectory.path);
 
     try {
       if (isStoreOpen) {
@@ -101,13 +103,16 @@ class Database {
         store = Store.attach(getObjectBoxModel(), objectBoxDirectory.path);
         Logger.info("Successfully attached to an existing ObjectBox store");
       } else {
-        Logger.info("Opening new ObjectBox store from path: ${objectBoxDirectory.path}");
+        Logger.info(
+            "Opening new ObjectBox store from path: ${objectBoxDirectory.path}");
         store = await openStore(directory: objectBoxDirectory.path);
       }
     } catch (e, s) {
       Logger.error("Failed to open ObjectBox store!", error: e, trace: s);
 
-      if (e.toString().contains("another store is still open using the same path")) {
+      if (e
+          .toString()
+          .contains("another store is still open using the same path")) {
         Logger.info("Retrying to attach to an existing ObjectBox store");
         await _initDatabaseMobile(storeOpenStatus: true);
       }
@@ -115,12 +120,15 @@ class Database {
   }
 
   static Future<void> _initDatabaseDesktop() async {
-    Directory objectBoxDirectory = Directory(join(fs.appDocDir.path, 'objectbox'));
+    Directory objectBoxDirectory =
+        Directory(join(fs.appDocDir.path, 'objectbox'));
 
     try {
       objectBoxDirectory.createSync(recursive: true);
-      if (ss.prefs.getBool('use-custom-path') == true && ss.prefs.getString('custom-path') != null) {
-        Directory oldCustom = Directory(join(ss.prefs.getString('custom-path')!, 'objectbox'));
+      if (ss.prefs.getBool('use-custom-path') == true &&
+          ss.prefs.getString('custom-path') != null) {
+        Directory oldCustom =
+            Directory(join(ss.prefs.getString('custom-path')!, 'objectbox'));
         if (oldCustom.existsSync()) {
           Logger.info("Detected prior use of custom path option. Migrating...");
           fs.copyDirectory(oldCustom, objectBoxDirectory);
@@ -129,40 +137,52 @@ class Database {
         await ss.prefs.remove('custom-path');
       }
 
-      Logger.info("Opening ObjectBox store from path: ${objectBoxDirectory.path}");
+      Logger.info(
+          "Opening ObjectBox store from path: ${objectBoxDirectory.path}");
       store = await openStore(directory: objectBoxDirectory.path);
     } catch (e, s) {
       if (Platform.isLinux) {
-        Logger.debug("Another instance is probably running. Sending foreground signal");
+        Logger.debug(
+            "Another instance is probably running. Sending foreground signal");
         final instanceFile = File(join(fs.appDocDir.path, '.instance'));
         instanceFile.openSync(mode: FileMode.write).closeSync();
         exit(0);
       }
 
-      Logger.error("Failed to initialize desktop database!", error: e, trace: s);
+      Logger.error("Failed to initialize desktop database!",
+          error: e, trace: s);
     }
   }
 
   static void _performDatabaseMigrations({int? versionOverride}) {
-    int version = versionOverride ?? ss.prefs.getInt('dbVersion') ?? (ss.settings.finishedSetup.value ? 1 : Database.version);
+    int version = versionOverride ??
+        ss.prefs.getInt('dbVersion') ??
+        (ss.settings.finishedSetup.value ? 1 : Database.version);
     if (version <= Database.version) return;
 
     final Stopwatch s = Stopwatch();
     s.start();
 
     int nextVersion = version;
-    Logger.debug("Performing database migration from version $version to ${Database.version}", tag: "DB-Migration");
+    Logger.debug(
+        "Performing database migration from version $version to ${Database.version}",
+        tag: "DB-Migration");
     switch (Database.version) {
       // Version 2 changed handleId to match the server side ROWID, rather than client side ROWID
       case 2:
-        Logger.info("Fetching all messages and handles...", tag: "DB-Migration");
+        Logger.info("Fetching all messages and handles...",
+            tag: "DB-Migration");
         final messages = Database.messages.getAll();
         if (messages.isNotEmpty) {
           final handles = Database.handles.getAll();
-          Logger.info("Replacing handleIds for messages...", tag: "DB-Migration");
+          Logger.info("Replacing handleIds for messages...",
+              tag: "DB-Migration");
           for (Message m in messages) {
             if (m.isFromMe! || m.handleId == 0 || m.handleId == null) continue;
-            m.handleId = handles.firstWhereOrNull((e) => e.id == m.handleId)?.originalROWID ?? m.handleId;
+            m.handleId = handles
+                    .firstWhereOrNull((e) => e.id == m.handleId)
+                    ?.originalROWID ??
+                m.handleId;
           }
           Logger.info("Final save...", tag: "DB-Migration");
           Database.messages.putMany(messages);
@@ -197,14 +217,20 @@ class Database {
         nextVersion = 4;
       case 5:
         // Find the Bright White theme and reset it back to the default (new colors)
-        final brightWhite = Database.themes.query(ThemeStruct_.name.equals("Bright White")).build().findFirst();
+        final brightWhite = Database.themes
+            .query(ThemeStruct_.name.equals("Bright White"))
+            .build()
+            .findFirst();
         if (brightWhite != null) {
           brightWhite.data = ts.whiteLightTheme;
           Database.themes.put(brightWhite, mode: PutMode.update);
         }
 
         // Find the OLED theme and reset it back to the default (new colors)
-        final oled = Database.themes.query(ThemeStruct_.name.equals("OLED Dark")).build().findFirst();
+        final oled = Database.themes
+            .query(ThemeStruct_.name.equals("OLED Dark"))
+            .build()
+            .findFirst();
         if (oled != null) {
           oled.data = ts.oledDarkTheme;
           Database.themes.put(oled, mode: PutMode.update);
@@ -216,7 +242,8 @@ class Database {
     }
 
     s.stop();
-    Logger.info("Completed database migration in ${s.elapsedMilliseconds}ms", tag: "DB-Migration");
+    Logger.info("Completed database migration in ${s.elapsedMilliseconds}ms",
+        tag: "DB-Migration");
   }
 
   /// Wrapper for store.runInTransaction

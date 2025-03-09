@@ -14,7 +14,10 @@ void launchIntent(bool video, String address) async {
       try {
         await mcs.invokeMethod("google-duo", {"number": address});
       } catch (_) {
-        showSnackbar("Error", "Something went wrong, Google Duo may not be installed!");
+        showSnackbar(
+          "Error",
+          "Something went wrong, Google Duo may not be installed!",
+        );
       }
     } else {
       launchUrl(Uri(scheme: "tel", path: address));
@@ -22,11 +25,16 @@ void launchIntent(bool video, String address) async {
   }
 }
 
-void showAddressPicker(Contact? contact, Handle handle, BuildContext context, {bool isEmail = false, bool video = false, bool isLongPressed = false}) async {
+void showAddressPicker(Contact? contact, Handle handle, BuildContext context,
+    {bool isEmail = false,
+    bool video = false,
+    bool isLongPressed = false}) async {
   if (contact == null) {
     launchIntent(video, handle.address);
   } else {
-    List<String> items = isEmail ? getUniqueEmails(contact.emails) : getUniqueNumbers(contact.phones);
+    List<String> items = isEmail
+        ? getUniqueEmails(contact.emails)
+        : getUniqueNumbers(contact.phones);
     if (items.length == 1) {
       launchIntent(video, items.first);
     } else if (!isEmail && handle.defaultPhone != null && !isLongPressed) {
@@ -39,70 +47,76 @@ void showAddressPicker(Contact? contact, Handle handle, BuildContext context, {b
         builder: (BuildContext context) {
           return AlertDialog(
             backgroundColor: context.theme.colorScheme.properSurface,
-            title:
-            Text("Select Address", style: context.theme.textTheme.titleLarge),
-            content: ObxValue<Rx<bool>>((data) => Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (int i = 0; i < items.length; i++)
-                  TextButton(
-                    child: Text(
-                      items[i],
-                      style: context.theme.textTheme.bodyLarge,
-                      textAlign: TextAlign.start,
-                    ),
-                    onPressed: () {
-                      if (data.value) {
-                        if (isEmail) {
-                          handle.defaultEmail = items[i];
-                          handle.updateDefaultEmail(items[i]);
-                        } else {
-                          handle.defaultPhone = items[i];
-                          handle.updateDefaultPhone(items[i]);
-                        }
-                      }
-                      launchIntent(video, items[i]);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                Row(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 48.0,
-                      width: 24.0,
-                      child: Checkbox(
-                        value: data.value,
-                        activeColor: context.theme.colorScheme.primary,
-                        onChanged: (bool? value) {
-                          data.value = value!;
-                        },
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        padding: const EdgeInsets.only(left: 5),
-                        elevation: 0.0
+            title: Text(
+              "Select Address",
+              style: context.theme.textTheme.titleLarge,
+            ),
+            content: ObxValue<Rx<bool>>(
+              (data) => Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (int i = 0; i < items.length; i++)
+                    TextButton(
+                      child: Text(
+                        items[i],
+                        style: context.theme.textTheme.bodyLarge,
+                        textAlign: TextAlign.start,
                       ),
                       onPressed: () {
-                        data = data.toggle();
+                        if (data.value) {
+                          if (isEmail) {
+                            handle.defaultEmail = items[i];
+                            handle.updateDefaultEmail(items[i]);
+                          } else {
+                            handle.defaultPhone = items[i];
+                            handle.updateDefaultPhone(items[i]);
+                          }
+                        }
+                        launchIntent(video, items[i]);
+                        Navigator.of(context).pop();
                       },
-                      child: Text(
-                        "Remember my selection", style: context.theme.textTheme.bodyMedium,
-                      ),
                     ),
-                  ],
-                ),
-                Text(
-                  "Long press the ${isEmail ? "email" : "call"} button to reset your default selection",
-                  style: context.theme.textTheme.bodySmall!.copyWith(color: context.theme.colorScheme.properOnSurface),
-                ),
-              ],
+                  Row(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 48.0,
+                        width: 24.0,
+                        child: Checkbox(
+                          value: data.value,
+                          activeColor: context.theme.colorScheme.primary,
+                          onChanged: (bool? value) {
+                            data.value = value!;
+                          },
+                        ),
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            padding: const EdgeInsets.only(left: 5),
+                            elevation: 0.0),
+                        onPressed: () {
+                          data = data.toggle();
+                        },
+                        child: Text(
+                          "Remember my selection",
+                          style: context.theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    "Long press the ${isEmail ? "email" : "call"} button to reset your default selection",
+                    style: context.theme.textTheme.bodySmall!.copyWith(
+                      color: context.theme.colorScheme.properOnSurface,
+                    ),
+                  ),
+                ],
+              ),
+              false.obs,
             ),
-            false.obs,
-          ));
+          );
         },
       );
     }

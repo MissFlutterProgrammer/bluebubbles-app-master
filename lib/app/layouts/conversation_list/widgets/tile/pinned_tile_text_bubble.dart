@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
@@ -27,7 +29,8 @@ class PinnedTileTextBubble extends CustomStateful<ConversationTileController> {
   State<StatefulWidget> createState() => PinnedTileTextBubbleState();
 }
 
-class PinnedTileTextBubbleState extends CustomState<PinnedTileTextBubble, void, ConversationTileController> {
+class PinnedTileTextBubbleState extends CustomState<PinnedTileTextBubble, void,
+    ConversationTileController> {
   final bool leftSide = Random().nextBool();
   Message? lastMessage;
   String subtitle = "Unknown";
@@ -55,10 +58,11 @@ class PinnedTileTextBubbleState extends CustomState<PinnedTileTextBubble, void, 
     // run query after render has completed
     if (!kIsWeb) {
       updateObx(() {
-        final latestMessageQuery = (Database.messages.query(Message_.dateDeleted.isNull())
-              ..link(Message_.chat, Chat_.guid.equals(controller.chat.guid))
-              ..order(Message_.dateCreated, flags: Order.descending))
-            .watch();
+        final latestMessageQuery =
+            (Database.messages.query(Message_.dateDeleted.isNull())
+                  ..link(Message_.chat, Chat_.guid.equals(controller.chat.guid))
+                  ..order(Message_.dateCreated, flags: Order.descending))
+                .watch();
 
         sub = latestMessageQuery.listen((Query<Message> query) async {
           final message = await runAsync(() {
@@ -72,7 +76,8 @@ class PinnedTileTextBubbleState extends CustomState<PinnedTileTextBubble, void, 
             if (newSubtitle != subtitle) {
               setState(() {
                 subtitle = newSubtitle;
-                fakeText = faker.lorem.words(subtitle.split(" ").length).join(" ");
+                fakeText =
+                    faker.lorem.words(subtitle.split(" ").length).join(" ");
               });
             }
           }
@@ -83,13 +88,15 @@ class PinnedTileTextBubbleState extends CustomState<PinnedTileTextBubble, void, 
       sub = WebListeners.newMessage.listen((tuple) {
         final message = tuple.item1;
         if (tuple.item2?.guid == controller.chat.guid &&
-            (cachedDateCreated == null || message.dateCreated!.isAfter(cachedDateCreated!))) {
+            (cachedDateCreated == null ||
+                message.dateCreated!.isAfter(cachedDateCreated!))) {
           if (message.guid != cachedLatestMessageGuid) {
             String newSubtitle = MessageHelper.getNotificationText(message);
             if (newSubtitle != subtitle) {
               setState(() {
                 subtitle = newSubtitle;
-                fakeText = faker.lorem.words(subtitle.split(" ").length).join(" ");
+                fakeText =
+                    faker.lorem.words(subtitle.split(" ").length).join(" ");
               });
             }
           }
@@ -112,7 +119,9 @@ class PinnedTileTextBubbleState extends CustomState<PinnedTileTextBubble, void, 
       context.theme.colorScheme.bubble(context, chat.isIMessage)
     ];
     if (lastMessage == null) return bubbleColors;
-    if (!ss.settings.colorfulAvatars.value && ss.settings.colorfulBubbles.value && !lastMessage!.isFromMe!) {
+    if (!ss.settings.colorfulAvatars.value &&
+        ss.settings.colorfulBubbles.value &&
+        !lastMessage!.isFromMe!) {
       if (lastMessage!.handle?.color == null) {
         bubbleColors = toColorGradient(lastMessage!.handle?.address);
       } else {
@@ -128,11 +137,15 @@ class PinnedTileTextBubbleState extends CustomState<PinnedTileTextBubble, void, 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final hideInfo = ss.settings.redactedMode.value && ss.settings.hideMessageContent.value;
+      final hideInfo = ss.settings.redactedMode.value &&
+          ss.settings.hideMessageContent.value;
       String _subtitle = hideInfo ? fakeText : subtitle;
 
       final unread = GlobalChatService.unreadState(controller.chat.guid).value;
-      if (!unread || lastMessage?.associatedMessageGuid != null || lastMessage!.isFromMe! || isNullOrEmpty(_subtitle)) {
+      if (!unread ||
+          lastMessage?.associatedMessageGuid != null ||
+          lastMessage!.isFromMe! ||
+          isNullOrEmpty(_subtitle)) {
         return const SizedBox.shrink();
       }
 
@@ -166,11 +179,15 @@ class PinnedTileTextBubbleState extends CustomState<PinnedTileTextBubble, void, 
                   left: leftSide ? size * 0.05 : null,
                   child: CustomPaint(
                     size: Size(size * 0.21, size * 0.105),
-                    painter: TailPainter(leftSide: leftSide, background: background),
+                    painter: TailPainter(
+                      leftSide: leftSide,
+                      background: background,
+                    ),
                   ),
                 ),
               ConstrainedBox(
-                constraints: BoxConstraints(minWidth: showTail ? size * 0.3 : 0),
+                constraints:
+                    BoxConstraints(minWidth: showTail ? size * 0.3 : 0),
                 child: ClipRRect(
                   clipBehavior: Clip.antiAlias,
                   borderRadius: BorderRadius.circular(size * 0.125),
@@ -188,13 +205,19 @@ class PinnedTileTextBubbleState extends CustomState<PinnedTileTextBubble, void, 
                       child: Text(
                         _subtitle,
                         overflow: TextOverflow.ellipsis,
-                        maxLines: clampDouble((size ~/ 30).toDouble(), 1, 3).toInt(),
+                        maxLines:
+                            clampDouble((size ~/ 30).toDouble(), 1, 3).toInt(),
                         textAlign: TextAlign.center,
                         style: context.theme.textTheme.bodySmall!.copyWith(
-                            fontSize: (size / 10).clamp(context.theme.textTheme.bodySmall!.fontSize!, double.infinity),
-                            color: context.theme.colorScheme
-                                .onBubble(context, chat.isIMessage)
-                                .withOpacity(ss.settings.colorfulBubbles.value ? 1 : 0.85)),
+                          fontSize: (size / 10).clamp(
+                              context.theme.textTheme.bodySmall!.fontSize!,
+                              double.infinity),
+                          color: context.theme.colorScheme
+                              .onBubble(context, chat.isIMessage)
+                              .withOpacity(
+                                ss.settings.colorfulBubbles.value ? 1 : 0.85,
+                              ),
+                        ),
                       ),
                     ),
                   ),
@@ -225,27 +248,59 @@ class TailPainter extends CustomPainter {
 
     if (leftSide) {
       path.moveTo(size.width * 0.9355556, size.height * 0.1489091);
-      path.cubicTo(size.width, size.height * 0.3262727, size.width * 0.6313889, size.height * 0.5667273,
-          size.width * 0.7722222, size.height * 0.8181818);
-      path.cubicTo(size.width * 0.8054444, size.height * 0.8875455, size.width * 0.9209444, size.height, size.width,
-          size.height);
-      path.cubicTo(size.width * 0.7504167, size.height, size.width * 0.2523611, size.height, 0, size.height);
-      path.cubicTo(size.width * 0.2253889, size.height * 0.9245455, size.width * 0.2102778, size.height * 0.6476364,
-          size.width * 0.5255556, size.height * 0.3018182);
-      path.cubicTo(size.width * 0.7247778, size.height * 0.0966364, size.width * 0.8862222, size.height * 0.0308182,
-          size.width * 0.9355556, size.height * 0.1489091);
+      path.cubicTo(
+          size.width,
+          size.height * 0.3262727,
+          size.width * 0.6313889,
+          size.height * 0.5667273,
+          size.width * 0.7722222,
+          size.height * 0.8181818);
+      path.cubicTo(size.width * 0.8054444, size.height * 0.8875455,
+          size.width * 0.9209444, size.height, size.width, size.height);
+      path.cubicTo(size.width * 0.7504167, size.height, size.width * 0.2523611,
+          size.height, 0, size.height);
+      path.cubicTo(
+          size.width * 0.2253889,
+          size.height * 0.9245455,
+          size.width * 0.2102778,
+          size.height * 0.6476364,
+          size.width * 0.5255556,
+          size.height * 0.3018182);
+      path.cubicTo(
+          size.width * 0.7247778,
+          size.height * 0.0966364,
+          size.width * 0.8862222,
+          size.height * 0.0308182,
+          size.width * 0.9355556,
+          size.height * 0.1489091);
       path.close();
     } else {
       path.moveTo(size.width * 0.0644444, size.height * 0.1489091);
-      path.cubicTo(0, size.height * 0.3262727, size.width * 0.3686111, size.height * 0.5667273, size.width * 0.2277778,
-          size.height * 0.8181818);
       path.cubicTo(
-          size.width * 0.1945556, size.height * 0.8875455, size.width * 0.0790556, size.height, 0, size.height);
-      path.cubicTo(size.width * 0.2495833, size.height, size.width * 0.7476389, size.height, size.width, size.height);
-      path.cubicTo(size.width * 0.7746111, size.height * 0.9245455, size.width * 0.7987222, size.height * 0.6476364,
-          size.width * 0.4744444, size.height * 0.3018182);
-      path.cubicTo(size.width * 0.2752222, size.height * 0.0966364, size.width * 0.1137778, size.height * 0.0308182,
-          size.width * 0.0644444, size.height * 0.1489091);
+          0,
+          size.height * 0.3262727,
+          size.width * 0.3686111,
+          size.height * 0.5667273,
+          size.width * 0.2277778,
+          size.height * 0.8181818);
+      path.cubicTo(size.width * 0.1945556, size.height * 0.8875455,
+          size.width * 0.0790556, size.height, 0, size.height);
+      path.cubicTo(size.width * 0.2495833, size.height, size.width * 0.7476389,
+          size.height, size.width, size.height);
+      path.cubicTo(
+          size.width * 0.7746111,
+          size.height * 0.9245455,
+          size.width * 0.7987222,
+          size.height * 0.6476364,
+          size.width * 0.4744444,
+          size.height * 0.3018182);
+      path.cubicTo(
+          size.width * 0.2752222,
+          size.height * 0.0966364,
+          size.width * 0.1137778,
+          size.height * 0.0308182,
+          size.width * 0.0644444,
+          size.height * 0.1489091);
       path.close();
     }
     canvas.drawPath(path, paint);
@@ -254,6 +309,7 @@ class TailPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     final oldPainter = oldDelegate as TailPainter;
-    return leftSide != oldPainter.leftSide || background != oldPainter.background;
+    return leftSide != oldPainter.leftSide ||
+        background != oldPainter.background;
   }
 }

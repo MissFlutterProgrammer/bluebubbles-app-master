@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:animations/animations.dart';
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/message/attachment/other_file.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
@@ -25,7 +24,8 @@ class MediaGalleryCard extends StatefulWidget {
   State<MediaGalleryCard> createState() => _MediaGalleryCardState();
 }
 
-class _MediaGalleryCardState extends OptimizedState<MediaGalleryCard> with AutomaticKeepAliveClientMixin {
+class _MediaGalleryCardState extends OptimizedState<MediaGalleryCard>
+    with AutomaticKeepAliveClientMixin {
   Uint8List? videoPreview;
   Duration? duration;
   AttachmentDownloadController? controller;
@@ -138,7 +138,8 @@ class _MediaGalleryCardState extends OptimizedState<MediaGalleryCard> with Autom
   Widget build(BuildContext context) {
     super.build(context);
 
-    final bool hideAttachments = ss.settings.redactedMode.value && ss.settings.hideAttachments.value;
+    final bool hideAttachments =
+        ss.settings.redactedMode.value && ss.settings.hideAttachments.value;
 
     late Widget child;
     bool addPadding = true;
@@ -152,11 +153,13 @@ class _MediaGalleryCardState extends OptimizedState<MediaGalleryCard> with Autom
       child = SizedBox(
         height: 40,
         width: 40,
-        child: Obx(() => CircleProgressBar(
-          foregroundColor: context.theme.colorScheme.primary,
-          backgroundColor: context.theme.colorScheme.outline,
-          value: controller!.progress.value?.toDouble() ?? 0
-        )),
+        child: Obx(
+          () => CircleProgressBar(
+            foregroundColor: context.theme.colorScheme.primary,
+            backgroundColor: context.theme.colorScheme.outline,
+            value: controller!.progress.value?.toDouble() ?? 0,
+          ),
+        ),
       );
     } else if (attachmentFile.bytes == null) {
       child = InkWell(
@@ -169,11 +172,12 @@ class _MediaGalleryCardState extends OptimizedState<MediaGalleryCard> with Autom
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 5),
-            Icon(ss.settings.skin.value == Skins.iOS
-                ? CupertinoIcons.cloud_download
-                : Icons.cloud_download,
+            Icon(
+              ss.settings.skin.value == Skins.iOS
+                  ? CupertinoIcons.cloud_download
+                  : Icons.cloud_download,
               size: 28.0,
-              color: context.theme.colorScheme.properOnSurface
+              color: context.theme.colorScheme.properOnSurface,
             ),
             const SizedBox(height: 5),
             Text(
@@ -185,11 +189,15 @@ class _MediaGalleryCardState extends OptimizedState<MediaGalleryCard> with Autom
         ),
       );
     } else if (attachment.mimeType?.startsWith("image") ?? false) {
-      child = ImageDisplay(attachment: attachment, image: attachmentFile.bytes!);
+      child =
+          ImageDisplay(attachment: attachment, image: attachmentFile.bytes!);
       addPadding = false;
-    } else if ((attachment.mimeType?.startsWith("video") ?? false) && !kIsDesktop && !kIsWeb) {
+    } else if ((attachment.mimeType?.startsWith("video") ?? false) &&
+        !kIsDesktop &&
+        !kIsWeb) {
       if (videoPreview != null) {
-        child = ImageDisplay(attachment: attachment, image: videoPreview!, duration: duration);
+        child = ImageDisplay(
+            attachment: attachment, image: videoPreview!, duration: duration);
         addPadding = false;
       } else {
         child = const Text(
@@ -257,27 +265,37 @@ class ImageDisplay extends StatelessWidget {
                   image,
                   fit: BoxFit.cover,
                   alignment: Alignment.center,
-                  cacheWidth: ns.width(context) ~/ max(2, ns.width(context) ~/ 200) * 2,
+                  cacheWidth:
+                      ns.width(context) ~/ max(2, ns.width(context) ~/ 200) * 2,
                   width: ns.width(context) / max(2, ns.width(context) ~/ 200),
                   height: ns.width(context) / max(2, ns.width(context) ~/ 200),
                 ),
-                if ((attachment.mimeType?.contains("video") ?? false) && duration != null)
+                if ((attachment.mimeType?.contains("video") ?? false) &&
+                    duration != null)
                   Positioned(
                     bottom: 10,
                     right: 10,
-                    child: Text(duration.toString().split('.').first
-                        .padLeft(8, "0").padLeft(9, "a")
-                        .replaceFirst("a00:", "").replaceFirst("a", ""),
-                      style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
+                    child: Text(
+                      duration
+                          .toString()
+                          .split('.')
+                          .first
+                          .padLeft(8, "0")
+                          .padLeft(9, "a")
+                          .replaceFirst("a00:", "")
+                          .replaceFirst("a", ""),
+                      style: context.theme.textTheme.bodyMedium!
+                          .copyWith(fontWeight: FontWeight.bold),
                     ),
                   ),
-                if (!(attachment.message.target?.isFromMe ?? true)
-                    && attachment.message.target?.handle != null
-                    && ss.settings.skin.value == Skins.iOS)
+                if (!(attachment.message.target?.isFromMe ?? true) &&
+                    attachment.message.target?.handle != null &&
+                    ss.settings.skin.value == Skins.iOS)
                   Positioned(
                     top: 10,
                     right: 10,
-                    child: ContactAvatarWidget(handle: attachment.message.target?.handle),
+                    child: ContactAvatarWidget(
+                        handle: attachment.message.target?.handle),
                   ),
               ],
             ),

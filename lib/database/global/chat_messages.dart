@@ -12,9 +12,16 @@ class ChatMessages {
   List<Message> get messages => _messages.values.toList();
   List<Message> get reactions => _reactions.values.toList();
   List<Attachment> get attachments => _attachments.values.toList();
-  List<Message> threads(String originatorGuid, int originatorPart, {bool returnOriginator = true}) =>
-      _threads[originatorGuid]?.values.where((e) =>
-      (e.normalizedThreadPart == originatorPart && e.guid != originatorGuid) || (returnOriginator ? e.guid == originatorGuid : false)).toList() ?? [];
+  List<Message> threads(String originatorGuid, int originatorPart,
+          {bool returnOriginator = true}) =>
+      _threads[originatorGuid]
+          ?.values
+          .where((e) =>
+              (e.normalizedThreadPart == originatorPart &&
+                  e.guid != originatorGuid) ||
+              (returnOriginator ? e.guid == originatorGuid : false))
+          .toList() ??
+      [];
 
   void addMessages(List<Message> __messages) {
     for (Message m in __messages) {
@@ -25,7 +32,9 @@ class ChatMessages {
         // add regular texts
         _messages[m.guid!] = m;
       }
-      if (m.threadOriginatorGuid != null && !m.guid!.startsWith("temp") && m.associatedMessageGuid == null) {
+      if (m.threadOriginatorGuid != null &&
+          !m.guid!.startsWith("temp") &&
+          m.associatedMessageGuid == null) {
         // add threaded messages
         _threads[m.threadOriginatorGuid!] ??= {};
         _threads[m.threadOriginatorGuid]![m.guid!] = m;
@@ -88,8 +97,10 @@ class ChatMessages {
     }
   }
 
-  Message? getPreviousReply(String threadGuid, int threadPart, String messageGuid) {
-    final thread = threads(threadGuid, threadPart)..sort((a, b) => Message.sort(a, b, descending: false));
+  Message? getPreviousReply(
+      String threadGuid, int threadPart, String messageGuid) {
+    final thread = threads(threadGuid, threadPart)
+      ..sort((a, b) => Message.sort(a, b, descending: false));
     final index = thread.indexWhere((element) => element.guid == messageGuid);
     if (index > 0) {
       return thread[index - 1];

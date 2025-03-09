@@ -24,7 +24,8 @@ class CircleProgressBar extends StatefulWidget {
   }
 }
 
-class CircleProgressBarState extends OptimizedState<CircleProgressBar> with SingleTickerProviderStateMixin {
+class CircleProgressBarState extends OptimizedState<CircleProgressBar>
+    with SingleTickerProviderStateMixin {
   // Used in tweens where a backgroundColor isn't given.
   static const TRANSPARENT = Color(0x00000000);
   late AnimationController _controller;
@@ -118,8 +119,10 @@ class CircleProgressBarState extends OptimizedState<CircleProgressBar> with Sing
         animation: curve,
         child: Container(),
         builder: (context, child) {
-          final backgroundColor = backgroundColorTween?.evaluate(curve) ?? widget.backgroundColor;
-          final foregroundColor = foregroundColorTween?.evaluate(curve) ?? widget.foregroundColor;
+          final backgroundColor =
+              backgroundColorTween?.evaluate(curve) ?? widget.backgroundColor;
+          final foregroundColor =
+              foregroundColorTween?.evaluate(curve) ?? widget.foregroundColor;
 
           return CustomPaint(
             child: child,
@@ -153,8 +156,10 @@ class CircleProgressBarPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Offset center = size.center(Offset.zero);
-    final Size constrainedSize = size - Offset(strokeWidth, strokeWidth) as Size;
-    final shortestSide = math.min(constrainedSize.width, constrainedSize.height);
+    final Size constrainedSize =
+        size - Offset(strokeWidth, strokeWidth) as Size;
+    final shortestSide =
+        math.min(constrainedSize.width, constrainedSize.height);
     final foregroundPaint = Paint()
       ..color = foregroundColor
       ..strokeWidth = strokeWidth

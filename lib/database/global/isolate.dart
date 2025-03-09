@@ -1,5 +1,4 @@
 import 'dart:isolate';
-
 import 'package:bluebubbles/database/models.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image/image.dart';
@@ -15,7 +14,8 @@ Future<Image?> decodeIsolate(PlatformFile file) async {
 
 void unsupportedToPngIsolate(IsolateData param) {
   try {
-    final bytes = param.file.bytes ?? (kIsWeb ? null : File(param.file.path!).readAsBytesSync());
+    final bytes = param.file.bytes ??
+        (kIsWeb ? null : File(param.file.path!).readAsBytesSync());
     if (bytes == null) {
       param.sendPort.send(null);
       return;

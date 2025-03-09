@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 abstract class MediaKit {
@@ -68,7 +67,8 @@ class Player {
 
   FutureOr<void> dispose({int code = 0}) {}
 
-  FutureOr<void> open(dynamic playable, {
+  FutureOr<void> open(
+    dynamic playable, {
     bool play = true,
   }) {}
 
@@ -129,17 +129,17 @@ class VideoController {
   final ValueNotifier<Rect?> rect = ValueNotifier<Rect?>(null);
 
   VideoController(
-      this.player,
+    this.player,
   );
 
   static Future<VideoController> create(
     Player player, {
-      int? width,
-      int? height,
-      bool enableHardwareAcceleration = true,
-    }) async {
-      throw Exception();
-    }
+    int? width,
+    int? height,
+    bool enableHardwareAcceleration = true,
+  }) async {
+    throw Exception();
+  }
 
   /// Disposes the [VideoController].
   /// Releases the allocated resources back to the system.
@@ -222,18 +222,18 @@ class PlayerStreams {
 
   /// {@macro player_streams}
   const PlayerStreams(
-      this.playlist,
-      this.playing,
-      this.completed,
-      this.position,
-      this.duration,
-      this.buffer,
-      this.volume,
-      this.rate,
-      this.pitch,
-      this.buffering,
-      this.audioBitrate,
-      this.width,
-      this.height,
-      );
+    this.playlist,
+    this.playing,
+    this.completed,
+    this.position,
+    this.duration,
+    this.buffer,
+    this.volume,
+    this.rate,
+    this.pitch,
+    this.buffering,
+    this.audioBitrate,
+    this.width,
+    this.height,
+  );
 }

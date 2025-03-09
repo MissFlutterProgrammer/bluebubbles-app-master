@@ -1,5 +1,6 @@
-import 'dart:async';
+// ignore_for_file: deprecated_member_use
 
+import 'dart:async';
 import 'package:bluebubbles/app/layouts/chat_creator/chat_creator.dart';
 import 'package:bluebubbles/app/layouts/conversation_list/widgets/conversation_list_fab.dart';
 import 'package:bluebubbles/app/layouts/conversation_list/widgets/footer/samsung_footer.dart';
@@ -38,7 +39,8 @@ class ConversationListController extends StatefulController {
   bool showMaterialFABText = true;
   double materialScrollStartPosition = 0;
 
-  ConversationListController({required this.showArchivedChats, required this.showUnknownSenders});
+  ConversationListController(
+      {required this.showArchivedChats, required this.showUnknownSenders});
 
   void updateSelectedChats() {
     if (ss.settings.skin.value == Skins.Material) {
@@ -54,8 +56,10 @@ class ConversationListController extends StatefulController {
     final copy = List.from(selectedChats);
     for (Chat c in copy) {
       selectedChats.removeWhere((element) => element.guid == c.guid);
-      Get.find<ConversationTileController>(tag: c.guid).updateWidgets<MaterialConversationTile>(null);
-      Get.find<ConversationTileController>(tag: c.guid).updateWidgets<SamsungConversationTile>(null);
+      Get.find<ConversationTileController>(tag: c.guid)
+          .updateWidgets<MaterialConversationTile>(null);
+      Get.find<ConversationTileController>(tag: c.guid)
+          .updateWidgets<SamsungConversationTile>(null);
     }
     updateSelectedChats();
   }
@@ -67,7 +71,8 @@ class ConversationListController extends StatefulController {
   void openCamera(BuildContext context) async {
     bool camera = await Permission.camera.isGranted;
     if (!camera) {
-      bool granted = (await Permission.camera.request()) == PermissionStatus.granted;
+      bool granted =
+          (await Permission.camera.request()) == PermissionStatus.granted;
       if (!granted) {
         showSnackbar("Error", "Camera was denied");
         return;
@@ -87,7 +92,8 @@ class ConversationListController extends StatefulController {
     ]);
   }
 
-  void openNewChatCreator(BuildContext context, {List<PlatformFile>? existing}) async {
+  void openNewChatCreator(BuildContext context,
+      {List<PlatformFile>? existing}) async {
     ns.pushAndRemoveUntil(
       context,
       ChatCreator(initialAttachments: existing ?? []),
@@ -97,24 +103,30 @@ class ConversationListController extends StatefulController {
 }
 
 class ConversationList extends CustomStateful<ConversationListController> {
-  ConversationList({super.key, required bool showArchivedChats, required bool showUnknownSenders})
+  ConversationList(
+      {super.key,
+      required bool showArchivedChats,
+      required bool showUnknownSenders})
       : super(
-            parentController: Get.put(
-                ConversationListController(
-                  showArchivedChats: showArchivedChats,
-                  showUnknownSenders: showUnknownSenders,
-                ),
-                tag: showArchivedChats
-                    ? "Archived"
-                    : showUnknownSenders
-                        ? "Unknown"
-                        : "Messages"));
+          parentController: Get.put(
+            ConversationListController(
+              showArchivedChats: showArchivedChats,
+              showUnknownSenders: showUnknownSenders,
+            ),
+            tag: showArchivedChats
+                ? "Archived"
+                : showUnknownSenders
+                    ? "Unknown"
+                    : "Messages",
+          ),
+        );
 
   @override
   State<StatefulWidget> createState() => _ConversationListState();
 }
 
-class _ConversationListState extends CustomState<ConversationList, void, ConversationListController> {
+class _ConversationListState
+    extends CustomState<ConversationList, void, ConversationListController> {
   @override
   void initState() {
     super.initState();
@@ -153,8 +165,10 @@ class _ConversationListState extends CustomState<ConversationList, void, Convers
             context,
             ConversationView(
                 chat: kIsWeb
-                    ? (await Chat.findOneWeb(guid: ss.prefs.getString('lastOpenedChat')))!
-                    : Chat.findOne(guid: ss.prefs.getString('lastOpenedChat'))!),
+                    ? (await Chat.findOneWeb(
+                        guid: ss.prefs.getString('lastOpenedChat')))!
+                    : Chat.findOne(
+                        guid: ss.prefs.getString('lastOpenedChat'))!),
             (route) => route.isFirst,
           );
         });
@@ -170,11 +184,15 @@ class _ConversationListState extends CustomState<ConversationList, void, Convers
       samsungSkin: SamsungConversationList(parentController: controller),
     );
 
-    if (controller.showArchivedChats || controller.showUnknownSenders) return child;
+    if (controller.showArchivedChats || controller.showUnknownSenders) {
+      return child;
+    }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        systemNavigationBarColor: ss.settings.immersiveMode.value ? Colors.transparent : context.theme.colorScheme.background, // navigation bar color
+        systemNavigationBarColor: ss.settings.immersiveMode.value
+            ? Colors.transparent
+            : context.theme.colorScheme.surface, // navigation bar color
         systemNavigationBarIconBrightness: brightness,
         statusBarColor: Colors.transparent, // status bar color
         statusBarIconBrightness: brightness.opposite,

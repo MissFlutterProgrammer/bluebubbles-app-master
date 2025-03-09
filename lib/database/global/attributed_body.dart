@@ -8,14 +8,26 @@ class AttributedBody {
   final List<Run> runs;
 
   factory AttributedBody.fromMap(Map<String, dynamic> json) => AttributedBody(
-    string: json["string"],
-    runs: json["runs"] == null ? [] : List<Run>.from(json["runs"].map((x) => Run.fromMap(x!.cast<String, Object>()))),
-  );
+        string: json["string"],
+        runs: json["runs"] == null
+            ? []
+            : List<Run>.from(
+                json["runs"].map(
+                  (x) => Run.fromMap(
+                    x!.cast<String, Object>(),
+                  ),
+                ),
+              ),
+      );
 
   Map<String, dynamic> toMap() => {
-    "string": string,
-    "runs": List<Map<String, dynamic>>.from(runs.map((x) => x.toMap())),
-  };
+        "string": string,
+        "runs": List<Map<String, dynamic>>.from(
+          runs.map(
+            (x) => x.toMap(),
+          ),
+        ),
+      };
 }
 
 class Run {
@@ -31,14 +43,18 @@ class Run {
   bool get hasMention => attributes?.mention != null;
 
   factory Run.fromMap(Map<String, dynamic> json) => Run(
-    range: json["range"] == null ? [] : List<int>.from(json["range"].map((x) => x)),
-    attributes: json["attributes"] == null ? null : Attributes.fromMap(json["attributes"]!.cast<String, Object>()),
-  );
+        range: json["range"] == null
+            ? []
+            : List<int>.from(json["range"].map((x) => x)),
+        attributes: json["attributes"] == null
+            ? null
+            : Attributes.fromMap(json["attributes"]!.cast<String, Object>()),
+      );
 
   Map<String, dynamic> toMap() => {
-    "range": range,
-    "attributes": attributes?.toMap(),
-  };
+        "range": range,
+        "attributes": attributes?.toMap(),
+      };
 }
 
 class Attributes {
@@ -46,7 +62,7 @@ class Attributes {
     this.messagePart,
     this.attachmentGuid,
     this.mention,
-    this.audioTranscript
+    this.audioTranscript,
   });
 
   final int? messagePart;
@@ -55,17 +71,18 @@ class Attributes {
   final String? audioTranscript;
 
   factory Attributes.fromMap(Map<String, dynamic> json) => Attributes(
-    messagePart: json["__kIMMessagePartAttributeName"],
-    attachmentGuid: json["__kIMFileTransferGUIDAttributeName"],
-    mention: json["__kIMMentionConfirmedMention"],
-    audioTranscript: json["IMAudioTranscription"]
-  );
+      messagePart: json["__kIMMessagePartAttributeName"],
+      attachmentGuid: json["__kIMFileTransferGUIDAttributeName"],
+      mention: json["__kIMMentionConfirmedMention"],
+      audioTranscript: json["IMAudioTranscription"]);
 
   Map<String, dynamic> toMap() {
     // Only include non-null values
     final Map<String, dynamic> map = {};
     if (messagePart != null) map["__kIMMessagePartAttributeName"] = messagePart;
-    if (attachmentGuid != null) map["__kIMFileTransferGUIDAttributeName"] = attachmentGuid;
+    if (attachmentGuid != null) {
+      map["__kIMFileTransferGUIDAttributeName"] = attachmentGuid;
+    }
     if (mention != null) map["__kIMMentionConfirmedMention"] = mention;
     if (audioTranscript != null) map["IMAudioTranscription"] = audioTranscript;
     return map;

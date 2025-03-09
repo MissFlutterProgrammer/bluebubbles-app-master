@@ -1,5 +1,6 @@
-import 'dart:math';
+// ignore_for_file: deprecated_member_use
 
+import 'dart:math';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/services/services.dart';
 import 'package:bluebubbles/utils/window_effects.dart';
@@ -58,11 +59,13 @@ class BubbleColors extends ThemeExtension<BubbleColors> {
       Color? onReceivedBubbleColor}) {
     return BubbleColors(
       iMessageBubbleColor: iMessageBubbleColor ?? this.iMessageBubbleColor,
-      oniMessageBubbleColor: oniMessageBubbleColor ?? this.oniMessageBubbleColor,
+      oniMessageBubbleColor:
+          oniMessageBubbleColor ?? this.oniMessageBubbleColor,
       smsBubbleColor: smsBubbleColor ?? this.smsBubbleColor,
       onSmsBubbleColor: onSmsBubbleColor ?? this.onSmsBubbleColor,
       receivedBubbleColor: receivedBubbleColor ?? this.receivedBubbleColor,
-      onReceivedBubbleColor: onReceivedBubbleColor ?? this.onReceivedBubbleColor,
+      onReceivedBubbleColor:
+          onReceivedBubbleColor ?? this.onReceivedBubbleColor,
     );
   }
 
@@ -72,12 +75,16 @@ class BubbleColors extends ThemeExtension<BubbleColors> {
       return this;
     }
     return BubbleColors(
-      iMessageBubbleColor: Color.lerp(iMessageBubbleColor, other.iMessageBubbleColor, t),
-      oniMessageBubbleColor: Color.lerp(oniMessageBubbleColor, other.oniMessageBubbleColor, t),
+      iMessageBubbleColor:
+          Color.lerp(iMessageBubbleColor, other.iMessageBubbleColor, t),
+      oniMessageBubbleColor:
+          Color.lerp(oniMessageBubbleColor, other.oniMessageBubbleColor, t),
       smsBubbleColor: Color.lerp(smsBubbleColor, other.smsBubbleColor, t),
       onSmsBubbleColor: Color.lerp(onSmsBubbleColor, other.onSmsBubbleColor, t),
-      receivedBubbleColor: Color.lerp(receivedBubbleColor, other.receivedBubbleColor, t),
-      onReceivedBubbleColor: Color.lerp(onReceivedBubbleColor, other.onReceivedBubbleColor, t),
+      receivedBubbleColor:
+          Color.lerp(receivedBubbleColor, other.receivedBubbleColor, t),
+      onReceivedBubbleColor:
+          Color.lerp(onReceivedBubbleColor, other.onReceivedBubbleColor, t),
     );
   }
 }
@@ -112,7 +119,8 @@ class BubbleText extends ThemeExtension<BubbleText> {
 /// theming values
 mixin ThemeHelpers<T extends StatefulWidget> on State<T> {
   // Samsung theme should always use the background color as the "header" color
-  bool get reverseMapping => ss.settings.skin.value == Skins.Material && ts.inDarkMode(context);
+  bool get reverseMapping =>
+      ss.settings.skin.value == Skins.Material && ts.inDarkMode(context);
 
   /// iOS skin [ListTile] subtitle [TextStyle]s
   TextStyle get iosSubtitle => context.theme.textTheme.labelLarge!.copyWith(
@@ -127,14 +135,21 @@ mixin ThemeHelpers<T extends StatefulWidget> on State<T> {
 
   /// Material / Samsung skin [ListTile] subtitle [TextStyle]s
   TextStyle get materialSubtitle =>
-      context.theme.textTheme.labelLarge!.copyWith(color: context.theme.colorScheme.primary, fontWeight: FontWeight.bold);
+      context.theme.textTheme.labelLarge!.copyWith(
+          color: context.theme.colorScheme.primary,
+          fontWeight: FontWeight.bold);
 
   Color get _headerColor => (ts.inDarkMode(context)
-      ? context.theme.colorScheme.background
-      : context.theme.colorScheme.properSurface).withAlpha(ss.settings.windowEffect.value != WindowEffect.disabled ? 20 : 255);
+          ? context.theme.colorScheme.background
+          : context.theme.colorScheme.properSurface)
+      .withAlpha(
+          ss.settings.windowEffect.value != WindowEffect.disabled ? 20 : 255);
 
-  Color get _tileColor => (ts.inDarkMode(context) ? context.theme.colorScheme.properSurface : context.theme.colorScheme.background)
-      .withAlpha(ss.settings.windowEffect.value != WindowEffect.disabled ? 100 : 255);
+  Color get _tileColor => (ts.inDarkMode(context)
+          ? context.theme.colorScheme.properSurface
+          : context.theme.colorScheme.background)
+      .withAlpha(
+          ss.settings.windowEffect.value != WindowEffect.disabled ? 100 : 255);
 
   /// Header / background color on settings pages
   Color get headerColor => reverseMapping ? _tileColor : _headerColor;
@@ -144,11 +159,15 @@ mixin ThemeHelpers<T extends StatefulWidget> on State<T> {
 
   /// Whether or not to use tablet mode
   bool get showAltLayout =>
-      ss.settings.tabletMode.value && (!context.isPhone || context.width / context.height > 0.8) && context.width > 600 && !ls.isBubble;
+      ss.settings.tabletMode.value &&
+      (!context.isPhone || context.width / context.height > 0.8) &&
+      context.width > 600 &&
+      !ls.isBubble;
 
   bool get showAltLayoutContextless =>
       ss.settings.tabletMode.value &&
-      (!Get.context!.isPhone || Get.context!.width / Get.context!.height > 0.8) &&
+      (!Get.context!.isPhone ||
+          Get.context!.width / Get.context!.height > 0.8) &&
       Get.context!.width > 600 &&
       !ls.isBubble;
 
@@ -162,43 +181,64 @@ mixin ThemeHelpers<T extends StatefulWidget> on State<T> {
 }
 
 extension ColorSchemeHelpers on ColorScheme {
-  Color get properSurface => surface.computeDifference(background) < 8 ? surfaceVariant : surface;
+  Color get properSurface =>
+      surface.computeDifference(background) < 8 ? surfaceVariant : surface;
 
-  Color get properOnSurface => surface.computeDifference(background) < 8 ? onSurfaceVariant : onSurface;
+  Color get properOnSurface =>
+      surface.computeDifference(background) < 8 ? onSurfaceVariant : onSurface;
 
-  Color get iMessageBubble =>
-      HSLColor.fromColor(primary).colorfulness < HSLColor.fromColor(primaryContainer).colorfulness ? primary : primaryContainer;
+  Color get iMessageBubble => HSLColor.fromColor(primary).colorfulness <
+          HSLColor.fromColor(primaryContainer).colorfulness
+      ? primary
+      : primaryContainer;
 
-  Color get oniMessageBubble => iMessageBubble == primary ? onPrimary : onPrimaryContainer;
+  Color get oniMessageBubble =>
+      iMessageBubble == primary ? onPrimary : onPrimaryContainer;
 
-  Color get smsBubble => HSLColor.fromColor(primary).colorfulness > HSLColor.fromColor(primaryContainer).colorfulness ? primary : primaryContainer;
+  Color get smsBubble => HSLColor.fromColor(primary).colorfulness >
+          HSLColor.fromColor(primaryContainer).colorfulness
+      ? primary
+      : primaryContainer;
 
-  Color get onSmsBubble => iMessageBubble == primary ? onPrimaryContainer : onPrimary;
+  Color get onSmsBubble =>
+      iMessageBubble == primary ? onPrimaryContainer : onPrimary;
 
-  Color bubble(BuildContext context, bool iMessage) => ss.settings.monetTheming.value != Monet.none
-      ? (iMessage ? iMessageBubble : smsBubble)
-      : iMessage
-          ? (context.theme.extensions[BubbleColors] as BubbleColors?)?.iMessageBubbleColor ?? iMessageBubble
-          : (context.theme.extensions[BubbleColors] as BubbleColors?)?.smsBubbleColor ?? smsBubble;
+  Color bubble(BuildContext context, bool iMessage) =>
+      ss.settings.monetTheming.value != Monet.none
+          ? (iMessage ? iMessageBubble : smsBubble)
+          : iMessage
+              ? (context.theme.extensions[BubbleColors] as BubbleColors?)
+                      ?.iMessageBubbleColor ??
+                  iMessageBubble
+              : (context.theme.extensions[BubbleColors] as BubbleColors?)
+                      ?.smsBubbleColor ??
+                  smsBubble;
 
-  Color onBubble(BuildContext context, bool iMessage) => ss.settings.monetTheming.value != Monet.none
-      ? (iMessage ? oniMessageBubble : onSmsBubble)
-      : iMessage
-          ? (context.theme.extensions[BubbleColors] as BubbleColors?)?.oniMessageBubbleColor ?? oniMessageBubble
-          : (context.theme.extensions[BubbleColors] as BubbleColors?)?.onSmsBubbleColor ?? onSmsBubble;
+  Color onBubble(BuildContext context, bool iMessage) =>
+      ss.settings.monetTheming.value != Monet.none
+          ? (iMessage ? oniMessageBubble : onSmsBubble)
+          : iMessage
+              ? (context.theme.extensions[BubbleColors] as BubbleColors?)
+                      ?.oniMessageBubbleColor ??
+                  oniMessageBubble
+              : (context.theme.extensions[BubbleColors] as BubbleColors?)
+                      ?.onSmsBubbleColor ??
+                  onSmsBubble;
 }
 
 extension ColorHelpers on Color {
   Color darkenPercent([double percent = 10]) {
     assert(1 <= percent && percent <= 100);
     var f = 1 - percent / 100;
-    return Color.fromARGB(alpha, (red * f).round(), (green * f).round(), (blue * f).round());
+    return Color.fromARGB(
+        alpha, (red * f).round(), (green * f).round(), (blue * f).round());
   }
 
   Color lightenPercent([double percent = 10]) {
     assert(1 <= percent && percent <= 100);
     var p = percent / 100;
-    return Color.fromARGB(alpha, red + ((255 - red) * p).round(), green + ((255 - green) * p).round(), blue + ((255 - blue) * p).round());
+    return Color.fromARGB(alpha, red + ((255 - red) * p).round(),
+        green + ((255 - green) * p).round(), blue + ((255 - blue) * p).round());
   }
 
   Color lightenOrDarken([double percent = 10]) {
@@ -229,7 +269,9 @@ extension ColorHelpers on Color {
   }
 
   Color themeOpacity(BuildContext context) {
-    if (ss.settings.windowEffect.value == WindowEffect.disabled) return withOpacity(1.0.obs.value);
+    if (ss.settings.windowEffect.value == WindowEffect.disabled) {
+      return withOpacity(1.0.obs.value);
+    }
     if (!WindowEffects.dependsOnColor()) return withOpacity(0.0.obs.value);
     if (!ts.inDarkMode(context)) {
       return withOpacity(ss.settings.windowEffectCustomOpacityLight.value);
@@ -281,7 +323,8 @@ extension HSLHelpers on HSLColor {
 }
 
 extension OppositeBrightness on Brightness {
-  Brightness get opposite => this == Brightness.light ? Brightness.dark : Brightness.light;
+  Brightness get opposite =>
+      this == Brightness.light ? Brightness.dark : Brightness.light;
 }
 
 MaterialColor createMaterialColor(Color color) {

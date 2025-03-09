@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/services/services.dart';
@@ -18,7 +20,9 @@ class GradientBackground extends CustomStateful<ConversationViewController> {
   State<StatefulWidget> createState() => _GradientBackgroundState();
 }
 
-class _GradientBackgroundState extends CustomState<GradientBackground, void, ConversationViewController> with WidgetsBindingObserver {
+class _GradientBackgroundState
+    extends CustomState<GradientBackground, void, ConversationViewController>
+    with WidgetsBindingObserver {
   late final RxBool adjustBackground = RxBool(ts.isGradientBg(Get.context!));
 
   @override
@@ -48,16 +52,14 @@ class _GradientBackgroundState extends CustomState<GradientBackground, void, Con
             gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
-              stops: [
-                anim.get("color1"),
-                anim.get("color2")
-              ], colors: [
+              stops: [anim.get("color1"), anim.get("color2")],
+              colors: [
                 context.theme.colorScheme
-                  .bubble(context, controller.chat.isIMessage)
-                  .withOpacity(0.5),
+                    .bubble(context, controller.chat.isIMessage)
+                    .withOpacity(0.5),
                 context.theme.colorScheme.background,
-              ]
-            )
+              ],
+            ),
           ),
           child: child,
         );

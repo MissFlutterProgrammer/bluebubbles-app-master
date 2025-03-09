@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:bluebubbles/helpers/backend/settings_helpers.dart';
 import 'package:bluebubbles/database/database.dart';
 import 'package:bluebubbles/utils/logger/logger.dart';
@@ -11,7 +10,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-MethodChannelService mcs = Get.isRegistered<MethodChannelService>() ? Get.find<MethodChannelService>() : Get.put(MethodChannelService());
+MethodChannelService mcs = Get.isRegistered<MethodChannelService>()
+    ? Get.find<MethodChannelService>()
+    : Get.put(MethodChannelService());
 
 class MethodChannelService extends GetxService {
   late final MethodChannel channel;
@@ -23,7 +24,8 @@ class MethodChannelService extends GetxService {
 
   Future<void> init({bool headless = false}) async {
     if (kIsWeb || kIsDesktop) return;
-    Logger.debug("Initializing MethodChannelService${headless ? " in headless mode" : ""}");
+    Logger.debug(
+        "Initializing MethodChannelService${headless ? " in headless mode" : ""}");
 
     background = headless;
     channel = const MethodChannel('com.bluebubbles.messaging');
@@ -45,12 +47,14 @@ class MethodChannelService extends GetxService {
   }
 
   Future<bool> _callHandler(MethodCall call) async {
-    final Map<String, dynamic>? arguments = call.arguments is String ? jsonDecode(call.arguments) : call.arguments?.cast<String, Object>();
-    
+    final Map<String, dynamic>? arguments = call.arguments is String
+        ? jsonDecode(call.arguments)
+        : call.arguments?.cast<String, Object>();
+
     // ONLY RETURN Future.value or Future.error
     // Future.value(false) will have the engine retry the call
     // Future.value(true) will have the engine stop trying to call the method
-    
+
     switch (call.method) {
       case "NewServerUrl":
         if (arguments == null) return Future.value(false);
@@ -62,16 +66,19 @@ class MethodChannelService extends GetxService {
           socket.restartSocket();
         }
         return Future.value(true);
-      case "new-message":  // FCM message
+      case "new-message": // FCM message
         await Database.waitForInit();
         Logger.info("Received new message from MethodChannel");
 
         // The socket will handle this event if the app is alive and unifiedpush is not enabled
-        if (ls.isAlive && socket.socket.connected && ss.settings.endpointUnifiedPush.value == "") {
+        if (ls.isAlive &&
+            socket.socket.connected &&
+            ss.settings.endpointUnifiedPush.value == "") {
           Logger.debug("App is alive, ignoring new message...");
           return Future.value(true);
         } else if (!ls.isAlive && ss.settings.keepAppAlive.value) {
-          Logger.debug("Ignoring FCM message while app is not alive, but keepAppAlive is enabled");
+          Logger.debug(
+              "Ignoring FCM message while app is not alive, but keepAppAlive is enabled");
           return Future.value(true);
         }
 
@@ -79,7 +86,8 @@ class MethodChannelService extends GetxService {
           Map<String, dynamic>? data = arguments;
           if (!isNullOrEmpty(data)) {
             final payload = ServerPayload.fromJson(data!);
-            final item = IncomingItem.fromMap(QueueType.newMessage, payload.data);
+            final item =
+                IncomingItem.fromMap(QueueType.newMessage, payload.data);
             if (ls.isAlive && ss.settings.endpointUnifiedPush.value == "") {
               await inq.queue(item);
             } else {
@@ -100,7 +108,8 @@ class MethodChannelService extends GetxService {
           Logger.debug("App is alive, ignoring updated message...");
           return Future.value(true);
         } else if (!ls.isAlive && ss.settings.keepAppAlive.value) {
-          Logger.debug("Ignoring FCM message while app is not alive, but keepAppAlive is enabled");
+          Logger.debug(
+              "Ignoring FCM message while app is not alive, but keepAppAlive is enabled");
           return Future.value(true);
         }
 
@@ -111,23 +120,28 @@ class MethodChannelService extends GetxService {
 
             // Since this is an updated-message event, the message should exist in the DB.
             // So if there is no chat, we can find it from the message guid
-            if (payload.data["chats"] == null || payload.data["chats"].isEmpty) {
-              Logger.warn("No chat data found, attempting to find chat from message guid...");
+            if (payload.data["chats"] == null ||
+                payload.data["chats"].isEmpty) {
+              Logger.warn(
+                  "No chat data found, attempting to find chat from message guid...");
               final existingMsg = Message.findOne(guid: payload.data["guid"]);
               if (existingMsg != null && existingMsg.chat.target != null) {
                 Logger.debug("Found chat from message guid, adding to payload");
                 payload.data['chats'] = [existingMsg.chat.target!.toMap()];
               } else {
-                Logger.warn("No chat data found, and unable to find chat from message guid");
+                Logger.warn(
+                    "No chat data found, and unable to find chat from message guid");
                 return Future.value(false);
               }
             }
 
-            final item = IncomingItem.fromMap(QueueType.updatedMessage, payload.data);
+            final item =
+                IncomingItem.fromMap(QueueType.updatedMessage, payload.data);
             if (ls.isAlive) {
               await inq.queue(item);
             } else {
-              await ah.handleUpdatedMessage(item.chat, item.message, item.tempGuid);
+              await ah.handleUpdatedMessage(
+                  item.chat, item.message, item.tempGuid);
             }
           }
         } catch (e, s) {
@@ -147,7 +161,8 @@ class MethodChannelService extends GetxService {
           Logger.debug("App is alive, ignoring updated message...");
           return Future.value(true);
         } else if (!ls.isAlive && ss.settings.keepAppAlive.value) {
-          Logger.debug("Ignoring FCM message while app is not alive, but keepAppAlive is enabled");
+          Logger.debug(
+              "Ignoring FCM message while app is not alive, but keepAppAlive is enabled");
           return Future.value(true);
         }
 
@@ -155,7 +170,8 @@ class MethodChannelService extends GetxService {
           Map<String, dynamic>? data = arguments;
           if (!isNullOrEmpty(data)) {
             final payload = ServerPayload.fromJson(data!);
-            final item = IncomingItem.fromMap(QueueType.updatedMessage, payload.data);
+            final item =
+                IncomingItem.fromMap(QueueType.updatedMessage, payload.data);
             await ah.handleNewOrUpdatedChat(item.chat);
           }
         } catch (e, s) {
@@ -172,7 +188,8 @@ class MethodChannelService extends GetxService {
           Logger.debug("App is alive, ignoring updated message...");
           return Future.value(true);
         } else if (!ls.isAlive && ss.settings.keepAppAlive.value) {
-          Logger.debug("Ignoring FCM message while app is not alive, but keepAppAlive is enabled");
+          Logger.debug(
+              "Ignoring FCM message while app is not alive, but keepAppAlive is enabled");
           return Future.value(true);
         }
 
@@ -213,29 +230,41 @@ class MethodChannelService extends GetxService {
         if (data == null) return Future.value(true);
 
         // check and make sure that we aren't sending a duplicate reply
-        final recentReplyGuid = ss.prefs.getString("recent-reply")?.split("/").first;
-        final recentReplyText = ss.prefs.getString("recent-reply")?.split("/").last;
-        if (recentReplyGuid == data["messageGuid"] && recentReplyText == data["text"]) return Future.value(false);
-        await ss.prefs.setString("recent-reply", "${data["messageGuid"]}/${data["text"]}");
-        Logger.info("Updated recent reply cache to ${ss.prefs.getString("recent-reply")}");
+        final recentReplyGuid =
+            ss.prefs.getString("recent-reply")?.split("/").first;
+        final recentReplyText =
+            ss.prefs.getString("recent-reply")?.split("/").last;
+        if (recentReplyGuid == data["messageGuid"] &&
+            recentReplyText == data["text"]) {
+          return Future.value(false);
+        }
+        await ss.prefs.setString(
+          "recent-reply",
+          "${data["messageGuid"]}/${data["text"]}",
+        );
+        Logger.info(
+          "Updated recent reply cache to ${ss.prefs.getString("recent-reply")}",
+        );
         Chat? chat = Chat.findOne(guid: data["chatGuid"]);
         if (chat == null) {
           return Future.value(false);
         } else {
           final Completer<void> completer = Completer();
-          outq.queue(OutgoingItem(
-            type: QueueType.sendMessage,
-            completer: completer,
-            chat: chat,
-            message: Message(
-              text: data['text'],
-              dateCreated: DateTime.now(),
-              hasAttachments: false,
-              isFromMe: true,
-              handleId: 0,
+          outq.queue(
+            OutgoingItem(
+              type: QueueType.sendMessage,
+              completer: completer,
+              chat: chat,
+              message: Message(
+                text: data['text'],
+                dateCreated: DateTime.now(),
+                hasAttachments: false,
+                isFromMe: true,
+                handleId: 0,
+              ),
+              customArgs: {'notifReply': true},
             ),
-            customArgs: {'notifReply': true}
-          ));
+          );
           await completer.future;
           return Future.value(true);
         }
@@ -269,7 +298,9 @@ class MethodChannelService extends GetxService {
           if (!isNullOrEmpty(data)) {
             final payload = ServerPayload.fromJson(data!);
             Chat? chat = Chat.findOne(guid: payload.data["chatGuid"]);
-            if (chat == null || (payload.data["read"] != true && payload.data["read"] != false)) {
+            if (chat == null ||
+                (payload.data["read"] != true &&
+                    payload.data["read"] != false)) {
               return Future.value(false);
             } else {
               chat.toggleHasUnread(!payload.data["read"]!, privateMark: false);
@@ -299,7 +330,8 @@ class MethodChannelService extends GetxService {
           Map<String, dynamic>? data = arguments;
           if (!isNullOrEmpty(data)) {
             final payload = ServerPayload.fromJson(data!);
-            await ActionHandler().handleIncomingFaceTimeCallLegacy(payload.data);
+            await ActionHandler()
+                .handleIncomingFaceTimeCallLegacy(payload.data);
           }
         } catch (e, s) {
           return Future.error(e, s);
@@ -334,7 +366,8 @@ class MethodChannelService extends GetxService {
           if (!isNullOrEmpty(data)) {
             final payload = ServerPayload.fromJson(data!);
             Logger.info("Alias(es) removed ${payload.data["aliases"]}");
-            await notif.createAliasesRemovedNotification((payload.data["aliases"] as List).cast<String>());
+            await notif.createAliasesRemovedNotification(
+                (payload.data["aliases"] as List).cast<String>());
           } else {
             Logger.warn("Aliases removed data empty or null");
           }
@@ -349,7 +382,8 @@ class MethodChannelService extends GetxService {
 
         try {
           final Map<String, dynamic> jsonData = jsonDecode(data['data']);
-          await ah.handleEvent(data['event'], jsonData, 'MethodChannel', useQueue: false);
+          await ah.handleEvent(data['event'], jsonData, 'MethodChannel',
+              useQueue: false);
         } catch (e, s) {
           return Future.error(e, s);
         }
@@ -360,10 +394,10 @@ class MethodChannelService extends GetxService {
         if (data == null) return false;
 
         try {
-            final String endpoint = data['endpoint'].toString();
-            upr.update(endpoint);
-        } catch(e, s) {
-            return Future.error(e, s);
+          final String endpoint = data['endpoint'].toString();
+          upr.update(endpoint);
+        } catch (e, s) {
+          return Future.error(e, s);
         }
 
         return Future.value(true);

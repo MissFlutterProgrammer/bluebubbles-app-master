@@ -17,7 +17,8 @@ class ChatSyncManager extends SyncManager {
 
   bool simulateError;
 
-  ChatSyncManager({bool saveLogs = false, this.simulateError = false}) : super("Chat", saveLogs: saveLogs);
+  ChatSyncManager({bool saveLogs = false, this.simulateError = false})
+      : super("Chat", saveLogs: saveLogs);
 
   flush() {
     chatsSynced = 0;
@@ -61,7 +62,8 @@ class ChatSyncManager extends SyncManager {
       }
 
       addToOutput("Streaming chats from server...");
-      await for (final chatEvent in streamChatPages(totalChats, batchSize: 100)) {
+      await for (final chatEvent
+          in streamChatPages(totalChats, batchSize: 100)) {
         double chatProgress = chatEvent.item1;
         List<Chat> serverChats = chatEvent.item2;
 
@@ -69,7 +71,7 @@ class ChatSyncManager extends SyncManager {
 
         await Chat.bulkSyncChats(serverChats);
         chatsSynced += serverChats.length;
-        
+
         addToOutput('Fetching group chat icons from the server...');
         for (Chat chat in serverChats) {
           if (!chat.isGroup) continue;
@@ -85,8 +87,10 @@ class ChatSyncManager extends SyncManager {
           // When we've hit the last chunk, we're finished
           await complete();
           if (kIsDesktop && Platform.isWindows) {
-            await WindowsTaskbar.setProgressMode(TaskbarProgressMode.noProgress);
-            await WindowsTaskbar.setFlashTaskbarAppIcon(mode: TaskbarFlashMode.timernofg);
+            await WindowsTaskbar.setProgressMode(
+                TaskbarProgressMode.noProgress);
+            await WindowsTaskbar.setFlashTaskbarAppIcon(
+                mode: TaskbarFlashMode.timernofg);
           }
         } else if (status.value == SyncStatus.STOPPING) {
           // If we are supposed to be stopping, complete the future.
@@ -97,18 +101,22 @@ class ChatSyncManager extends SyncManager {
           }
 
           if (kIsDesktop && Platform.isWindows) {
-            await WindowsTaskbar.setProgressMode(TaskbarProgressMode.noProgress);
-            await WindowsTaskbar.setFlashTaskbarAppIcon(mode: TaskbarFlashMode.timernofg);
+            await WindowsTaskbar.setProgressMode(
+                TaskbarProgressMode.noProgress);
+            await WindowsTaskbar.setFlashTaskbarAppIcon(
+                mode: TaskbarFlashMode.timernofg);
           }
         }
       }
     } catch (e, s) {
-      addToOutput('Failed to sync chats! Error: ${e.toString()}', level: LogLevel.ERROR);
+      addToOutput('Failed to sync chats! Error: ${e.toString()}',
+          level: LogLevel.ERROR);
       addToOutput(s.toString(), level: LogLevel.ERROR);
       completeWithError(e.toString());
       if (kIsDesktop && Platform.isWindows) {
         await WindowsTaskbar.setProgressMode(TaskbarProgressMode.error);
-        await WindowsTaskbar.setFlashTaskbarAppIcon(mode: TaskbarFlashMode.timernofg);
+        await WindowsTaskbar.setFlashTaskbarAppIcon(
+            mode: TaskbarFlashMode.timernofg);
       }
     }
 
@@ -125,7 +133,8 @@ class ChatSyncManager extends SyncManager {
     return null;
   }
 
-  Stream<Tuple2<double, List<Chat>>> streamChatPages(int? count, {int batchSize = 200}) async* {
+  Stream<Tuple2<double, List<Chat>>> streamChatPages(int? count,
+      {int batchSize = 200}) async* {
     // Set some default sync values
     int batches = 1;
     int countPerBatch = batchSize;
@@ -140,13 +149,10 @@ class ChatSyncManager extends SyncManager {
     for (int i = 0; i < batches; i++) {
       // Fetch the handles and throw an error if we don't get back a good response.
       // Throwing an error should cancel the sync
-      Response chatPage = await http.chats(
-        offset: i * countPerBatch,
-        limit: countPerBatch,
-        withQuery: [
-          "participants",
-        ]
-      );
+      Response chatPage = await http
+          .chats(offset: i * countPerBatch, limit: countPerBatch, withQuery: [
+        "participants",
+      ]);
       dynamic data = chatPage.data;
       if (chatPage.statusCode != 200) {
         throw ChatRequestException(

@@ -1,6 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 import 'dart:math';
-
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/message/typing/typing_indicator.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/app/layouts/conversation_list/dialogs/conversation_peek_view.dart';
@@ -17,26 +18,30 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
-class PinnedConversationTile extends CustomStateful<ConversationTileController> {
+class PinnedConversationTile
+    extends CustomStateful<ConversationTileController> {
   PinnedConversationTile({
     super.key,
     required Chat chat,
     required ConversationListController controller,
   }) : super(
-            parentController: Get.isRegistered<ConversationTileController>(tag: chat.guid)
-                ? Get.find<ConversationTileController>(tag: chat.guid)
-                : Get.put(
-                    ConversationTileController(
-                      chat: chat,
-                      listController: controller,
-                    ),
-                    tag: "${chat.guid}-pinned"));
+          parentController:
+              Get.isRegistered<ConversationTileController>(tag: chat.guid)
+                  ? Get.find<ConversationTileController>(tag: chat.guid)
+                  : Get.put(
+                      ConversationTileController(
+                        chat: chat,
+                        listController: controller,
+                      ),
+                      tag: "${chat.guid}-pinned"),
+        );
 
   @override
   State<PinnedConversationTile> createState() => _PinnedConversationTileState();
 }
 
-class _PinnedConversationTileState extends CustomState<PinnedConversationTile, void, ConversationTileController> {
+class _PinnedConversationTileState extends CustomState<PinnedConversationTile,
+    void, ConversationTileController> {
   ConversationListController get listController => controller.listController;
   Offset? longPressPosition;
 
@@ -50,7 +55,8 @@ class _PinnedConversationTileState extends CustomState<PinnedConversationTile, v
     forceDelete = false;
 
     if (kIsDesktop || kIsWeb) {
-      controller.shouldHighlight.value = cm.activeChat?.chat.guid == controller.chat.guid;
+      controller.shouldHighlight.value =
+          cm.activeChat?.chat.guid == controller.chat.guid;
     }
 
     eventDispatcher.stream.listen((event) {
@@ -81,9 +87,11 @@ class _PinnedConversationTileState extends CustomState<PinnedConversationTile, v
           onLongPress: kIsDesktop || kIsWeb
               ? null
               : () async {
-                  await peekChat(context, controller.chat, longPressPosition ?? Offset.zero);
+                  await peekChat(context, controller.chat,
+                      longPressPosition ?? Offset.zero);
                 },
-          onSecondaryTapUp: (details) => controller.onSecondaryTap(context, details),
+          onSecondaryTapUp: (details) =>
+              controller.onSecondaryTap(context, details),
           child: Obx(() {
             ns.listener.value;
             return AnimatedContainer(
@@ -97,22 +105,34 @@ class _PinnedConversationTileState extends CustomState<PinnedConversationTile, v
               ),
               decoration: BoxDecoration(
                 color: controller.shouldPartialHighlight.value
-                    ? context.theme.colorScheme.properSurface.lightenOrDarken(10)
+                    ? context.theme.colorScheme.properSurface
+                        .lightenOrDarken(10)
                     : controller.shouldHighlight.value
-                        ? context.theme.colorScheme.bubble(context, controller.chat.isIMessage)
+                        ? context.theme.colorScheme
+                            .bubble(context, controller.chat.isIMessage)
                         : controller.hoverHighlight.value
                             ? context.theme.colorScheme.properSurface
                             : null,
                 borderRadius: BorderRadius.circular(
-                    controller.shouldHighlight.value || controller.shouldPartialHighlight.value || controller.hoverHighlight.value ? 8 : 0),
+                    controller.shouldHighlight.value ||
+                            controller.shouldPartialHighlight.value ||
+                            controller.hoverHighlight.value
+                        ? 8
+                        : 0),
               ),
               child: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
                   // Great math right here
                   final availableWidth = constraints.maxWidth;
-                  final colCount = kIsDesktop ? ss.settings.pinColumnsLandscape.value : ss.settings.pinColumnsPortrait.value;
+                  final colCount = kIsDesktop
+                      ? ss.settings.pinColumnsLandscape.value
+                      : ss.settings.pinColumnsPortrait.value;
                   final spaceBetween = (colCount - 1) * 30;
-                  final maxWidth = max(((availableWidth - spaceBetween) / colCount).floorToDouble(), 0).toDouble();
+                  final maxWidth = max(
+                          ((availableWidth - spaceBetween) / colCount)
+                              .floorToDouble(),
+                          0)
+                      .toDouble();
 
                   return ConstrainedBox(
                     constraints: BoxConstraints(
@@ -132,15 +152,30 @@ class _PinnedConversationTileState extends CustomState<PinnedConversationTile, v
                                   size: maxWidth,
                                   editable: false,
                                 ),
-                                UnreadIcon(width: maxWidth, parentController: controller),
-                                MuteIcon(width: maxWidth, parentController: controller),
-                                PinnedIndicators(width: maxWidth, controller: controller),
+                                UnreadIcon(
+                                  width: maxWidth,
+                                  parentController: controller,
+                                ),
+                                MuteIcon(
+                                  width: maxWidth,
+                                  parentController: controller,
+                                ),
+                                PinnedIndicators(
+                                  width: maxWidth,
+                                  controller: controller,
+                                ),
                               ],
                             ),
-                            ChatTitle(width: maxWidth, parentController: controller),
+                            ChatTitle(
+                              width: maxWidth,
+                              parentController: controller,
+                            ),
                           ],
                         ),
-                        ReactionIcon(width: maxWidth, parentController: controller),
+                        ReactionIcon(
+                          width: maxWidth,
+                          parentController: controller,
+                        ),
                         Positioned(
                           bottom: context.textTheme.bodyMedium!.fontSize! * 3,
                           width: maxWidth,
@@ -164,7 +199,8 @@ class _PinnedConversationTileState extends CustomState<PinnedConversationTile, v
 }
 
 class UnreadIcon extends CustomStateful<ConversationTileController> {
-  const UnreadIcon({Key? key, required this.width, required super.parentController});
+  const UnreadIcon(
+      {Key? key, required this.width, required super.parentController});
 
   final double width;
 
@@ -172,7 +208,8 @@ class UnreadIcon extends CustomStateful<ConversationTileController> {
   State<StatefulWidget> createState() => _UnreadIconState();
 }
 
-class _UnreadIconState extends CustomState<UnreadIcon, void, ConversationTileController> {
+class _UnreadIconState
+    extends CustomState<UnreadIcon, void, ConversationTileController> {
   @override
   void initState() {
     super.initState();
@@ -186,25 +223,28 @@ class _UnreadIconState extends CustomState<UnreadIcon, void, ConversationTileCon
   Widget build(BuildContext context) {
     return Obx(() {
       final unread = GlobalChatService.unreadState(controller.chat.guid).value;
-      return unread ? Positioned(
-        left: sqrt(widget.width) - widget.width * 0.05 * sqrt(2),
-        top: sqrt(widget.width) - widget.width * 0.05 * sqrt(2),
-        child: Container(
-          width: widget.width * 0.2,
-          height: widget.width * 0.2,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: context.theme.colorScheme.primary,
-          ),
-          margin: const EdgeInsets.only(right: 3),
-        ),
-      ) : const SizedBox.shrink();
+      return unread
+          ? Positioned(
+              left: sqrt(widget.width) - widget.width * 0.05 * sqrt(2),
+              top: sqrt(widget.width) - widget.width * 0.05 * sqrt(2),
+              child: Container(
+                width: widget.width * 0.2,
+                height: widget.width * 0.2,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: context.theme.colorScheme.primary,
+                ),
+                margin: const EdgeInsets.only(right: 3),
+              ),
+            )
+          : const SizedBox.shrink();
     });
   }
 }
 
 class MuteIcon extends CustomStateful<ConversationTileController> {
-  const MuteIcon({Key? key, required this.width, required super.parentController});
+  const MuteIcon(
+      {Key? key, required this.width, required super.parentController});
 
   final double width;
 
@@ -212,8 +252,8 @@ class MuteIcon extends CustomStateful<ConversationTileController> {
   State<StatefulWidget> createState() => _MuteIconState();
 }
 
-class _MuteIconState extends CustomState<MuteIcon, void, ConversationTileController> {
-
+class _MuteIconState
+    extends CustomState<MuteIcon, void, ConversationTileController> {
   @override
   void initState() {
     super.initState();
@@ -238,12 +278,16 @@ class _MuteIconState extends CustomState<MuteIcon, void, ConversationTileControl
                 height: widget.width * 0.2,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: unread ? context.theme.colorScheme.primaryContainer : context.theme.colorScheme.tertiaryContainer,
+                  color: unread
+                      ? context.theme.colorScheme.primaryContainer
+                      : context.theme.colorScheme.tertiaryContainer,
                 ),
                 child: Icon(
                   CupertinoIcons.bell_slash_fill,
                   size: widget.width * 0.14,
-                  color: unread ? context.theme.colorScheme.onPrimaryContainer : context.theme.colorScheme.onTertiaryContainer,
+                  color: unread
+                      ? context.theme.colorScheme.onPrimaryContainer
+                      : context.theme.colorScheme.onTertiaryContainer,
                 ),
               ),
             )
@@ -255,13 +299,15 @@ class _MuteIconState extends CustomState<MuteIcon, void, ConversationTileControl
 class ChatTitle extends CustomStateful<ConversationTileController> {
   final double width;
 
-  const ChatTitle({Key? key, required this.width, required super.parentController});
+  const ChatTitle(
+      {Key? key, required this.width, required super.parentController});
 
   @override
   State<StatefulWidget> createState() => _ChatTitleState();
 }
 
-class _ChatTitleState extends CustomState<ChatTitle, void, ConversationTileController> {
+class _ChatTitleState
+    extends CustomState<ChatTitle, void, ConversationTileController> {
   String title = "Unknown";
   late final StreamSubscription sub;
   String? cachedDisplayName = "";
@@ -280,7 +326,9 @@ class _ChatTitleState extends CustomState<ChatTitle, void, ConversationTileContr
     // run query after render has completed
     if (!kIsWeb) {
       updateObx(() {
-        final titleQuery = Database.chats.query(Chat_.guid.equals(controller.chat.guid)).watch();
+        final titleQuery = Database.chats
+            .query(Chat_.guid.equals(controller.chat.guid))
+            .watch();
         sub = titleQuery.listen((Query<Chat> query) async {
           final chat = controller.chat.id == null
               ? null
@@ -289,7 +337,8 @@ class _ChatTitleState extends CustomState<ChatTitle, void, ConversationTileContr
                 });
           if (chat == null) return;
           // check if we really need to update this widget
-          if (chat.displayName != cachedDisplayName || chat.handles.length != cachedParticipants.length) {
+          if (chat.displayName != cachedDisplayName ||
+              chat.handles.length != cachedParticipants.length) {
             final newTitle = chat.getTitle();
             if (newTitle != title) {
               setState(() {
@@ -305,8 +354,8 @@ class _ChatTitleState extends CustomState<ChatTitle, void, ConversationTileContr
       sub = WebListeners.chatUpdate.listen((chat) {
         if (chat.guid == controller.chat.guid) {
           // check if we really need to update this widget
-          if (chat.displayName != cachedDisplayName
-              || chat.participants.length != cachedParticipants.length) {
+          if (chat.displayName != cachedDisplayName ||
+              chat.participants.length != cachedParticipants.length) {
             final newTitle = chat.getTitle();
             if (newTitle != title) {
               setState(() {
@@ -334,16 +383,20 @@ class _ChatTitleState extends CustomState<ChatTitle, void, ConversationTileContr
         vertical: widget.width * 0.075,
       ),
       child: Obx(() {
-        final hideInfo = ss.settings.redactedMode.value && ss.settings.hideContactInfo.value;
+        final hideInfo =
+            ss.settings.redactedMode.value && ss.settings.hideContactInfo.value;
         final style = context.theme.textTheme.bodyMedium!.apply(
           color: controller.shouldHighlight.value
-              ? context.theme.colorScheme.onBubble(context, controller.chat.isIMessage)
+              ? context.theme.colorScheme
+                  .onBubble(context, controller.chat.isIMessage)
               : context.theme.colorScheme.outline,
           fontSizeFactor: controller.chat.isPinned! ? 0.95 : 1,
         );
         String _title = title;
         if (hideInfo) {
-          _title = controller.chat.participants.length > 1 ? "Group Chat" : controller.chat.participants[0].fakeName;
+          _title = controller.chat.participants.length > 1
+              ? "Group Chat"
+              : controller.chat.participants[0].fakeName;
         }
 
         return SizedBox(
@@ -381,7 +434,8 @@ class PinnedIndicators extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final showTypingIndicator = cvc(controller.chat).showTypingIndicator.value;
+      final showTypingIndicator =
+          cvc(controller.chat).showTypingIndicator.value;
       if (showTypingIndicator) {
         return Positioned(
           top: -sqrt(width / 2) + width * 0.05,
@@ -396,7 +450,9 @@ class PinnedIndicators extends StatelessWidget {
       }
 
       final showMarker = controller.chat.latestMessage.indicatorToShow;
-      if (ss.settings.statusIndicatorsOnChats.value && !controller.chat.isGroup && showMarker != Indicator.NONE) {
+      if (ss.settings.statusIndicatorsOnChats.value &&
+          !controller.chat.isGroup &&
+          showMarker != Indicator.NONE) {
         return Positioned(
           left: sqrt(width) - width * 0.05 * sqrt(2),
           top: width - width * 0.13 * 2,
@@ -404,7 +460,10 @@ class PinnedIndicators extends StatelessWidget {
             width: width * 0.27,
             height: width * 0.27,
             decoration: BoxDecoration(
-              border: Border.all(color: context.theme.colorScheme.background, width: 1),
+              border: Border.all(
+                color: context.theme.colorScheme.background,
+                width: 1,
+              ),
               borderRadius: BorderRadius.circular(30),
               color: context.theme.colorScheme.tertiaryContainer,
             ),
@@ -430,7 +489,8 @@ class PinnedIndicators extends StatelessWidget {
 }
 
 class ReactionIcon extends CustomStateful<ConversationTileController> {
-  const ReactionIcon({Key? key, required this.width, required super.parentController});
+  const ReactionIcon(
+      {Key? key, required this.width, required super.parentController});
 
   final double width;
 
@@ -438,8 +498,8 @@ class ReactionIcon extends CustomStateful<ConversationTileController> {
   State<StatefulWidget> createState() => _ReactionIconState();
 }
 
-class _ReactionIconState extends CustomState<ReactionIcon, void, ConversationTileController> {
-
+class _ReactionIconState
+    extends CustomState<ReactionIcon, void, ConversationTileController> {
   @override
   void initState() {
     super.initState();
@@ -453,7 +513,10 @@ class _ReactionIconState extends CustomState<ReactionIcon, void, ConversationTil
   Widget build(BuildContext context) {
     return Obx(() {
       final unread = GlobalChatService.unreadState(controller.chat.guid).value;
-      return unread && !isNullOrEmpty(controller.chat.latestMessage.associatedMessageGuid) && !controller.chat.latestMessage.isFromMe!
+      return unread &&
+              !isNullOrEmpty(
+                  controller.chat.latestMessage.associatedMessageGuid) &&
+              !controller.chat.latestMessage.isFromMe!
           ? Positioned(
               top: -sqrt(widget.width / 2) + widget.width * 0.05,
               right: -sqrt(widget.width / 2) + widget.width * 0.025,

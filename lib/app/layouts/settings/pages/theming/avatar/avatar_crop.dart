@@ -26,7 +26,8 @@ class _AvatarCropState extends OptimizedState<AvatarCrop> {
   void onCropped(Uint8List croppedData) async {
     String appDocPath = fs.appDocDir.path;
     if (widget.index == null && widget.chat == null) {
-      File file = File("$appDocPath/avatars/you/avatar-${croppedData.length}.jpg");
+      File file =
+          File("$appDocPath/avatars/you/avatar-${croppedData.length}.jpg");
       if (!(await file.exists())) {
         await file.create(recursive: true);
       }
@@ -40,7 +41,8 @@ class _AvatarCropState extends OptimizedState<AvatarCrop> {
       Navigator.of(context).pop();
       showSnackbar("Notice", "User avatar saved successfully");
     } else if (widget.index != null) {
-      File file = File("$appDocPath/avatars/${chats.chats[widget.index!].guid.characters.where((char) => char.isAlphabetOnly || char.isNumericOnly).join()}/avatar-${croppedData.length}.jpg");
+      File file = File(
+          "$appDocPath/avatars/${chats.chats[widget.index!].guid.characters.where((char) => char.isAlphabetOnly || char.isNumericOnly).join()}/avatar-${croppedData.length}.jpg");
       if (!(await file.exists())) {
         await file.create(recursive: true);
       }
@@ -54,7 +56,8 @@ class _AvatarCropState extends OptimizedState<AvatarCrop> {
       Navigator.of(context).pop();
       showSnackbar("Notice", "Custom chat avatar saved successfully");
     } else {
-      File file = File("$appDocPath/avatars/${widget.chat!.guid.characters.where((char) => char.isAlphabetOnly || char.isNumericOnly).join()}/avatar-${croppedData.length}.jpg");
+      File file = File(
+          "$appDocPath/avatars/${widget.chat!.guid.characters.where((char) => char.isAlphabetOnly || char.isNumericOnly).join()}/avatar-${croppedData.length}.jpg");
       if (!(await file.exists())) {
         await file.create(recursive: true);
       }
@@ -74,19 +77,23 @@ class _AvatarCropState extends OptimizedState<AvatarCrop> {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        systemNavigationBarColor: ss.settings.immersiveMode.value ? Colors.transparent : context.theme.colorScheme.background, // navigation bar color
-        systemNavigationBarIconBrightness: context.theme.colorScheme.brightness.opposite,
+        systemNavigationBarColor: ss.settings.immersiveMode.value
+            ? Colors.transparent
+            : context.theme.colorScheme.surface, // navigation bar color
+        systemNavigationBarIconBrightness:
+            context.theme.colorScheme.brightness.opposite,
         statusBarColor: Colors.transparent, // status bar color
         statusBarIconBrightness: context.theme.colorScheme.brightness.opposite,
       ),
       child: Scaffold(
-          backgroundColor: context.theme.colorScheme.background,
+          backgroundColor: context.theme.colorScheme.surface,
           appBar: PreferredSize(
             preferredSize: Size(ns.width(context), kIsDesktop ? 80 : 50),
             child: AppBar(
-              systemOverlayStyle: context.theme.colorScheme.brightness == Brightness.dark
-                  ? SystemUiOverlayStyle.light
-                  : SystemUiOverlayStyle.dark,
+              systemOverlayStyle:
+                  context.theme.colorScheme.brightness == Brightness.dark
+                      ? SystemUiOverlayStyle.light
+                      : SystemUiOverlayStyle.dark,
               toolbarHeight: kIsDesktop ? 80 : 50,
               elevation: 0,
               scrolledUnderElevation: 3,
@@ -103,8 +110,10 @@ class _AvatarCropState extends OptimizedState<AvatarCrop> {
                   absorbing: _imageData == null || _isLoading,
                   child: TextButton(
                       child: Text("SAVE",
-                          style: context.theme.textTheme.bodyLarge!
-                              .apply(color: _imageData == null || _isLoading ? context.theme.colorScheme.outline : context.theme.colorScheme.primary)),
+                          style: context.theme.textTheme.bodyLarge!.apply(
+                              color: _imageData == null || _isLoading
+                                  ? context.theme.colorScheme.outline
+                                  : context.theme.colorScheme.primary)),
                       onPressed: () {
                         showSavingAvatarDialog();
                         _cropController.crop();
@@ -113,21 +122,24 @@ class _AvatarCropState extends OptimizedState<AvatarCrop> {
               ],
             ),
           ),
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          child: Center(
-            child: Column(
-              children: [
-                if (_imageData != null)
-                  Container(
-                    height: context.height / 2,
-                    child: Crop(
+          body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: Center(
+              child: Column(
+                children: [
+                  if (_imageData != null)
+                    Container(
+                      height: context.height / 2,
+                      child: Crop(
                         controller: _cropController,
                         image: _imageData!,
-                        onCropped: onCropped,
+                        onCropped: (result) {
+                          onCropped(result.image);
+                        },
                         onStatusChanged: (status) {
-                          if (status == CropStatus.ready || status == CropStatus.cropping) {
+                          if (status == CropStatus.ready ||
+                              status == CropStatus.cropping) {
                             setState(() {
                               _isLoading = false;
                             });
@@ -140,58 +152,71 @@ class _AvatarCropState extends OptimizedState<AvatarCrop> {
                         withCircleUi: true,
                         initialSize: 0.5,
                       ),
-                  ),
-                if (_imageData == null)
-                  Container(
-                    height: context.height / 2,
-                    child: Center(
-                      child: Text("Pick an image to crop it for a custom avatar", style: context.theme.textTheme.bodyLarge),
                     ),
-                  ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(color: context.theme.colorScheme.onPrimaryContainer)
+                  if (_imageData == null)
+                    Container(
+                      height: context.height / 2,
+                      child: Center(
+                        child: Text(
+                            "Pick an image to crop it for a custom avatar",
+                            style: context.theme.textTheme.bodyLarge),
+                      ),
                     ),
-                    backgroundColor: context.theme.colorScheme.primaryContainer,
-                  ),
-                  onPressed: () async {
-                    final res = await FilePicker.platform.pickFiles(withData: true, type: FileType.custom, allowedExtensions: ['png', 'jpg', 'jpeg']);
-                    if (res == null || res.files.isEmpty || res.files.first.bytes == null) return;
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(
+                              color: context
+                                  .theme.colorScheme.onPrimaryContainer)),
+                      backgroundColor:
+                          context.theme.colorScheme.primaryContainer,
+                    ),
+                    onPressed: () async {
+                      final res = await FilePicker.platform.pickFiles(
+                          withData: true,
+                          type: FileType.custom,
+                          allowedExtensions: ['png', 'jpg', 'jpeg']);
+                      if (res == null ||
+                          res.files.isEmpty ||
+                          res.files.first.bytes == null) {
+                        return;
+                      }
 
-                    if (res.files.first.name.endsWith("gif")) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text("Saving avatar...", style: context.theme.textTheme.titleLarge),
-                          content: Container(
-                            height: 70,
-                            child: Center(
-                              child: buildProgressIndicator(context),
+                      if (res.files.first.name.endsWith("gif")) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text("Saving avatar...",
+                                style: context.theme.textTheme.titleLarge),
+                            content: Container(
+                              height: 70,
+                              child: Center(
+                                child: buildProgressIndicator(context),
+                              ),
                             ),
+                            backgroundColor:
+                                context.theme.colorScheme.properSurface,
                           ),
-                          backgroundColor: context.theme.colorScheme.properSurface,
-                        ),
-                        barrierDismissible: false,
-                      );
-                      onCropped(res.files.first.bytes!);
-                    } else {
-                      _imageData = res.files.first.bytes!;
-                      setState(() {});
-                    }
-                  },
-                  child: Text(
-                    _imageData != null ? "Pick New Image" : "Pick Image",
-                    style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.onPrimaryContainer)
+                          barrierDismissible: false,
+                        );
+                        onCropped(res.files.first.bytes!);
+                      } else {
+                        _imageData = res.files.first.bytes!;
+                        setState(() {});
+                      }
+                    },
+                    child: Text(
+                        _imageData != null ? "Pick New Image" : "Pick Image",
+                        style: context.theme.textTheme.bodyLarge!.copyWith(
+                            color:
+                                context.theme.colorScheme.onPrimaryContainer)),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        )
-      ),
+          )),
     );
   }
 
@@ -199,7 +224,8 @@ class _AvatarCropState extends OptimizedState<AvatarCrop> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Saving avatar...", style: context.theme.textTheme.titleLarge),
+        title:
+            Text("Saving avatar...", style: context.theme.textTheme.titleLarge),
         content: Container(
           height: 70,
           child: Center(

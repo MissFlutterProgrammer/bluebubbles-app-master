@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:bluebubbles/app/components/avatars/contact_avatar_widget.dart';
 import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
@@ -27,7 +26,8 @@ class ContactCard extends StatefulWidget {
   State<ContactCard> createState() => _ContactCardState();
 }
 
-class _ContactCardState extends OptimizedState<ContactCard> with AutomaticKeepAliveClientMixin {
+class _ContactCardState extends OptimizedState<ContactCard>
+    with AutomaticKeepAliveClientMixin {
   Contact? contact;
 
   @override
@@ -100,11 +100,15 @@ class _ContactCardState extends OptimizedState<ContactCard> with AutomaticKeepAl
             if (kIsWeb || widget.file.path == null) {
               final content = base64.encode(widget.file.bytes!);
               html.AnchorElement(
-                  href: "data:application/octet-stream;charset=utf-16le;base64,$content")
+                href:
+                    "data:application/octet-stream;charset=utf-16le;base64,$content",
+              )
                 ..setAttribute("download", widget.file.name)
                 ..click();
             } else {
-              await OpenFilex.open("${fs.appDocDir.path}/attachments/${widget.attachment.guid!}/${basename(widget.file.path!)}", type: widget.attachment.mimeType);
+              await OpenFilex.open(
+                  "${fs.appDocDir.path}/attachments/${widget.attachment.guid!}/${basename(widget.file.path!)}",
+                  type: widget.attachment.mimeType);
             }
           },
           child: Padding(
@@ -113,9 +117,10 @@ class _ContactCardState extends OptimizedState<ContactCard> with AutomaticKeepAl
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Expanded(
-                  child:  Text(
+                  child: Text(
                     contact?.displayName ?? 'Unknown',
-                    style: context.theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                    style: context.theme.textTheme.bodyLarge!
+                        .copyWith(fontWeight: FontWeight.bold),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                     softWrap: true,
@@ -141,7 +146,7 @@ class _ContactCardState extends OptimizedState<ContactCard> with AutomaticKeepAl
                   ],
                 )
               ],
-            )
+            ),
           ),
         ),
       ),

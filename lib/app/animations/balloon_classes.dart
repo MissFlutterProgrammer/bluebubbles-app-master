@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -63,15 +62,18 @@ class BalloonController implements Listenable {
     }
 
     if (autoLaunchDuration != Duration.zero &&
-        (elapsedDuration - lastAutoLaunch >= autoLaunchDuration || elapsedDuration == Duration.zero)) {
+        (elapsedDuration - lastAutoLaunch >= autoLaunchDuration ||
+            elapsedDuration == Duration.zero)) {
       lastAutoLaunch = elapsedDuration;
-      balloons.add(BalloonObject(
-        random: random,
-        position: Point(windowSize.width, windowSize.height + 100),
-        color: primaries[random.nextInt(primaries.length)],
-        radius: (random.nextDouble() * 100).clamp(40, 100),
-        angle: pi / 2 - random.nextDouble() * pi / 6,
-      ));
+      balloons.add(
+        BalloonObject(
+          random: random,
+          position: Point(windowSize.width, windowSize.height + 100),
+          color: primaries[random.nextInt(primaries.length)],
+          radius: (random.nextDouble() * 100).clamp(40, 100),
+          angle: pi / 2 - random.nextDouble() * pi / 6,
+        ),
+      );
     }
 
     for (final balloon in balloons) {
@@ -101,13 +103,12 @@ class BalloonController implements Listenable {
 }
 
 class BalloonObject {
-  BalloonObject({
-    required this.random,
-    required this.position,
-    required this.color,
-    required this.radius,
-    required this.angle
-  });
+  BalloonObject(
+      {required this.random,
+      required this.position,
+      required this.color,
+      required this.radius,
+      required this.angle});
 
   final Random random;
   Point<double> position;
@@ -118,7 +119,8 @@ class BalloonObject {
   double velocity = 8;
 
   void update() {
-    position = Point(position.x - velocity * cos(angle), position.y - velocity * sin(angle));
+    position = Point(
+        position.x - velocity * cos(angle), position.y - velocity * sin(angle));
   }
 }
 

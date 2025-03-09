@@ -21,7 +21,8 @@ class SliverDecoration extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(BuildContext context, RenderSliverDecoration renderObject) {
+  void updateRenderObject(
+      BuildContext context, RenderSliverDecoration renderObject) {
     renderObject.color = color;
   }
 }
@@ -68,9 +69,11 @@ class RenderSliverDecoration extends RenderProxySliver {
     child!.layout(constraints, parentUsesSize: true);
     final SliverGeometry childLayoutGeometry = child!.geometry!;
     geometry = childLayoutGeometry;
-    double headerPosition = child!.constraints.viewportMainAxisExtent - child!.constraints.remainingPaintExtent;
+    double headerPosition = child!.constraints.viewportMainAxisExtent -
+        child!.constraints.remainingPaintExtent;
     BorderRadius borderRadius = this.borderRadius.resolve(TextDirection.ltr);
-    _clipRRect = borderRadius.toRRect(Rect.fromLTRB(0, 0, constraints.crossAxisExtent, child!.paintBounds.bottom));
+    _clipRRect = borderRadius.toRRect(Rect.fromLTRB(
+        0, 0, constraints.crossAxisExtent, child!.paintBounds.bottom));
     _offset = Offset(0, headerPosition);
     _clipRRect = _clipRRect!.shift(_offset!);
   }
@@ -78,7 +81,11 @@ class RenderSliverDecoration extends RenderProxySliver {
   @override
   void paint(PaintingContext context, Offset offset) {
     if (geometry!.visible && _clipRRect != null) {
-      context.canvas.drawRRect(_clipRRect!, Paint()..color = color..style = PaintingStyle.fill);
+      context.canvas.drawRRect(
+          _clipRRect!,
+          Paint()
+            ..color = color
+            ..style = PaintingStyle.fill);
     }
     if (child != null && child!.geometry!.visible) {
       assert(needsCompositing);

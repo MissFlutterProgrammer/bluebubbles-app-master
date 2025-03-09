@@ -19,9 +19,11 @@ class DeliveredIndicator extends CustomStateful<MessageWidgetController> {
   CustomState createState() => _DeliveredIndicatorState();
 }
 
-class _DeliveredIndicatorState extends CustomState<DeliveredIndicator, void, MessageWidgetController> {
+class _DeliveredIndicatorState
+    extends CustomState<DeliveredIndicator, void, MessageWidgetController> {
   Message get message => controller.message;
-  bool get showAvatar => (controller.cvController?.chat ?? cm.activeChat!.chat).isGroup;
+  bool get showAvatar =>
+      (controller.cvController?.chat ?? cm.activeChat!.chat).isGroup;
 
   @override
   void initState() {
@@ -38,10 +40,20 @@ class _DeliveredIndicatorState extends CustomState<DeliveredIndicator, void, Mes
   bool get shouldShow {
     if (controller.audioWasKept.value != null) return true;
     if (widget.forceShow || message.guid!.contains("temp")) return true;
-    if ((!message.isFromMe! && iOS) || (controller.parts.lastOrNull?.isUnsent ?? false)) return false;
-    final messages = ms(controller.cvController?.chat.guid ?? cm.activeChat!.chat.guid).struct.messages
-        .where((e) => (!iOS ? !e.isFromMe! : false) || (e.isFromMe! && (e.dateDelivered != null || e.dateRead != null)))
-        .toList()..sort(Message.sort);
+    if ((!message.isFromMe! && iOS) ||
+        (controller.parts.lastOrNull?.isUnsent ?? false)) {
+      return false;
+    }
+    final messages = ms(
+      controller.cvController?.chat.guid ?? cm.activeChat!.chat.guid,
+    )
+        .struct
+        .messages
+        .where((e) =>
+            (!iOS ? !e.isFromMe! : false) ||
+            (e.isFromMe! && (e.dateDelivered != null || e.dateRead != null)))
+        .toList()
+      ..sort(Message.sort);
     final index = messages.indexWhere((e) => e.guid == message.guid);
     if (index == 0) return true;
     if (index == 1 && message.isFromMe!) {
@@ -54,18 +66,26 @@ class _DeliveredIndicatorState extends CustomState<DeliveredIndicator, void, Mes
       }
     }
     if (index > 1 && message.isFromMe!) {
-      return messages.firstWhereOrNull((e) => e.dateRead != null)?.guid == message.guid;
+      return messages.firstWhereOrNull((e) => e.dateRead != null)?.guid ==
+          message.guid;
     }
     return false;
   }
 
   List<InlineSpan> buildTwoPiece(String action, String? date) {
     return [
-      TextSpan(text: "$action ",
-        style: context.theme.textTheme.labelSmall!.copyWith(fontWeight: FontWeight.w600, color: context.theme.colorScheme.outline),),
+      TextSpan(
+        text: "$action ",
+        style: context.theme.textTheme.labelSmall!.copyWith(
+            fontWeight: FontWeight.w600,
+            color: context.theme.colorScheme.outline),
+      ),
       if (date != null)
-        TextSpan(text: date,
-          style: context.theme.textTheme.labelSmall!.copyWith(color: context.theme.colorScheme.outline, fontWeight: FontWeight.normal))
+        TextSpan(
+            text: date,
+            style: context.theme.textTheme.labelSmall!.copyWith(
+                color: context.theme.colorScheme.outline,
+                fontWeight: FontWeight.normal))
     ];
   }
 
@@ -77,10 +97,16 @@ class _DeliveredIndicatorState extends CustomState<DeliveredIndicator, void, Mes
     } else if (message.dateRead != null) {
       return buildTwoPiece("Read", buildDate(message.dateRead));
     } else if (message.dateDelivered != null) {
-      return buildTwoPiece("Delivered${message.wasDeliveredQuietly && !message.didNotifyRecipient ? " Quietly" : ""}", ss.settings.showDeliveryTimestamps.value || !iOS || widget.forceShow ? buildDate(message.dateDelivered) : null);
+      return buildTwoPiece(
+          "Delivered${message.wasDeliveredQuietly && !message.didNotifyRecipient ? " Quietly" : ""}",
+          ss.settings.showDeliveryTimestamps.value || !iOS || widget.forceShow
+              ? buildDate(message.dateDelivered)
+              : null);
     } else if (message.isDelivered) {
       return buildTwoPiece("Delivered", null);
-    } else if (message.guid!.contains("temp") && !(controller.cvController?.chat ?? cm.activeChat!.chat).isGroup && !iOS) {
+    } else if (message.guid!.contains("temp") &&
+        !(controller.cvController?.chat ?? cm.activeChat!.chat).isGroup &&
+        !iOS) {
       return buildTwoPiece("Sending...", "");
     } else if (widget.forceShow) {
       return buildTwoPiece("Sent", buildDate(message.dateCreated));
@@ -95,15 +121,24 @@ class _DeliveredIndicatorState extends CustomState<DeliveredIndicator, void, Mes
       curve: Curves.easeInOut,
       alignment: Alignment.bottomCenter,
       duration: const Duration(milliseconds: 250),
-      child: Obx(() => shouldShow && getText().isNotEmpty ? Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15).add(EdgeInsets.only(
-          top: 3,
-          left: showAvatar || ss.settings.alwaysShowAvatars.value ? 35 : 0)
-        ),
-        child: Text.rich(TextSpan(
-          children: getText(),
-        )),
-      ) : const SizedBox.shrink()),
+      child: Obx(
+        () => shouldShow && getText().isNotEmpty
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15).add(
+                  EdgeInsets.only(
+                      top: 3,
+                      left: showAvatar || ss.settings.alwaysShowAvatars.value
+                          ? 35
+                          : 0),
+                ),
+                child: Text.rich(
+                  TextSpan(
+                    children: getText(),
+                  ),
+                ),
+              )
+            : const SizedBox.shrink(),
+      ),
     );
   }
 }

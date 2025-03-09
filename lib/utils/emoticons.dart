@@ -56,7 +56,8 @@ final RegExp emoticonRegex = RegExp(
     multiLine: true);
 
 // Replace all emoji and return the text, and the offsets and length differences of the replaced emoticons
-(String newText, List<(int, int)> offsetsAndDifferences) replaceEmoticons(String text) {
+(String newText, List<(int, int)> offsetsAndDifferences) replaceEmoticons(
+    String text) {
   List<(int, int)> offsets = [];
   text = text.replaceAllMapped(emoticonRegex, (match) {
     String emoji = emoticonMap[match.group(0)]!;

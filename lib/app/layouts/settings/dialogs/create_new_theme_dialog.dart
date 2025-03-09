@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CreateNewThemeDialog extends StatelessWidget {
-  CreateNewThemeDialog(this._context, this.isDarkMode, this.currentTheme, this.onComplete, {super.key});
+  CreateNewThemeDialog(
+      this._context, this.isDarkMode, this.currentTheme, this.onComplete,
+      {super.key});
   final BuildContext _context;
   final bool isDarkMode;
   final ThemeStruct currentTheme;
@@ -19,14 +21,26 @@ class CreateNewThemeDialog extends StatelessWidget {
       backgroundColor: context.theme.colorScheme.properSurface,
       actions: [
         TextButton(
-          child: Text("Cancel", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
+          child: Text(
+            "Cancel",
+            style: context.theme.textTheme.bodyLarge!.copyWith(
+              color: context.theme.colorScheme.primary,
+            ),
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         TextButton(
-          child: Text("OK", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
+          child: Text(
+            "OK",
+            style: context.theme.textTheme.bodyLarge!.copyWith(
+              color: context.theme.colorScheme.primary,
+            ),
+          ),
           onPressed: () {
-            if (ThemeStruct.findOne(controller.text) != null || controller.text.isEmpty) {
-              showSnackbar("Error", "Please use a unique name for your new theme");
+            if (ThemeStruct.findOne(controller.text) != null ||
+                controller.text.isEmpty) {
+              showSnackbar(
+                  "Error", "Please use a unique name for your new theme");
             } else {
               Navigator.of(kIsDesktop ? context : _context).pop();
               ThemeData finalData = currentTheme.data;
@@ -36,7 +50,10 @@ class CreateNewThemeDialog extends StatelessWidget {
               } else {
                 finalData = tuple.item1;
               }
-              ThemeStruct newTheme = ThemeStruct(themeData: finalData, name: controller.text);
+              ThemeStruct newTheme = ThemeStruct(
+                themeData: finalData,
+                name: controller.text,
+              );
               onComplete.call(newTheme);
             }
           },
@@ -46,7 +63,7 @@ class CreateNewThemeDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 15.0),
+            padding: const EdgeInsets.only(bottom: 15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -60,10 +77,11 @@ class CreateNewThemeDialog extends StatelessWidget {
                 ),
                 const SizedBox(width: 20),
                 Expanded(
-                    child: Text(
-                      "Your new theme will copy the colors currently displayed in the advanced theming menu",
-                      style: context.theme.textTheme.bodySmall!.copyWith(color: context.theme.colorScheme.properOnSurface),
-                    )
+                  child: Text(
+                    "Your new theme will copy the colors currently displayed in the advanced theming menu",
+                    style: context.theme.textTheme.bodySmall!.copyWith(
+                        color: context.theme.colorScheme.properOnSurface),
+                  ),
                 ),
               ],
             ),
@@ -73,18 +91,23 @@ class CreateNewThemeDialog extends StatelessWidget {
             decoration: InputDecoration(
               labelText: "Theme Name",
               enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: context.theme.colorScheme.outline,
-                  )),
+                borderSide: BorderSide(
+                  color: context.theme.colorScheme.outline,
+                ),
+              ),
               focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: context.theme.colorScheme.primary,
-                  )),
+                borderSide: BorderSide(
+                  color: context.theme.colorScheme.primary,
+                ),
+              ),
             ),
           ),
         ],
       ),
-      title: Text("Create a New Theme", style: context.theme.textTheme.titleLarge),
+      title: Text(
+        "Create a New Theme",
+        style: context.theme.textTheme.titleLarge,
+      ),
     );
   }
 }

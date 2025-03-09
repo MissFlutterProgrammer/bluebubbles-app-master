@@ -1,3 +1,5 @@
+// ignore_for_file: no_wildcard_variable_uses
+
 import 'package:bluebubbles/app/components/circle_progress_bar.dart';
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/message/attachment/other_file.dart';
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/message/attachment/video_player.dart';
@@ -25,7 +27,9 @@ class EmbeddedMedia extends CustomStateful<MessageWidgetController> {
   State<EmbeddedMedia> createState() => _EmbeddedMediaState();
 }
 
-class _EmbeddedMediaState extends CustomState<EmbeddedMedia, void, MessageWidgetController> with AutomaticKeepAliveClientMixin {
+class _EmbeddedMediaState
+    extends CustomState<EmbeddedMedia, void, MessageWidgetController>
+    with AutomaticKeepAliveClientMixin {
   Message get message => widget.message;
 
   dynamic content;
@@ -104,17 +108,25 @@ class _EmbeddedMediaState extends CustomState<EmbeddedMedia, void, MessageWidget
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (content is PlatformFile && content.bytes != null && content.name.endsWith(".png"))
+        if (content is PlatformFile &&
+            content.bytes != null &&
+            content.name.endsWith(".png"))
           Image.memory(
             content.bytes!,
             gaplessPlayback: true,
             filterQuality: FilterQuality.none,
             errorBuilder: (context, object, stacktrace) => Center(
               heightFactor: 1,
-              child: Text("Failed to display image", style: context.theme.textTheme.bodyLarge),
+              child: Text(
+                "Failed to display image",
+                style: context.theme.textTheme.bodyLarge,
+              ),
             ),
           ),
-        if (content is PlatformFile && content.bytes != null && content.name.toLowerCase().endsWith(".mov") && !kIsDesktop)
+        if (content is PlatformFile &&
+            content.bytes != null &&
+            content.name.toLowerCase().endsWith(".mov") &&
+            !kIsDesktop)
           VideoPlayer(
             file: content,
             attachment: Attachment(
@@ -123,7 +135,10 @@ class _EmbeddedMediaState extends CustomState<EmbeddedMedia, void, MessageWidget
             controller: controller.cvController,
             isFromMe: message.isFromMe!,
           ),
-        if (content is PlatformFile && content.bytes != null && content.name.toLowerCase().endsWith(".mov") && kIsDesktop)
+        if (content is PlatformFile &&
+            content.bytes != null &&
+            content.name.toLowerCase().endsWith(".mov") &&
+            kIsDesktop)
           OtherFile(
             attachment: Attachment(
               guid: message.guid,
@@ -132,9 +147,11 @@ class _EmbeddedMediaState extends CustomState<EmbeddedMedia, void, MessageWidget
           ),
         if (content is! PlatformFile)
           InkWell(
-            onTap: content is String ? () {
-              getContent();
-            } : null,
+            onTap: content is String
+                ? () {
+                    getContent();
+                  }
+                : null,
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Row(
@@ -147,30 +164,41 @@ class _EmbeddedMediaState extends CustomState<EmbeddedMedia, void, MessageWidget
                         children: [
                           Text(
                             getAppName(),
-                            style: context.theme.textTheme.bodyLarge!.apply(fontWeightDelta: 2),
+                            style: context.theme.textTheme.bodyLarge!
+                                .apply(fontWeightDelta: 2),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            content is Rx ? "Downloading media..." : "Failed to load media!",
-                            style: context.theme.textTheme.labelMedium!.copyWith(fontWeight: FontWeight.normal, color: context.theme.colorScheme.outline),
+                            content is Rx
+                                ? "Downloading media..."
+                                : "Failed to load media!",
+                            style:
+                                context.theme.textTheme.labelMedium!.copyWith(
+                              fontWeight: FontWeight.normal,
+                              color: context.theme.colorScheme.outline,
+                            ),
                             overflow: TextOverflow.clip,
                             maxLines: 2,
                           ),
-                        ]
-                    ),
+                        ]),
                   ),
                   if (content is Rx<Tuple2>)
                     SizedBox(
                       height: 40,
                       width: 40,
                       child: Center(
-                        child: Obx(() => CircleProgressBar(
-                          value: content.value.item2 > 0 ? content.value.item1 / content.value.item2 : 0,
-                          backgroundColor: context.theme.colorScheme.outline,
-                          foregroundColor: context.theme.colorScheme.properOnSurface,
-                        )),
+                        child: Obx(
+                          () => CircleProgressBar(
+                            value: content.value.item2 > 0
+                                ? content.value.item1 / content.value.item2
+                                : 0,
+                            backgroundColor: context.theme.colorScheme.outline,
+                            foregroundColor:
+                                context.theme.colorScheme.properOnSurface,
+                          ),
+                        ),
                       ),
                     ),
                   if (content is String)
@@ -178,7 +206,10 @@ class _EmbeddedMediaState extends CustomState<EmbeddedMedia, void, MessageWidget
                       height: 40,
                       width: 40,
                       child: Center(
-                        child: Icon(iOS ? CupertinoIcons.arrow_clockwise : Icons.refresh, size: 30),
+                        child: Icon(
+                          iOS ? CupertinoIcons.arrow_clockwise : Icons.refresh,
+                          size: 30,
+                        ),
                       ),
                     ),
                 ],

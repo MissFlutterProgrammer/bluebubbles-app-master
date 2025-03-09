@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/database/database.dart';
 import 'package:bluebubbles/objectbox.g.dart';
@@ -38,10 +37,9 @@ class Attachment {
 
   Map<String, dynamic>? metadata;
 
-  String? get dbMetadata => metadata == null
-      ? null : jsonEncode(metadata);
-  set dbMetadata(String? json) => metadata = json == null
-      ? null : jsonDecode(json) as Map<String, dynamic>;
+  String? get dbMetadata => metadata == null ? null : jsonEncode(metadata);
+  set dbMetadata(String? json) =>
+      metadata = json == null ? null : jsonDecode(json) as Map<String, dynamic>;
 
   Attachment({
     this.id,
@@ -63,7 +61,8 @@ class Attachment {
   /// Convert JSON to [Attachment]
   factory Attachment.fromMap(Map<String, dynamic> json) {
     String? mimeType = json["mimeType"];
-    if (json["uti"] == "com.apple.coreaudio_format" || json['transferName'].toString().endsWith(".caf")) {
+    if (json["uti"] == "com.apple.coreaudio_format" ||
+        json['transferName'].toString().endsWith(".caf")) {
       mimeType = "audio/caf";
     }
 
@@ -121,12 +120,16 @@ class Attachment {
     return Database.runInTransaction(TxMode.write, () {
       /// convert List<List<Attachment>> into just List<Attachment> (flatten it)
       final attachments = map.values.flattened.toList();
+
       /// find existing attachments
-      List<Attachment> existingAttachments =
-          Attachment.find(cond: Attachment_.guid.oneOf(attachments.map((e) => e.guid!).toList()));
+      List<Attachment> existingAttachments = Attachment.find(
+          cond:
+              Attachment_.guid.oneOf(attachments.map((e) => e.guid!).toList()));
+
       /// map existing attachment IDs to the attachments to save, if applicable
       for (Attachment a in attachments) {
-        final existing = existingAttachments.firstWhereOrNull((e) => e.guid == a.guid);
+        final existing =
+            existingAttachments.firstWhereOrNull((e) => e.guid == a.guid);
         if (existing != null) {
           a.id = existing.id;
         }
@@ -142,7 +145,8 @@ class Attachment {
   }
 
   /// replaces a temporary attachment with the new one from the server
-  static Future<Attachment> replaceAttachment(String? oldGuid, Attachment newAttachment) async {
+  static Future<Attachment> replaceAttachment(
+      String? oldGuid, Attachment newAttachment) async {
     if (kIsWeb) return newAttachment;
     Attachment? existing = Attachment.findOne(oldGuid!);
     if (existing == null) {
@@ -190,7 +194,8 @@ class Attachment {
   /// find an attachment by its guid
   static Attachment? findOne(String guid) {
     if (kIsWeb) return null;
-    final query = Database.attachments.query(Attachment_.guid.equals(guid)).build();
+    final query =
+        Database.attachments.query(Attachment_.guid.equals(guid)).build();
     query.limit = 1;
     final result = query.findFirst();
     query.close();
@@ -208,7 +213,8 @@ class Attachment {
   static void delete(String guid) {
     if (kIsWeb) return;
     Database.runInTransaction(TxMode.write, () {
-      final query = Database.attachments.query(Attachment_.guid.equals(guid)).build();
+      final query =
+          Database.attachments.query(Attachment_.guid.equals(guid)).build();
       final result = query.findFirst();
       query.close();
       if (result?.id != null) {
@@ -223,7 +229,11 @@ class Attachment {
 
   bool get hasValidSize => (width ?? 0) > 0 && (height ?? 0) > 0;
 
-  double get aspectRatio => hasValidSize ? (_isPortrait && height! < width! ?  (height! / width!).abs() : (width! / height!).abs()) : 0.78;
+  double get aspectRatio => hasValidSize
+      ? (_isPortrait && height! < width!
+          ? (height! / width!).abs()
+          : (width! / height!).abs())
+      : 0.78;
 
   String? get mimeStart => mimeType?.split("/").first;
 
@@ -263,7 +273,8 @@ class Attachment {
     attachment1.transferName ??= attachment2.transferName;
     attachment1.uti ??= attachment2.uti;
     attachment1.webUrl ??= attachment2.webUrl;
-    attachment1.metadata = mergeTopLevelDicts(attachment1.metadata, attachment2.metadata);
+    attachment1.metadata =
+        mergeTopLevelDicts(attachment1.metadata, attachment2.metadata);
     if (attachment2.hasLivePhoto) {
       attachment1.hasLivePhoto = attachment2.hasLivePhoto;
     }
@@ -274,21 +285,21 @@ class Attachment {
   }
 
   Map<String, dynamic> toMap() => {
-    "ROWID": id,
-    "originalROWID": originalROWID,
-    "guid": guid,
-    "uti": uti,
-    "mimeType": mimeType,
-    "isOutgoing": isOutgoing!,
-    "transferName": transferName,
-    "totalBytes": totalBytes,
-    "height": height,
-    "width": width,
-    "metadata": jsonEncode(metadata),
-    "hasLivePhoto": hasLivePhoto,
-  };
+        "ROWID": id,
+        "originalROWID": originalROWID,
+        "guid": guid,
+        "uti": uti,
+        "mimeType": mimeType,
+        "isOutgoing": isOutgoing!,
+        "transferName": transferName,
+        "totalBytes": totalBytes,
+        "height": height,
+        "width": width,
+        "metadata": jsonEncode(metadata),
+        "hasLivePhoto": hasLivePhoto,
+      };
 
-  bool  get _isPortrait {
+  bool get _isPortrait {
     if (metadata?['orientation'] == '1') return true;
     if (metadata?['orientation'] == 1) return true;
     if (metadata?['orientation'] == 'portrait') return true;

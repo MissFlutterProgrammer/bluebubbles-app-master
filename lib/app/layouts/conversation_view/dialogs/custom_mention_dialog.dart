@@ -5,8 +5,10 @@ import 'package:bluebubbles/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-Future<String?> showCustomMentionDialog(BuildContext context, Mentionable? mention) async {
-  final TextEditingController mentionController = TextEditingController(text: mention?.displayName);
+Future<String?> showCustomMentionDialog(
+    BuildContext context, Mentionable? mention) async {
+  final TextEditingController mentionController =
+      TextEditingController(text: mention?.displayName);
   String? changed;
   await showDialog(
       context: context,
@@ -14,11 +16,21 @@ Future<String?> showCustomMentionDialog(BuildContext context, Mentionable? menti
         return AlertDialog(
           actions: [
             TextButton(
-              child: Text("Cancel", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
+              child: Text(
+                "Cancel",
+                style: context.theme.textTheme.bodyLarge!.copyWith(
+                  color: context.theme.colorScheme.primary,
+                ),
+              ),
               onPressed: () => Get.back(),
             ),
             TextButton(
-              child: Text("OK", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
+              child: Text(
+                "OK",
+                style: context.theme.textTheme.bodyLarge!.copyWith(
+                  color: context.theme.colorScheme.primary,
+                ),
+              ),
               onPressed: () {
                 if (isNullOrEmptyString(mentionController.text)) {
                   changed = mention?.handle.displayName ?? "";
@@ -49,10 +61,12 @@ Future<String?> showCustomMentionDialog(BuildContext context, Mentionable? menti
               Get.back();
             },
           ),
-          title: Text("Custom Mention", style: context.theme.textTheme.titleLarge),
+          title: Text(
+            "Custom Mention",
+            style: context.theme.textTheme.titleLarge,
+          ),
           backgroundColor: context.theme.colorScheme.properSurface,
         );
-      }
-  );
+      });
   return changed;
 }

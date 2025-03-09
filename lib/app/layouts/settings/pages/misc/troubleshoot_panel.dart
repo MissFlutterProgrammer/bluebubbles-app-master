@@ -79,53 +79,50 @@ class _TroubleshootPanelState extends OptimizedState<TroubleshootPanel> {
                         onTap: () async {
                           final RxList<String> log = <String>[].obs;
                           showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                    backgroundColor:
-                                        context.theme.colorScheme.surface,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 20),
-                                    titlePadding:
-                                        const EdgeInsets.only(top: 15),
-                                    title: Text("Fetching contacts...",
-                                        style:
-                                            context.theme.textTheme.titleLarge),
-                                    content: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: SizedBox(
-                                        width: ns.width(context) * 4 / 5,
-                                        height: context.height * 1 / 3,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(25),
-                                            color: context
-                                                .theme.colorScheme.background,
-                                          ),
-                                          padding: const EdgeInsets.all(10),
-                                          child: Obx(() => ListView.builder(
-                                                physics:
-                                                    const AlwaysScrollableScrollPhysics(
-                                                        parent:
-                                                            BouncingScrollPhysics()),
-                                                itemBuilder: (context, index) {
-                                                  return Text(
-                                                    log[index],
-                                                    style: TextStyle(
-                                                      color: context
-                                                          .theme
-                                                          .colorScheme
-                                                          .onBackground,
-                                                      fontSize: 10,
-                                                    ),
-                                                  );
-                                                },
-                                                itemCount: log.length,
-                                              )),
-                                        ),
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              backgroundColor:
+                                  context.theme.colorScheme.surface,
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              titlePadding: const EdgeInsets.only(top: 15),
+                              title: Text("Fetching contacts...",
+                                  style: context.theme.textTheme.titleLarge),
+                              content: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  width: ns.width(context) * 4 / 5,
+                                  height: context.height * 1 / 3,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(25),
+                                      color: context.theme.colorScheme.surface,
+                                    ),
+                                    padding: const EdgeInsets.all(10),
+                                    child: Obx(
+                                      () => ListView.builder(
+                                        physics:
+                                            const AlwaysScrollableScrollPhysics(
+                                                parent:
+                                                    BouncingScrollPhysics()),
+                                        itemBuilder: (context, index) {
+                                          return Text(
+                                            log[index],
+                                            style: TextStyle(
+                                              color: context
+                                                  .theme.colorScheme.onSurface,
+                                              fontSize: 10,
+                                            ),
+                                          );
+                                        },
+                                        itemCount: log.length,
                                       ),
                                     ),
-                                  ));
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
                           await cs.fetchNetworkContacts(logger: (newLog) {
                             log.add(newLog);
                           });
@@ -149,7 +146,8 @@ class _TroubleshootPanelState extends OptimizedState<TroubleshootPanel> {
                   const LogLevelSelector(),
                   SettingsTile(
                     title: "View Latest Log",
-                    subtitle: "View the latest log file. Useful for debugging issues, in app.",
+                    subtitle:
+                        "View the latest log file. Useful for debugging issues, in app.",
                     leading: const SettingsLeadingIcon(
                       iosIcon: CupertinoIcons.doc_append,
                       materialIcon: Icons.document_scanner_rounded,
@@ -177,7 +175,8 @@ class _TroubleshootPanelState extends OptimizedState<TroubleshootPanel> {
                             "${logFileCount.value} log file(s) | ${logFileSize.value} KB",
                         onTap: () async {
                           if (logFileCount.value == 0) {
-                            showSnackbar("No Logs", "There are no logs to download!");
+                            showSnackbar(
+                                "No Logs", "There are no logs to download!");
                             return;
                           }
 
@@ -185,12 +184,14 @@ class _TroubleshootPanelState extends OptimizedState<TroubleshootPanel> {
                           isExportingLogs = true;
 
                           try {
-                            showSnackbar("Please Wait", "Compressing ${logFileCount.value} log file(s)...");
+                            showSnackbar("Please Wait",
+                                "Compressing ${logFileCount.value} log file(s)...");
                             String filePath = Logger.compressLogs();
                             final File zippedLogFile = File(filePath);
 
                             // Copy the file to downloads
-                            String newPath = await fs.saveToDownloads(zippedLogFile);
+                            String newPath =
+                                await fs.saveToDownloads(zippedLogFile);
 
                             // Delete the original file
                             zippedLogFile.deleteSync();
@@ -205,8 +206,10 @@ class _TroubleshootPanelState extends OptimizedState<TroubleshootPanel> {
                               },
                             );
                           } catch (ex, stacktrace) {
-                            Logger.error("Failed to export logs!", error: ex, trace: stacktrace);
-                            showSnackbar("Failed to export logs!", "Error: ${ex.toString()}");
+                            Logger.error("Failed to export logs!",
+                                error: ex, trace: stacktrace);
+                            showSnackbar("Failed to export logs!",
+                                "Error: ${ex.toString()}");
                           } finally {
                             isExportingLogs = false;
                           }
@@ -280,38 +283,40 @@ class _TroubleshootPanelState extends OptimizedState<TroubleshootPanel> {
                           }
                         },
                         leading: Obx(() => SettingsLeadingIcon(
-                          iosIcon: CupertinoIcons.battery_25,
-                          materialIcon: Icons.battery_5_bar,
-                          containerColor: optimizationsDisabled.value ? Colors.green : Colors.redAccent,
-                        )),
+                              iosIcon: CupertinoIcons.battery_25,
+                              materialIcon: Icons.battery_5_bar,
+                              containerColor: optimizationsDisabled.value
+                                  ? Colors.green
+                                  : Colors.redAccent,
+                            )),
                         title: "Disable Battery Optimizations",
-                        subtitle: "Allow app to run in the background via the OS. This may not do anything on some devices.",
+                        subtitle:
+                            "Allow app to run in the background via the OS. This may not do anything on some devices.",
                         trailing: Obx(() => !optimizationsDisabled.value
                             ? const NextButton()
                             : Icon(Icons.check,
                                 color: context.theme.colorScheme.outline))),
                   ]),
                 SettingsHeader(
-                  iosSubtitle: iosSubtitle,
-                  materialSubtitle: materialSubtitle,
-                  text: "Troubleshooting"),
-                SettingsSection(
-                  backgroundColor: tileColor,
-                  children: [
-                    SettingsTile(
-                        onTap: () async {
-                          await ss.prefs.remove("lastOpenedChat");
-                          showSnackbar("Success", "Successfully cleared the last opened chat!");
-                        },
-                        leading: const SettingsLeadingIcon(
-                          iosIcon: CupertinoIcons.rectangle_badge_xmark,
-                          materialIcon: Icons.folder_delete_outlined,
-                          containerColor: Colors.orange,
-                        ),
-                        title: "Clear Last Opened Chat",
-                        subtitle: "Use this if you are experiencing the app opening an incorrect chat"
-                    )
-                  ]),
+                    iosSubtitle: iosSubtitle,
+                    materialSubtitle: materialSubtitle,
+                    text: "Troubleshooting"),
+                SettingsSection(backgroundColor: tileColor, children: [
+                  SettingsTile(
+                      onTap: () async {
+                        await ss.prefs.remove("lastOpenedChat");
+                        showSnackbar("Success",
+                            "Successfully cleared the last opened chat!");
+                      },
+                      leading: const SettingsLeadingIcon(
+                        iosIcon: CupertinoIcons.rectangle_badge_xmark,
+                        materialIcon: Icons.folder_delete_outlined,
+                        containerColor: Colors.orange,
+                      ),
+                      title: "Clear Last Opened Chat",
+                      subtitle:
+                          "Use this if you are experiencing the app opening an incorrect chat")
+                ]),
                 if (!kIsWeb)
                   SettingsHeader(
                       iosSubtitle: iosSubtitle,
@@ -333,7 +338,8 @@ class _TroubleshootPanelState extends OptimizedState<TroubleshootPanel> {
                             showSnackbar("Success",
                                 "Successfully re-synced handles! You may need to close and re-open the app for changes to take effect.");
                           } catch (ex, stacktrace) {
-                            Logger.error("Failed to reset contacts!", error: ex, trace: stacktrace);
+                            Logger.error("Failed to reset contacts!",
+                                error: ex, trace: stacktrace);
 
                             showSnackbar("Failed to re-sync handles!",
                                 "Error: ${ex.toString()}");
@@ -359,11 +365,13 @@ class _TroubleshootPanelState extends OptimizedState<TroubleshootPanel> {
                     const SettingsDivider(padding: EdgeInsets.only(left: 16.0)),
                     SettingsTile(
                         title: "Sync Chat Info",
-                        subtitle: "This will re-sync all chat data & icons from the server to ensure that you have the most up-to-date information.\n\nNote: This will overwrite any group chat icons that are not locked!",
+                        subtitle:
+                            "This will re-sync all chat data & icons from the server to ensure that you have the most up-to-date information.\n\nNote: This will overwrite any group chat icons that are not locked!",
                         onTap: () async {
                           resyncingChats.value = true;
                           try {
-                            showSnackbar("Please Wait...", "This may take a few minutes.");
+                            showSnackbar("Please Wait...",
+                                "This may take a few minutes.");
 
                             final chatSyncer = ChatSyncManager();
                             await chatSyncer.start();
@@ -372,7 +380,8 @@ class _TroubleshootPanelState extends OptimizedState<TroubleshootPanel> {
                             showSnackbar("Success",
                                 "Successfully synced your chat info! You may need to close and re-open the app for changes to take effect.");
                           } catch (ex, stacktrace) {
-                            Logger.error("Failed to sync chat info!", error: ex, trace: stacktrace);
+                            Logger.error("Failed to sync chat info!",
+                                error: ex, trace: stacktrace);
                             showSnackbar("Failed to sync chat info!",
                                 "Error: ${ex.toString()}");
                           } finally {

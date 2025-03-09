@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bluebubbles/utils/logger/logger.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/database/html/attachment.dart';
@@ -36,7 +35,9 @@ String getFullChatTitle(Chat _chat) {
     } else if (titles.length <= 4) {
       title = titles.join(", ");
       int pos = title.lastIndexOf(", ");
-      if (pos != -1) title = "${title.substring(0, pos)} & ${title.substring(pos + 2)}";
+      if (pos != -1) {
+        title = "${title.substring(0, pos)} & ${title.substring(pos + 2)}";
+      }
     } else {
       title = titles.sublist(0, 3).join(", ");
       title = "$title & ${titles.length - 3} others";
@@ -65,6 +66,7 @@ class Chat {
     title ??= getTitle();
     return title!;
   }
+
   String? displayName;
   List<Handle> _participants = [];
   List<Handle> get participants {
@@ -73,6 +75,7 @@ class Chat {
     }
     return _participants;
   }
+
   bool? autoSendReadReceipts = true;
   bool? autoSendTypingIndicators = true;
   String? textFieldText;
@@ -80,12 +83,15 @@ class Chat {
   Message? _latestMessage;
   Message get latestMessage {
     if (_latestMessage != null) return _latestMessage!;
-    _latestMessage = Chat.getMessages(this, limit: 1, getDetails: true).firstOrNull ?? Message(
-      dateCreated: DateTime.fromMillisecondsSinceEpoch(0),
-      guid: guid,
-    );
+    _latestMessage =
+        Chat.getMessages(this, limit: 1, getDetails: true).firstOrNull ??
+            Message(
+              dateCreated: DateTime.fromMillisecondsSinceEpoch(0),
+              guid: guid,
+            );
     return _latestMessage!;
   }
+
   set latestMessage(Message m) => _latestMessage = m;
   DateTime? dbOnlyLatestMessageDate;
   DateTime? dateDeleted;
@@ -140,7 +146,9 @@ class Chat {
   }
 
   factory Chat.fromMap(Map<String, dynamic> json) {
-    final message = json['lastMessage'] != null ? Message.fromMap(json['lastMessage']) : null;
+    final message = json['lastMessage'] != null
+        ? Message.fromMap(json['lastMessage'])
+        : null;
     return Chat(
       id: json["ROWID"] ?? json["id"],
       guid: json["guid"],
@@ -154,7 +162,9 @@ class Chat {
       displayName: json["displayName"],
       customAvatar: json['_customAvatarPath'],
       pinnedIndex: json['_pinIndex'],
-      participants: (json['participants'] as List? ?? []).map((e) => Handle.fromMap(e)).toList(),
+      participants: (json['participants'] as List? ?? [])
+          .map((e) => Handle.fromMap(e))
+          .toList(),
       autoSendReadReceipts: json["autoSendReadReceipts"],
       autoSendTypingIndicators: json["autoSendTypingIndicators"],
       dateDeleted: parseDate(json["dateDeleted"]),
@@ -206,7 +216,13 @@ class Chat {
   /// Get a chat's title
   String getChatCreatorSubtitle() {
     // generate names for group chats or DMs
-    List<String> titles = participants.map((e) => e.displayName.trim().split(isGroup && e.contact != null ? " " : String.fromCharCode(65532)).first).toList();
+    List<String> titles = participants
+        .map((e) => e.displayName
+            .trim()
+            .split(
+                isGroup && e.contact != null ? " " : String.fromCharCode(65532))
+            .first)
+        .toList();
     if (titles.isEmpty) {
       if (chatIdentifier!.startsWith("urn:biz")) {
         return "Business Chat";
@@ -248,7 +264,8 @@ class Chat {
       return individuals.contains(message?.handle?.address ?? "");
     } else if (muteType == "temporary_mute") {
       DateTime time = DateTime.parse(muteArgs!);
-      bool shouldMute = DateTime.now().toLocal().difference(time).inSeconds.isNegative;
+      bool shouldMute =
+          DateTime.now().toLocal().difference(time).inSeconds.isNegative;
       if (!shouldMute) {
         toggleMute(false);
         muteType = null;
@@ -277,7 +294,10 @@ class Chat {
     return;
   }
 
-  Chat toggleHasUnread(bool hasUnread, {bool force = false, bool clearLocalNotifications = true, bool privateMark = true}) {
+  Chat toggleHasUnread(bool hasUnread,
+      {bool force = false,
+      bool clearLocalNotifications = true,
+      bool privateMark = true}) {
     if (hasUnreadMessage == hasUnread && !force) return this;
     if (!cm.isChatActive(guid) || !hasUnread || force) {
       hasUnreadMessage = hasUnread;
@@ -285,7 +305,9 @@ class Chat {
     }
 
     try {
-      if (privateMark && ss.settings.enablePrivateAPI.value && ss.settings.privateMarkChatAsRead.value) {
+      if (privateMark &&
+          ss.settings.enablePrivateAPI.value &&
+          ss.settings.privateMarkChatAsRead.value) {
         if (!hasUnread && autoSendReadReceipts!) {
           http.markChatRead(guid);
         } else if (hasUnread) {
@@ -297,7 +319,10 @@ class Chat {
     return this;
   }
 
-  Future<Chat> addMessage(Message message, {bool changeUnreadStatus = true, bool checkForMessageText = true, bool clearNotificationsIfFromMe = true}) async {
+  Future<Chat> addMessage(Message message,
+      {bool changeUnreadStatus = true,
+      bool checkForMessageText = true,
+      bool clearNotificationsIfFromMe = true}) async {
     // Save the message
     Message? latest = latestMessage;
     Message? newMessage;
@@ -307,7 +332,10 @@ class Chat {
     } catch (ex, stacktrace) {
       newMessage = Message.findOne(guid: message.guid);
       if (newMessage == null) {
-        Logger.error("Failed to add message (GUID: ${message.guid}) to chat (GUID: $guid)", error: ex, trace: stacktrace);
+        Logger.error(
+            "Failed to add message (GUID: ${message.guid}) to chat (GUID: $guid)",
+            error: ex,
+            trace: stacktrace);
       }
     }
     bool isNewer = false;
@@ -315,8 +343,9 @@ class Chat {
     // If the message was saved correctly, update this chat's latestMessage info,
     // but only if the incoming message's date is newer
     if ((newMessage?.id != null || kIsWeb) && checkForMessageText) {
-      isNewer = message.dateCreated!.isAfter(latest.dateCreated!)
-          || (message.guid != latest.guid && message.dateCreated == latest.dateCreated);
+      isNewer = message.dateCreated!.isAfter(latest.dateCreated!) ||
+          (message.guid != latest.guid &&
+              message.dateCreated == latest.dateCreated);
       if (isNewer) {
         _latestMessage = message;
         dateDeleted = null;
@@ -340,7 +369,9 @@ class Chat {
       // If the message is from me, mark it unread
       // If the message is not from the same chat as the current chat, mark unread
       if (message.isFromMe!) {
-        toggleHasUnread(false, clearLocalNotifications: clearNotificationsIfFromMe, force: cm.isChatActive(guid));
+        toggleHasUnread(false,
+            clearLocalNotifications: clearNotificationsIfFromMe,
+            force: cm.isChatActive(guid));
       } else if (!cm.isChatActive(guid)) {
         toggleHasUnread(true);
       }
@@ -369,7 +400,8 @@ class Chat {
     return null;
   }
 
-  static List<Attachment> getAttachments(Chat chat, {int offset = 0, int limit = 25}) {
+  static List<Attachment> getAttachments(Chat chat,
+      {int offset = 0, int limit = 25}) {
     return [];
   }
 
@@ -378,12 +410,18 @@ class Chat {
   }
 
   static List<Message> getMessages(Chat chat,
-      {int offset = 0, int limit = 25, bool includeDeleted = false, bool getDetails = false}) {
+      {int offset = 0,
+      int limit = 25,
+      bool includeDeleted = false,
+      bool getDetails = false}) {
     return [];
   }
 
   static Future<List<Message>> getMessagesAsync(Chat chat,
-      {int offset = 0, int limit = 25, bool includeDeleted = false, int? searchAround}) async {
+      {int offset = 0,
+      int limit = 25,
+      bool includeDeleted = false,
+      int? searchAround}) async {
     return [];
   }
 
@@ -393,7 +431,9 @@ class Chat {
 
   void webSyncParticipants() {
     // ignore: argument_type_not_assignable, return_of_invalid_type, invalid_assignment, for_in_of_invalid_element_type
-    _participants = chats.webCachedHandles.where((e) => _participants.map((e2) => e2.address).contains(e.address)).toList();
+    _participants = chats.webCachedHandles
+        .where((e) => _participants.map((e2) => e2.address).contains(e.address))
+        .toList();
   }
 
   Chat addParticipant(Handle participant) {
@@ -460,17 +500,20 @@ class Chat {
     if (id == null) return this;
     this.autoSendTypingIndicators = autoSendTypingIndicators;
     save(updateAutoSendTypingIndicators: true);
-    if (!(autoSendTypingIndicators ?? ss.settings.privateSendTypingIndicators.value)) {
+    if (!(autoSendTypingIndicators ??
+        ss.settings.privateSendTypingIndicators.value)) {
       socket.sendMessage("stopped-typing", {"chatGuid": guid});
     }
     return this;
   }
 
-  static Future<Chat?> findOneWeb({String? guid, String? chatIdentifier}) async {
+  static Future<Chat?> findOneWeb(
+      {String? guid, String? chatIdentifier}) async {
     if (guid != null) {
       return chats.chats.firstWhereOrNull((e) => e.guid == guid) as Chat;
     } else if (chatIdentifier != null) {
-      return chats.chats.firstWhereOrNull((e) => e.chatIdentifier == chatIdentifier) as Chat;
+      return chats.chats
+          .firstWhereOrNull((e) => e.chatIdentifier == chatIdentifier) as Chat;
     }
     return null;
   }
@@ -483,7 +526,8 @@ class Chat {
     throw Exception("Use socket to get chats on Web!");
   }
 
-  static Future<List<Chat>> syncLatestMessages(List<Chat> chats, bool toggleUnread) async {
+  static Future<List<Chat>> syncLatestMessages(
+      List<Chat> chats, bool toggleUnread) async {
     return chats;
   }
 
@@ -491,7 +535,8 @@ class Chat {
     return chats;
   }
 
-  static Future<List<Message>> bulkSyncMessages(Chat chat, List<Message> messages) async {
+  static Future<List<Message>> bulkSyncMessages(
+      Chat chat, List<Message> messages) async {
     return messages;
   }
 
@@ -538,44 +583,56 @@ class Chat {
 
   static int sort(Chat? a, Chat? b) {
     // If they both are pinned & ordered, reflect the order
-    if (a!.isPinned! && b!.isPinned! && a.pinIndex != null && b.pinIndex != null) {
+    if (a!.isPinned! &&
+        b!.isPinned! &&
+        a.pinIndex != null &&
+        b.pinIndex != null) {
       return a.pinIndex!.compareTo(b.pinIndex!);
     }
 
     // If b is pinned & ordered, but a isn't either pinned or ordered, return accordingly
-    if (b!.isPinned! && b.pinIndex != null && (!a.isPinned! || a.pinIndex == null)) return 1;
+    if (b!.isPinned! &&
+        b.pinIndex != null &&
+        (!a.isPinned! || a.pinIndex == null)) {
+      return 1;
+    }
     // If a is pinned & ordered, but b isn't either pinned or ordered, return accordingly
-    if (a.isPinned! && a.pinIndex != null && (!b.isPinned! || b.pinIndex == null)) return -1;
+    if (a.isPinned! &&
+        a.pinIndex != null &&
+        (!b.isPinned! || b.pinIndex == null)) {
+      return -1;
+    }
 
     // Compare when one is pinned and the other isn't
     if (!a.isPinned! && b.isPinned!) return 1;
     if (a.isPinned! && !b.isPinned!) return -1;
 
     // Compare the last message dates
-    return -(a.latestMessage.dateCreated)!.compareTo(b.latestMessage.dateCreated!);
+    return -(a.latestMessage.dateCreated)!
+        .compareTo(b.latestMessage.dateCreated!);
   }
 
   static Future<void> getIcon(Chat c, {bool force = false}) async {}
 
   Map<String, dynamic> toMap() => {
-    "ROWID": id,
-    "guid": guid,
-    "chatIdentifier": chatIdentifier,
-    "isArchived": isArchived!,
-    "muteType": muteType,
-    "muteArgs": muteArgs,
-    "isPinned": isPinned!,
-    "displayName": displayName,
-    "participants": participants.map((item) => item.toMap()).toList(),
-    "hasUnreadMessage": hasUnreadMessage!,
-    "_customAvatarPath": _customAvatarPath.value,
-    "_pinIndex": _pinIndex.value,
-    "autoSendReadReceipts": autoSendReadReceipts!,
-    "autoSendTypingIndicators": autoSendTypingIndicators!,
-    "dateDeleted": dateDeleted?.millisecondsSinceEpoch,
-    "style": style,
-    "lockChatName": lockChatName,
-    "lockChatIcon": lockChatIcon,
-    "lastReadMessageGuid": lastReadMessageGuid,
-  };
+        "ROWID": id,
+        "guid": guid,
+        "chatIdentifier": chatIdentifier,
+        "isArchived": isArchived!,
+        "muteType": muteType,
+        "muteArgs": muteArgs,
+        "isPinned": isPinned!,
+        "displayName": displayName,
+        "participants": participants.map((item) => item.toMap()).toList(),
+        "hasUnreadMessage": hasUnreadMessage!,
+        "_customAvatarPath": _customAvatarPath.value,
+        "_pinIndex": _pinIndex.value,
+        "autoSendReadReceipts": autoSendReadReceipts!,
+        "autoSendTypingIndicators": autoSendTypingIndicators!,
+        "dateDeleted": dateDeleted?.millisecondsSinceEpoch,
+        "style": style,
+        "lockChatName": lockChatName,
+        "lockChatIcon": lockChatIcon,
+        "lastReadMessageGuid": lastReadMessageGuid,
+      };
 }

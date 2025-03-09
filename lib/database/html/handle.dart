@@ -38,10 +38,14 @@ class Handle {
     if (contact != null) return contact!.displayName;
     return address.contains("@") ? address : (formattedAddress ?? address);
   }
+
   String? get initials {
     // Remove any numbers, certain symbols, and non-alphabet characters
     if (address.startsWith("urn:biz")) return null;
-    String importantChars = displayName.toUpperCase().replaceAll(RegExp(r'[^a-zA-Z _-]'), "").trim();
+    String importantChars = displayName
+        .toUpperCase()
+        .replaceAll(RegExp(r'[^a-zA-Z _-]'), "")
+        .trim();
     if (importantChars.isEmpty) return null;
 
     // Split by a space or special character delimiter, take each of the items and
@@ -76,22 +80,24 @@ class Handle {
   }
 
   factory Handle.fromMap(Map<String, dynamic> json) => Handle(
-    id: json["ROWID"] ?? json["id"],
-    originalROWID: json["originalROWID"],
-    address: json["address"],
-    service: json["service"] ?? "iMessage",
-    uniqueAddressAndService: json["uniqueAddrAndService"] ?? "${json["address"]}/${json["service"] ?? "iMessage"}",
-    formattedAddress: json["formattedAddress"],
-    country: json["country"],
-    handleColor: json["color"],
-    defaultPhone: json['defaultPhone'],
-  );
+        id: json["ROWID"] ?? json["id"],
+        originalROWID: json["originalROWID"],
+        address: json["address"],
+        service: json["service"] ?? "iMessage",
+        uniqueAddressAndService: json["uniqueAddrAndService"] ??
+            "${json["address"]}/${json["service"] ?? "iMessage"}",
+        formattedAddress: json["formattedAddress"],
+        country: json["country"],
+        handleColor: json["color"],
+        defaultPhone: json['defaultPhone'],
+      );
 
   Handle save({updateColor = false}) {
     return this;
   }
 
-  static List<Handle> bulkSave(List<Handle> handles, {bool matchOnOriginalROWID = false}) {
+  static List<Handle> bulkSave(List<Handle> handles,
+      {bool matchOnOriginalROWID = false}) {
     return [];
   }
 
@@ -113,9 +119,15 @@ class Handle {
     return this;
   }
 
-  static Handle? findOne({int? id, int? originalROWID, Tuple2<String, String>? addressAndService}) {
+  static Handle? findOne(
+      {int? id,
+      int? originalROWID,
+      Tuple2<String, String>? addressAndService}) {
     // ignore: argument_type_not_assignable, return_of_invalid_type, invalid_assignment, for_in_of_invalid_element_type
-    return chats.webCachedHandles.firstWhereOrNull((e) => originalROWID != null ? e.originalROWID == originalROWID : e.uniqueAddressAndService == "${addressAndService?.item1}/${addressAndService?.item2}");
+    return chats.webCachedHandles.firstWhereOrNull((e) => originalROWID != null
+        ? e.originalROWID == originalROWID
+        : e.uniqueAddressAndService ==
+            "${addressAndService?.item1}/${addressAndService?.item2}");
   }
 
   static List<Handle> find() {
@@ -139,7 +151,6 @@ class Handle {
   }
 
   Map<String, dynamic> toMap({bool includeObjects = false}) {
-
     final output = {
       "ROWID": id,
       "originalROWID": originalROWID,

@@ -11,23 +11,35 @@ void showMetadataDialog(Attachment a, BuildContext context) {
     'filename': a.transferName,
     'mime': a.mimeType,
   }..addAll(a.metadata ?? {});
-  for (MapEntry entry in metadataMap.entries.where((element) => element.value != null)) {
-    metaWidgets.add(RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(text: "${entry.key}: ", style: context.theme.textTheme.bodyLarge!.apply(fontWeightDelta: 2)),
-          TextSpan(text: entry.value.toString(), style: context.theme.textTheme.bodyLarge)
-        ],
+  for (MapEntry entry
+      in metadataMap.entries.where((element) => element.value != null)) {
+    metaWidgets.add(
+      RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: "${entry.key}: ",
+              style:
+                  context.theme.textTheme.bodyLarge!.apply(fontWeightDelta: 2),
+            ),
+            TextSpan(
+              text: entry.value.toString(),
+              style: context.theme.textTheme.bodyLarge,
+            )
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   if (metaWidgets.isEmpty) {
-    metaWidgets.add(Text(
-      "No metadata available",
-      style: context.theme.textTheme.bodyLarge,
-      textAlign: TextAlign.center,
-    ));
+    metaWidgets.add(
+      Text(
+        "No metadata available",
+        style: context.theme.textTheme.bodyLarge,
+        textAlign: TextAlign.center,
+      ),
+    );
   }
 
   showDialog(
@@ -44,8 +56,8 @@ void showMetadataDialog(Attachment a, BuildContext context) {
         child: Container(
           padding: const EdgeInsets.all(10.0),
           decoration: BoxDecoration(
-            color: context.theme.colorScheme.background,
-            borderRadius: BorderRadius.circular(10)
+            color: context.theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(10),
           ),
           child: ListView(
             physics: ThemeSwitcher.getScrollPhysics(),
@@ -57,7 +69,9 @@ void showMetadataDialog(Attachment a, BuildContext context) {
         TextButton(
           child: Text(
             "Close",
-            style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)
+            style: context.theme.textTheme.bodyLarge!.copyWith(
+              color: context.theme.colorScheme.primary,
+            ),
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),

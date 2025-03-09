@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:bluebubbles/helpers/ui/theme_helpers.dart';
 import 'package:bluebubbles/app/animations/love_classes.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +29,7 @@ class Love extends LeafRenderObjectWidget {
 class RenderLove extends RenderBox {
   RenderLove({
     required LoveController controller,
-  })   : _controller = controller;
+  }) : _controller = controller;
 
   LoveController get controller => _controller;
   LoveController _controller;
@@ -95,22 +97,29 @@ class RenderLove extends RenderBox {
       p.moveTo(x, y + d / 4);
       p.quadraticBezierTo(x, y, x + d / 4, y);
       p.quadraticBezierTo(x + d / 2, y, x + d / 2, y + d / 4);
-      p.quadraticBezierTo(x + d / 2, y, x + d * 3/4, y);
+      p.quadraticBezierTo(x + d / 2, y, x + d * 3 / 4, y);
       p.quadraticBezierTo(x + d, y, x + d, y + d / 4);
-      p.quadraticBezierTo(x + d, y + d / 2, x + d * 3/4, y + d * 3/4);
+      p.quadraticBezierTo(x + d, y + d / 2, x + d * 3 / 4, y + d * 3 / 4);
       p.lineTo(x + d / 2, y + d);
-      p.lineTo(x + d / 4, y + d * 3/4);
+      p.lineTo(x + d / 4, y + d * 3 / 4);
       p.quadraticBezierTo(x, y + d / 2, x, y + d / 4);
 
-      canvas.drawPath(p, Paint()
-        ..style = PaintingStyle.fill
-        ..shader = RadialGradient(
-            colors: [
-              Colors.red.darkenAmount(0.2).withOpacity(0.7),
-              Colors.red.lightenAmount(0.1).withOpacity(0.7)
-            ],
-            stops: [0, 0.7]
-        ).createShader(Rect.fromCircle(center: Offset(x + d * 3/4, y + d / 4), radius: d * 1.5))
+      canvas.drawPath(
+        p,
+        Paint()
+          ..style = PaintingStyle.fill
+          ..shader = RadialGradient(colors: [
+            Colors.red.darkenAmount(0.2).withOpacity(0.7),
+            Colors.red.lightenAmount(0.1).withOpacity(0.7)
+          ], stops: [
+            0,
+            0.7
+          ]).createShader(
+            Rect.fromCircle(
+              center: Offset(x + d * 3 / 4, y + d / 4),
+              radius: d * 1.5,
+            ),
+          ),
       );
     }
   }

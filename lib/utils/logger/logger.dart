@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:archive/archive_io.dart';
 import 'package:bluebubbles/services/services.dart';
 import 'package:bluebubbles/utils/logger/outputs/log_stream_output.dart';

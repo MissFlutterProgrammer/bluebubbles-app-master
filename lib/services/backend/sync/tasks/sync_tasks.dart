@@ -1,5 +1,6 @@
-import 'dart:async';
+// ignore_for_file: deprecated_member_use
 
+import 'dart:async';
 import 'package:async_task/async_task.dart';
 import 'package:bluebubbles/helpers/types/helpers/message_helper.dart';
 import 'package:bluebubbles/helpers/backend/sync/sync_helpers.dart';
@@ -14,7 +15,8 @@ class BulkSyncChats extends AsyncTask<List<dynamic>, List<Chat>> {
   BulkSyncChats(this.params);
 
   @override
-  AsyncTask<List<dynamic>, List<Chat>> instantiate(List<dynamic> parameters, [Map<String, SharedData>? sharedData]) {
+  AsyncTask<List<dynamic>, List<Chat>> instantiate(List<dynamic> parameters,
+      [Map<String, SharedData>? sharedData]) {
     return BulkSyncChats(parameters);
   }
 
@@ -39,7 +41,8 @@ class BulkSyncChats extends AsyncTask<List<dynamic>, List<Chat>> {
       /// Takes the list of chats from [params] and saves it
       /// to the objectbox store.
       List<Chat> inputChats = params[0];
-      List<String> inputChatGuids = inputChats.map((element) => element.guid).toList();
+      List<String> inputChatGuids =
+          inputChats.map((element) => element.guid).toList();
 
       // 0. Create map for the chats and handles to save
       Map<String, Handle> handlesToSave = {};
@@ -64,14 +67,26 @@ class BulkSyncChats extends AsyncTask<List<dynamic>, List<Chat>> {
 
       // 1. Check for existing handles and save new ones
       List<Handle> inputHandles = handlesToSave.values.toList();
-      List<String> inputHandleAddressesAndServices = inputHandles.map((element) => element.uniqueAddressAndService).toList();
-      final handleQuery = Database.handles.query(Handle_.uniqueAddressAndService.oneOf(inputHandleAddressesAndServices)).build();
-      List<String> existingHandleAddressesAndServices = handleQuery.find().map((e) => e.uniqueAddressAndService).toList();
-      inputHandles = inputHandles.where((element) => !existingHandleAddressesAndServices.contains(element.uniqueAddressAndService)).toList();
+      List<String> inputHandleAddressesAndServices = inputHandles
+          .map((element) => element.uniqueAddressAndService)
+          .toList();
+      final handleQuery = Database.handles
+          .query(Handle_.uniqueAddressAndService
+              .oneOf(inputHandleAddressesAndServices))
+          .build();
+      List<String> existingHandleAddressesAndServices =
+          handleQuery.find().map((e) => e.uniqueAddressAndService).toList();
+      inputHandles = inputHandles
+          .where((element) => !existingHandleAddressesAndServices
+              .contains(element.uniqueAddressAndService))
+          .toList();
       Database.handles.putMany(inputHandles);
 
       // 2. Fetch all inserted/existing handles based on input
-      final handleQuery2 = Database.handles.query(Handle_.uniqueAddressAndService.oneOf(inputHandleAddressesAndServices)).build();
+      final handleQuery2 = Database.handles
+          .query(Handle_.uniqueAddressAndService
+              .oneOf(inputHandleAddressesAndServices))
+          .build();
       List<Handle> handles = handleQuery2.find().toList();
 
       // 3. Create map of inserted/existing handles
@@ -81,13 +96,18 @@ class BulkSyncChats extends AsyncTask<List<dynamic>, List<Chat>> {
       }
 
       // 4. Check for existing chats and save new ones
-      final chatQuery = Database.chats.query(Chat_.guid.oneOf(inputChatGuids)).build();
-      List<String> existingChatGuids = chatQuery.find().map((e) => e.guid).toList();
-      inputChats = inputChats.where((element) => !existingChatGuids.contains(element.guid)).toList();
+      final chatQuery =
+          Database.chats.query(Chat_.guid.oneOf(inputChatGuids)).build();
+      List<String> existingChatGuids =
+          chatQuery.find().map((e) => e.guid).toList();
+      inputChats = inputChats
+          .where((element) => !existingChatGuids.contains(element.guid))
+          .toList();
       Database.chats.putMany(inputChats);
 
       // 5. Fetch all inserted/existing chats based on input
-      final chatQuery2 = Database.chats.query(Chat_.guid.oneOf(inputChatGuids)).build();
+      final chatQuery2 =
+          Database.chats.query(Chat_.guid.oneOf(inputChatGuids)).build();
       List<Chat> chats = chatQuery2.find().toList();
 
       // 6. Create map of inserted/existing chats
@@ -100,7 +120,8 @@ class BulkSyncChats extends AsyncTask<List<dynamic>, List<Chat>> {
       for (final item in chatHandles.entries) {
         final chat = chatMap[item.key];
         if (chat == null) continue;
-        final participants = item.value.map((e) => handleMap[e]).whereNotNull().toList();
+        final participants =
+            item.value.map((e) => handleMap[e]).whereNotNull().toList();
         if (participants.isNotEmpty) {
           chat.handles.clear();
           chat.handles.addAll(participants);
@@ -121,7 +142,8 @@ class BulkSyncMessages extends AsyncTask<List<dynamic>, List<Message>> {
   BulkSyncMessages(this.params);
 
   @override
-  AsyncTask<List<dynamic>, List<Message>> instantiate(List<dynamic> parameters, [Map<String, SharedData>? sharedData]) {
+  AsyncTask<List<dynamic>, List<Message>> instantiate(List<dynamic> parameters,
+      [Map<String, SharedData>? sharedData]) {
     return BulkSyncMessages(parameters);
   }
 
@@ -159,7 +181,8 @@ class BulkSyncMessages extends AsyncTask<List<dynamic>, List<Message>> {
 
       // 1. For each message, match the handles & replace the old reference
       for (Message message in inputMessages) {
-        message.handle ??= handlesCache.values.firstWhereOrNull((e) => e.originalROWID == message.handleId);
+        message.handle ??= handlesCache.values
+            .firstWhereOrNull((e) => e.originalROWID == message.handleId);
       }
 
       // 2. Extract & cache the attachments
@@ -173,7 +196,8 @@ class BulkSyncMessages extends AsyncTask<List<dynamic>, List<Message>> {
       }
 
       // 3. Sync the attachments & insert IDs into cache
-      List<Attachment> syncedAttachments = syncAttachments(attachmentCache.values.toList());
+      List<Attachment> syncedAttachments =
+          syncAttachments(attachmentCache.values.toList());
       for (var attachment in syncedAttachments) {
         if (!attachmentCache.containsKey(attachment.guid)) continue;
         attachmentCache[attachment.guid!] = attachment;
@@ -191,7 +215,10 @@ class BulkSyncMessages extends AsyncTask<List<dynamic>, List<Message>> {
         }
 
         // Update the relational attachments
-        message.dbAttachments.addAll(message.attachments.where((element) => element != null).map((e) => e!).toList());
+        message.dbAttachments.addAll(message.attachments
+            .where((element) => element != null)
+            .map((e) => e!)
+            .toList());
       }
 
       // 5. Invoke a final put call to sync the relational data
@@ -199,7 +226,8 @@ class BulkSyncMessages extends AsyncTask<List<dynamic>, List<Message>> {
         try {
           Database.messages.put(m);
         } catch (e, stack) {
-          Logger.error("Failed to put messages into database during bulk sync!", error: e, trace: stack);
+          Logger.error("Failed to put messages into database during bulk sync!",
+              error: e, trace: stack);
         }
       }
       return syncedMessages;
@@ -213,7 +241,8 @@ class SyncLastMessages extends AsyncTask<List<dynamic>, List<Chat>> {
   SyncLastMessages(this.params);
 
   @override
-  AsyncTask<List<dynamic>, List<Chat>> instantiate(List<dynamic> parameters, [Map<String, SharedData>? sharedData]) {
+  AsyncTask<List<dynamic>, List<Chat>> instantiate(List<dynamic> parameters,
+      [Map<String, SharedData>? sharedData]) {
     return SyncLastMessages(parameters);
   }
 
@@ -224,9 +253,10 @@ class SyncLastMessages extends AsyncTask<List<dynamic>, List<Chat>> {
 
   /// Tries to update the latest message for a [chat], based on
   /// the input [lastMessage] object.
-  /// 
+  ///
   /// Returns a boolean determining if we've updated the latest message
-  bool tryUpdateLastMessage(Chat chat, Message? lastMessage, bool toggleUnread) {
+  bool tryUpdateLastMessage(
+      Chat chat, Message? lastMessage, bool toggleUnread) {
     // If we don't even have a last message, return false
     if (lastMessage == null || lastMessage.dateCreated == null) return false;
 
@@ -258,7 +288,7 @@ class SyncLastMessages extends AsyncTask<List<dynamic>, List<Chat>> {
     // If we still want to update the info, do so
     if (didUpdate) {
       chat.latestMessage = lastMessage;
-      
+
       // Mark the chat as unread if we updated the last message & it's not from us
       if (toggleUnread && !(lastMessage.isFromMe ?? false)) {
         chat.toggleHasUnread(true);
@@ -277,7 +307,8 @@ class SyncLastMessages extends AsyncTask<List<dynamic>, List<Chat>> {
       List<String> inputGuids = inputChats.map((e) => e.guid).toList();
 
       // Get the latest versions of the chats
-      final chatQuery = Database.chats.query(Chat_.guid.oneOf(inputGuids)).build();
+      final chatQuery =
+          Database.chats.query(Chat_.guid.oneOf(inputGuids)).build();
       List<Chat> existingChats = chatQuery.find();
 
       // Pull the latest message for all of the chats.
@@ -285,15 +316,20 @@ class SyncLastMessages extends AsyncTask<List<dynamic>, List<Chat>> {
       List<Chat> updatedChats = [];
       for (int i in chatIds) {
         // Fetch latest message for the chat
-        final latestMsgQuery = (Database.messages.query(Message_.chat.equals(i))..order(Message_.dateCreated, flags: Order.descending)).build();
+        final latestMsgQuery = (Database.messages.query(Message_.chat.equals(i))
+              ..order(Message_.dateCreated, flags: Order.descending))
+            .build();
         Message? latestMessage = latestMsgQuery.findFirst();
-        if (latestMessage?.handle == null && latestMessage?.handleId != null && latestMessage?.handleId != 0) {
+        if (latestMessage?.handle == null &&
+            latestMessage?.handleId != null &&
+            latestMessage?.handleId != 0) {
           latestMessage!.handle = latestMessage.getHandle();
         }
         Chat current = existingChats.firstWhere((element) => element.id == i);
 
         // Try and update the last message info
-        bool didUpdate = tryUpdateLastMessage(current, latestMessage, toggleUnread);
+        bool didUpdate =
+            tryUpdateLastMessage(current, latestMessage, toggleUnread);
         if (didUpdate) {
           // Add to a list to be updated in the DB
           updatedChats.add(current);
@@ -304,7 +340,7 @@ class SyncLastMessages extends AsyncTask<List<dynamic>, List<Chat>> {
       if (updatedChats.isNotEmpty) {
         Database.chats.putMany(updatedChats, mode: PutMode.update);
       }
-      
+
       // This will contain the updated chat values
       return existingChats;
     });

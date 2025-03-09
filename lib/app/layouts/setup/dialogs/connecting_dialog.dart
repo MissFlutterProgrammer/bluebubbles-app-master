@@ -14,7 +14,6 @@ class ConnectingDialog extends StatefulWidget {
 }
 
 class _ConnectingDialogState extends OptimizedState<ConnectingDialog> {
-
   @override
   void initState() {
     super.initState();
@@ -26,7 +25,8 @@ class _ConnectingDialogState extends OptimizedState<ConnectingDialog> {
       ever(socket.state, (event) {
         if (event == SocketState.connected) {
           widget.onConnect(true);
-        } else if (event == SocketState.error || event == SocketState.disconnected) {
+        } else if (event == SocketState.error ||
+            event == SocketState.disconnected) {
           widget.onConnect(false);
         }
         setState(() {});
@@ -51,7 +51,8 @@ class _ConnectingDialogState extends OptimizedState<ConnectingDialog> {
           backgroundColor: context.theme.colorScheme.properSurface,
           content: LinearProgressIndicator(
             backgroundColor: context.theme.colorScheme.outline,
-            valueColor: AlwaysStoppedAnimation<Color>(context.theme.colorScheme.primary),
+            valueColor: AlwaysStoppedAnimation<Color>(
+                context.theme.colorScheme.primary),
           ),
         ),
       );

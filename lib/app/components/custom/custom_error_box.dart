@@ -1,4 +1,10 @@
-import 'dart:ui' as ui show Paragraph, ParagraphBuilder, ParagraphConstraints, ParagraphStyle, TextStyle;
+import 'dart:ui' as ui
+    show
+        Paragraph,
+        ParagraphBuilder,
+        ParagraphConstraints,
+        ParagraphStyle,
+        TextStyle;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +28,7 @@ class CustomErrorWidget extends LeafRenderObjectWidget {
   ///
   /// An explicit [FlutterError] can be provided to be reported to inspection
   /// tools. It need not match the message.
-  CustomErrorWidget.withDetails({ this.message = '', FlutterError? error })
+  CustomErrorWidget.withDetails({this.message = '', FlutterError? error})
       : _flutterError = error,
         super(key: UniqueKey());
 
@@ -60,11 +66,13 @@ class CustomErrorWidget extends LeafRenderObjectWidget {
   static Widget _defaultErrorWidgetBuilder(FlutterErrorDetails details) {
     String message = '';
     assert(() {
-      message = '${_stringify(details.exception)}\nSee also: https://flutter.dev/docs/testing/errors';
+      message =
+          '${_stringify(details.exception)}\nSee also: https://flutter.dev/docs/testing/errors';
       return true;
     }());
     final Object exception = details.exception;
-    return CustomErrorWidget.withDetails(message: message, error: exception is FlutterError ? exception : null);
+    return CustomErrorWidget.withDetails(
+        message: message, error: exception is FlutterError ? exception : null);
   }
 
   static String _stringify(Object? exception) {
@@ -91,7 +99,8 @@ class CustomErrorWidget extends LeafRenderObjectWidget {
     if (_flutterError == null) {
       properties.add(StringProperty('message', message, quoted: false));
     } else {
-      properties.add(_flutterError!.toDiagnosticsNode(style: DiagnosticsTreeStyle.whitespace));
+      properties.add(_flutterError!
+          .toDiagnosticsNode(style: DiagnosticsTreeStyle.whitespace));
     }
   }
 }
@@ -101,7 +110,7 @@ class RenderErrorBox extends RenderBox {
   ///
   /// A message can optionally be provided. If a message is provided, an attempt
   /// will be made to render the message when the box paints.
-  RenderErrorBox([ this.message = '' ]) {
+  RenderErrorBox([this.message = '']) {
     try {
       if (message != '') {
         // This class is intentionally doing things using the low-level
@@ -219,7 +228,7 @@ class RenderErrorBox extends RenderBox {
   @override
   void paint(PaintingContext context, Offset offset) {
     try {
-      context.canvas.drawRect(offset & size, Paint() .. color = backgroundColor);
+      context.canvas.drawRect(offset & size, Paint()..color = backgroundColor);
       if (_paragraph != null) {
         double width = size.width;
         double left = 0.0;

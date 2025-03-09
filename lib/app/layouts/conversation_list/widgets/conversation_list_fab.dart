@@ -16,23 +16,29 @@ class ConversationListFAB extends CustomStateful<ConversationListController> {
   State<StatefulWidget> createState() => _ConversationListFABState();
 }
 
-class _ConversationListFABState extends CustomState<ConversationListFAB, void, ConversationListController> {
-
+class _ConversationListFABState
+    extends CustomState<ConversationListFAB, void, ConversationListController> {
   @override
   void initState() {
     super.initState();
 
     controller.materialScrollController.addListener(() {
       if (!material) return;
-      if (controller.materialScrollStartPosition - controller.materialScrollController.offset < -75
-          && controller.materialScrollController.position.userScrollDirection == ScrollDirection.reverse
-          && controller.showMaterialFABText) {
+      if (controller.materialScrollStartPosition -
+                  controller.materialScrollController.offset <
+              -75 &&
+          controller.materialScrollController.position.userScrollDirection ==
+              ScrollDirection.reverse &&
+          controller.showMaterialFABText) {
         setState(() {
           controller.showMaterialFABText = false;
         });
-      } else if (controller.materialScrollStartPosition - controller.materialScrollController.offset > 75
-          && controller.materialScrollController.position.userScrollDirection == ScrollDirection.forward
-          && !controller.showMaterialFABText) {
+      } else if (controller.materialScrollStartPosition -
+                  controller.materialScrollController.offset >
+              75 &&
+          controller.materialScrollController.position.userScrollDirection ==
+              ScrollDirection.forward &&
+          !controller.showMaterialFABText) {
         setState(() {
           controller.showMaterialFABText = true;
         });
@@ -50,51 +56,56 @@ class _ConversationListFABState extends CustomState<ConversationListFAB, void, C
 
   @override
   Widget build(BuildContext context) {
-    final widget = Obx(() => Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        if (ss.settings.cameraFAB.value && iOS && !kIsWeb && !kIsDesktop)
-          ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 45,
-              maxHeight: 45,
-            ),
-            child: FloatingActionButton(
-              child: Icon(
-                iOS ? CupertinoIcons.camera : Icons.photo_camera,
-                size: 20,
-                color: context.theme.colorScheme.onPrimaryContainer
+    final widget = Obx(
+      () => Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          if (ss.settings.cameraFAB.value && iOS && !kIsWeb && !kIsDesktop)
+            ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 45,
+                maxHeight: 45,
               ),
-              onPressed: () => controller.openCamera(context),
-              heroTag: null,
-              backgroundColor: context.theme.colorScheme.primaryContainer,
+              child: FloatingActionButton(
+                child: Icon(
+                  iOS ? CupertinoIcons.camera : Icons.photo_camera,
+                  size: 20,
+                  color: context.theme.colorScheme.onPrimaryContainer,
+                ),
+                onPressed: () => controller.openCamera(context),
+                heroTag: null,
+                backgroundColor: context.theme.colorScheme.primaryContainer,
+              ),
+            ),
+          if (ss.settings.cameraFAB.value && iOS && !kIsWeb && !kIsDesktop)
+            const SizedBox(
+              height: 10,
+            ),
+          InkWell(
+            onLongPress:
+                iOS || !ss.settings.cameraFAB.value || kIsWeb || kIsDesktop
+                    ? null
+                    : () => controller.openCamera(context),
+            child: FloatingActionButton(
+              backgroundColor: context.theme.colorScheme.primary,
+              child: Icon(
+                iOS ? CupertinoIcons.pencil : Icons.message,
+                color: context.theme.colorScheme.onPrimary,
+                size: 25,
+              ),
+              onPressed: () => controller.openNewChatCreator(context),
             ),
           ),
-        if (ss.settings.cameraFAB.value && iOS && !kIsWeb && !kIsDesktop)
-          const SizedBox(
-            height: 10,
-          ),
-        InkWell(
-          onLongPress: iOS || !ss.settings.cameraFAB.value || kIsWeb || kIsDesktop
-            ? null : () => controller.openCamera(context),
-          child: FloatingActionButton(
-            backgroundColor: context.theme.colorScheme.primary,
-            child: Icon(
-              iOS ? CupertinoIcons.pencil : Icons.message,
-              color: context.theme.colorScheme.onPrimary,
-              size: 25
-            ),
-            onPressed: () => controller.openNewChatCreator(context)
-          ),
-        ),
-      ],
-    ));
+        ],
+      ),
+    );
 
     return ThemeSwitcher(
       iOSSkin: widget,
       materialSkin: AnimatedCrossFade(
         crossFadeState: controller.selectedChats.isEmpty
-            ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+            ? CrossFadeState.showFirst
+            : CrossFadeState.showSecond,
         alignment: Alignment.center,
         duration: const Duration(milliseconds: 300),
         secondChild: const SizedBox.shrink(),
@@ -111,7 +122,9 @@ class _ConversationListFABState extends CustomState<ConversationListFAB, void, C
                 child: FloatingActionButton.small(
                   heroTag: null,
                   onPressed: () async {
-                    await controller.materialScrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+                    await controller.materialScrollController.animateTo(0,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOut);
                     setState(() {
                       controller.showMaterialFABText = true;
                     });
@@ -126,16 +139,20 @@ class _ConversationListFABState extends CustomState<ConversationListFAB, void, C
               Positioned(
                 right: material ? 15 : 0,
                 child: InkWell(
-                  onLongPress: ss.settings.cameraFAB.value && !kIsWeb && !kIsDesktop
-                      ? () => controller.openCamera(context) : null,
+                  onLongPress:
+                      ss.settings.cameraFAB.value && !kIsWeb && !kIsDesktop
+                          ? () => controller.openCamera(context)
+                          : null,
                   child: Container(
                     height: 65,
                     padding: const EdgeInsets.only(right: 4.5, bottom: 9),
                     child: FloatingActionButton(
-                      backgroundColor: context.theme.colorScheme.primaryContainer,
+                      backgroundColor:
+                          context.theme.colorScheme.primaryContainer,
                       shape: const CircleBorder(),
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 2),
+                        padding: const EdgeInsets.only(
+                            left: 5.0, right: 5.0, top: 2),
                         child: Icon(
                           CupertinoIcons.bubble_left,
                           color: context.theme.colorScheme.onPrimaryContainer,

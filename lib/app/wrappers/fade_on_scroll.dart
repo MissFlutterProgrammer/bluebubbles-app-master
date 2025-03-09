@@ -9,11 +9,10 @@ class FadeOnScroll extends StatefulWidget {
 
   FadeOnScroll(
       {Key? key,
-        required this.scrollController,
-        required this.child,
-        this.zeroOpacityOffset = 0,
-        this.fullOpacityOffset = 0
-      });
+      required this.scrollController,
+      required this.child,
+      this.zeroOpacityOffset = 0,
+      this.fullOpacityOffset = 0});
 
   @override
   State<StatefulWidget> createState() => _FadeOnScrollState();
@@ -55,7 +54,8 @@ class _FadeOnScrollState extends OptimizedState<FadeOnScroll> {
       } else if (_offset >= widget.fullOpacityOffset) {
         return 1;
       } else {
-        return (_offset - widget.zeroOpacityOffset) / (widget.fullOpacityOffset - widget.zeroOpacityOffset);
+        return (_offset - widget.zeroOpacityOffset) /
+            (widget.fullOpacityOffset - widget.zeroOpacityOffset);
       }
     } else {
       // fading out
@@ -64,7 +64,8 @@ class _FadeOnScrollState extends OptimizedState<FadeOnScroll> {
       } else if (_offset >= widget.zeroOpacityOffset) {
         return 0;
       } else {
-        return (_offset - widget.zeroOpacityOffset) / (widget.fullOpacityOffset - widget.zeroOpacityOffset);
+        return (_offset - widget.zeroOpacityOffset) /
+            (widget.fullOpacityOffset - widget.zeroOpacityOffset);
       }
     }
   }

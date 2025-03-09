@@ -215,5 +215,6 @@ const languageData = [
   }
 ];
 
-final List<(String, String)> languageNameAndCodes =
-    languageData.map((d) => (d["name"]!, d["longCode"]!)).sorted((a, b) => a.$1.compareTo(b.$1));
+final List<(String, String)> languageNameAndCodes = languageData
+    .map((d) => (d["name"]!, d["longCode"]!))
+    .sorted((a, b) => a.$1.compareTo(b.$1));

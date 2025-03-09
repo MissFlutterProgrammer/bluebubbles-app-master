@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:async_task/async_task_extension.dart';
 import 'package:bluebubbles/database/database.dart';
 import 'package:bluebubbles/utils/logger/logger.dart';
@@ -25,7 +27,8 @@ class HandleSyncManager extends SyncManager {
 
   bool simulateError;
 
-  HandleSyncManager({bool saveLogs = false, this.simulateError = false}) : super("Handle", saveLogs: saveLogs);
+  HandleSyncManager({bool saveLogs = false, this.simulateError = false})
+      : super("Handle", saveLogs: saveLogs);
 
   flush() {
     chatHandleCache = {};
@@ -117,7 +120,8 @@ class HandleSyncManager extends SyncManager {
         }
 
         // Save the new handles to the DB
-        List<Handle> handles = Handle.bulkSave(serverHandles, matchOnOriginalROWID: true);
+        List<Handle> handles =
+            Handle.bulkSave(serverHandles, matchOnOriginalROWID: true);
         handlesSynced += handles.length;
 
         // Save the new handles to a cache
@@ -131,8 +135,10 @@ class HandleSyncManager extends SyncManager {
           // When we've hit the last chunk, we're finished
           await complete();
           if (kIsDesktop && Platform.isWindows) {
-            await WindowsTaskbar.setProgressMode(TaskbarProgressMode.noProgress);
-            await WindowsTaskbar.setFlashTaskbarAppIcon(mode: TaskbarFlashMode.timernofg);
+            await WindowsTaskbar.setProgressMode(
+                TaskbarProgressMode.noProgress);
+            await WindowsTaskbar.setFlashTaskbarAppIcon(
+                mode: TaskbarFlashMode.timernofg);
           }
         } else if (status.value == SyncStatus.STOPPING) {
           // If we are supposed to be stopping, complete the future.
@@ -144,18 +150,22 @@ class HandleSyncManager extends SyncManager {
           }
 
           if (kIsDesktop && Platform.isWindows) {
-            await WindowsTaskbar.setProgressMode(TaskbarProgressMode.noProgress);
-            await WindowsTaskbar.setFlashTaskbarAppIcon(mode: TaskbarFlashMode.timernofg);
+            await WindowsTaskbar.setProgressMode(
+                TaskbarProgressMode.noProgress);
+            await WindowsTaskbar.setFlashTaskbarAppIcon(
+                mode: TaskbarFlashMode.timernofg);
           }
         }
       }
     } catch (e, s) {
-      addToOutput('Failed to sync handles! Error: ${e.toString()}', level: LogLevel.ERROR);
+      addToOutput('Failed to sync handles! Error: ${e.toString()}',
+          level: LogLevel.ERROR);
       addToOutput(s.toString(), level: LogLevel.ERROR);
       completeWithError(e.toString());
       if (kIsDesktop && Platform.isWindows) {
         await WindowsTaskbar.setProgressMode(TaskbarProgressMode.error);
-        await WindowsTaskbar.setFlashTaskbarAppIcon(mode: TaskbarFlashMode.timernofg);
+        await WindowsTaskbar.setFlashTaskbarAppIcon(
+            mode: TaskbarFlashMode.timernofg);
       }
     }
 
@@ -194,7 +204,8 @@ class HandleSyncManager extends SyncManager {
     addToOutput("Caching chat participants...");
     for (Chat c in chats) {
       List<Handle> handles = c.participants;
-      List<int> rowIds = handles.map((e) => e.originalROWID).whereNotNull().toList();
+      List<int> rowIds =
+          handles.map((e) => e.originalROWID).whereNotNull().toList();
       chatHandleCache[c] = rowIds;
     }
   }
@@ -220,13 +231,15 @@ class HandleSyncManager extends SyncManager {
   rebuildRelationships(Map<int, Handle> handleMap) {
     addToOutput("Re-creating chat <-> handle relationships");
     chatHandleCache.forEach((key, value) {
-      List<Handle> relations = value.map((e) => handleMap[e]).whereNotNull().toList();
+      List<Handle> relations =
+          value.map((e) => handleMap[e]).whereNotNull().toList();
       key.handles.addAll(relations);
       key.handles.applyToDb();
     });
   }
 
-  Stream<Tuple2<double, List<Handle>>> streamHandlePages(int? count, {int batchSize = 200}) async* {
+  Stream<Tuple2<double, List<Handle>>> streamHandlePages(int? count,
+      {int batchSize = 200}) async* {
     // Set some default sync values
     int batches = 1;
     int countPerBatch = batchSize;
@@ -241,7 +254,8 @@ class HandleSyncManager extends SyncManager {
     for (int i = 0; i < batches; i++) {
       // Fetch the handles and throw an error if we don't get back a good response.
       // Throwing an error should cancel the sync
-      Response handlePage = await http.handles(offset: i * countPerBatch, limit: countPerBatch);
+      Response handlePage =
+          await http.handles(offset: i * countPerBatch, limit: countPerBatch);
       dynamic data = handlePage.data;
       if (handlePage.statusCode != 200) {
         throw HandleRequestException(
@@ -250,7 +264,8 @@ class HandleSyncManager extends SyncManager {
 
       // Convert the returned handle dictionaries to a list of Handle Objects
       List<dynamic> handleResponse = data["data"];
-      List<Handle> handles = handleResponse.map((e) => Handle.fromMap(e)).toList();
+      List<Handle> handles =
+          handleResponse.map((e) => Handle.fromMap(e)).toList();
       yield Tuple2<double, List<Handle>>((i + 1) / batches, handles);
     }
   }

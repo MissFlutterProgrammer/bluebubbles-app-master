@@ -19,28 +19,37 @@ class _SplashScreenState extends OptimizedState<SplashScreen> {
   void navigate() async {
     if (widget.shouldNavigate && !didNavigate) {
       didNavigate = true;
-      await Future.delayed(const Duration(milliseconds: 100));
-      Navigator.of(context).pushAndRemoveUntil(PageRouteBuilder(
-          transitionDuration: const Duration(seconds: 1),
-          pageBuilder: (_, __, ___) => TitleBarWrapper(child: SetupView())), (route) => route.isFirst);
+      await Future.delayed(
+        const Duration(milliseconds: 100),
+      );
+      Navigator.of(context).pushAndRemoveUntil(
+          PageRouteBuilder(
+            transitionDuration: const Duration(seconds: 1),
+            pageBuilder: (_, __, ___) => TitleBarWrapper(
+              child: SetupView(),
+            ),
+          ),
+          (route) => route.isFirst);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: context.theme.colorScheme.background,
-        body: Center(
-          child: Hero(
-            tag: "setup-icon",
-            child: Image.asset("assets/icon/icon.png", width: 150, fit: BoxFit.contain, frameBuilder: (context, child, frame, _) {
-              if (frame != null) {
-                navigate();
-              }
-              return child;
-            })
-          ),
-        )
+      backgroundColor: context.theme.colorScheme.surface,
+      body: Center(
+        child: Hero(
+          tag: "setup-icon",
+          child: Image.asset("assets/icon/icon.png",
+              width: 150,
+              fit: BoxFit.contain, frameBuilder: (context, child, frame, _) {
+            if (frame != null) {
+              navigate();
+            }
+            return child;
+          }),
+        ),
+      ),
     );
   }
 }

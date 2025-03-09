@@ -1,5 +1,6 @@
-import 'dart:async';
+// ignore_for_file: deprecated_member_use
 
+import 'dart:async';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/app/layouts/conversation_list/dialogs/conversation_peek_view.dart';
 import 'package:bluebubbles/app/layouts/conversation_list/widgets/tile/conversation_tile.dart';
@@ -12,14 +13,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class CupertinoConversationTile extends CustomStateful<ConversationTileController> {
+class CupertinoConversationTile
+    extends CustomStateful<ConversationTileController> {
   const CupertinoConversationTile({Key? key, required super.parentController});
 
   @override
   State<StatefulWidget> createState() => _CupertinoConversationTileState();
 }
 
-class _CupertinoConversationTileState extends CustomState<CupertinoConversationTile, void, ConversationTileController> {
+class _CupertinoConversationTileState extends CustomState<
+    CupertinoConversationTile, void, ConversationTileController> {
   Offset? longPressPosition;
 
   @override
@@ -42,21 +45,25 @@ class _CupertinoConversationTileState extends CustomState<CupertinoConversationT
       child: InkWell(
         mouseCursor: MouseCursor.defer,
         onTap: () => controller.onTap(context),
-        onSecondaryTapUp: (details) => controller.onSecondaryTap(Get.context!, details),
+        onSecondaryTapUp: (details) =>
+            controller.onSecondaryTap(Get.context!, details),
         onLongPress: kIsDesktop || kIsWeb
             ? null
             : () async {
-                await peekChat(context, controller.chat, longPressPosition ?? Offset.zero);
+                await peekChat(
+                    context, controller.chat, longPressPosition ?? Offset.zero);
               },
         onTapDown: (details) {
           longPressPosition = details.globalPosition;
         },
-        child: Obx(() => ListTile(
+        child: Obx(
+          () => ListTile(
             mouseCursor: MouseCursor.defer,
             enableFeedback: true,
             dense: ss.settings.denseChatTiles.value,
             contentPadding: const EdgeInsets.only(left: 0),
-            visualDensity: ss.settings.denseChatTiles.value ? VisualDensity.compact : null,
+            visualDensity:
+                ss.settings.denseChatTiles.value ? VisualDensity.compact : null,
             minVerticalPadding: ss.settings.denseChatTiles.value ? 7.5 : 10,
             horizontalTitleGap: 10,
             title: Row(
@@ -65,8 +72,13 @@ class _CupertinoConversationTileState extends CustomState<CupertinoConversationT
                   child: ChatTitle(
                     parentController: controller,
                     style: context.theme.textTheme.bodyLarge!.copyWith(
-                        fontWeight: controller.shouldHighlight.value ? FontWeight.w600 : FontWeight.w500,
-                        color: controller.shouldHighlight.value ? context.theme.colorScheme.onBubble(context, controller.chat.isIMessage) : null),
+                        fontWeight: controller.shouldHighlight.value
+                            ? FontWeight.w600
+                            : FontWeight.w500,
+                        color: controller.shouldHighlight.value
+                            ? context.theme.colorScheme
+                                .onBubble(context, controller.chat.isIMessage)
+                            : null),
                   ),
                 ),
                 CupertinoTrailing(parentController: controller),
@@ -79,13 +91,17 @@ class _CupertinoConversationTileState extends CustomState<CupertinoConversationT
                     parentController: controller,
                     style: context.theme.textTheme.bodyMedium!.copyWith(
                       color: controller.shouldHighlight.value
-                          ? context.theme.colorScheme.onBubble(context, controller.chat.isIMessage).withOpacity(0.85)
+                          ? context.theme.colorScheme
+                              .onBubble(context, controller.chat.isIMessage)
+                              .withOpacity(0.85)
                           : context.theme.colorScheme.outline,
                       height: 1.5,
                     ),
                   ),
             ),
-            leading: leading)),
+            leading: leading,
+          ),
+        ),
       ),
     );
 
@@ -97,28 +113,40 @@ class _CupertinoConversationTileState extends CustomState<CupertinoConversationT
           color: controller.shouldPartialHighlight.value
               ? context.theme.colorScheme.properSurface.lightenOrDarken(10)
               : controller.shouldHighlight.value
-                  ? context.theme.colorScheme.bubble(context, controller.chat.isIMessage)
+                  ? context.theme.colorScheme
+                      .bubble(context, controller.chat.isIMessage)
                   : controller.hoverHighlight.value
                       ? context.theme.colorScheme.properSurface.withOpacity(0.5)
                       : null,
           borderRadius: BorderRadius.circular(
-              controller.shouldHighlight.value || controller.shouldPartialHighlight.value || controller.hoverHighlight.value ? 8 : 0),
+              controller.shouldHighlight.value ||
+                      controller.shouldPartialHighlight.value ||
+                      controller.hoverHighlight.value
+                  ? 8
+                  : 0),
         ),
         child: ns.isAvatarOnly(context)
             ? InkWell(
                 mouseCursor: MouseCursor.defer,
                 onTap: () => controller.onTap(context),
-                onSecondaryTapUp: (details) => controller.onSecondaryTap(Get.context!, details),
+                onSecondaryTapUp: (details) =>
+                    controller.onSecondaryTap(Get.context!, details),
                 onLongPress: kIsDesktop || kIsWeb
                     ? null
                     : () async {
-                        await peekChat(context, controller.chat, longPressPosition ?? Offset.zero);
+                        await peekChat(context, controller.chat,
+                            longPressPosition ?? Offset.zero);
                       },
                 onTapDown: (details) {
                   longPressPosition = details.globalPosition;
                 },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: (ns.width(context) - 100) / 2).add(const EdgeInsets.only(right: 15)),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 10.0,
+                    horizontal: (ns.width(context) - 100) / 2,
+                  ).add(
+                    const EdgeInsets.only(right: 15),
+                  ),
                   child: leading,
                 ),
               )
@@ -135,7 +163,8 @@ class CupertinoTrailing extends CustomStateful<ConversationTileController> {
   State<StatefulWidget> createState() => _CupertinoTrailingState();
 }
 
-class _CupertinoTrailingState extends CustomState<CupertinoTrailing, void, ConversationTileController> {
+class _CupertinoTrailingState
+    extends CustomState<CupertinoTrailing, void, ConversationTileController> {
   DateTime? dateCreated;
   late final StreamSubscription sub;
   String? cachedLatestMessageGuid = "";
@@ -154,10 +183,14 @@ class _CupertinoTrailingState extends CustomState<CupertinoTrailing, void, Conve
     // run query after render has completed
     if (!kIsWeb) {
       updateObx(() {
-        final latestMessageQuery = (Database.messages.query(Message_.dateDeleted.isNull())
-              ..link(Message_.chat, Chat_.guid.equals(controller.chat.guid))
-              ..order(Message_.dateCreated, flags: Order.descending))
-            .watch();
+        final latestMessageQuery =
+            (Database.messages.query(Message_.dateDeleted.isNull())
+                  ..link(Message_.chat, Chat_.guid.equals(controller.chat.guid))
+                  ..order(
+                    Message_.dateCreated,
+                    flags: Order.descending,
+                  ))
+                .watch();
 
         sub = latestMessageQuery.listen((Query<Message> query) async {
           final message = await runAsync(() {
@@ -165,7 +198,8 @@ class _CupertinoTrailingState extends CustomState<CupertinoTrailing, void, Conve
           });
           if (message != null &&
               ss.settings.statusIndicatorsOnChats.value &&
-              (message.dateDelivered != cachedLatestMessage?.dateDelivered || message.dateRead != cachedLatestMessage?.dateRead)) {
+              (message.dateDelivered != cachedLatestMessage?.dateDelivered ||
+                  message.dateRead != cachedLatestMessage?.dateRead)) {
             setState(() {});
           }
           cachedLatestMessage = message;
@@ -182,7 +216,9 @@ class _CupertinoTrailingState extends CustomState<CupertinoTrailing, void, Conve
       });
     } else {
       sub = WebListeners.newMessage.listen((tuple) {
-        if (tuple.item2?.guid == controller.chat.guid && (dateCreated == null || tuple.item1.dateCreated!.isAfter(dateCreated!))) {
+        if (tuple.item2?.guid == controller.chat.guid &&
+            (dateCreated == null ||
+                tuple.item1.dateCreated!.isAfter(dateCreated!))) {
           cachedLatestMessage = tuple.item1;
           setState(() {
             dateCreated = tuple.item1.dateCreated;
@@ -210,8 +246,11 @@ class _CupertinoTrailingState extends CustomState<CupertinoTrailing, void, Conve
         children: <Widget>[
           Obx(() {
             String indicatorText = "";
-            if (ss.settings.statusIndicatorsOnChats.value && (cachedLatestMessage?.isFromMe ?? false) && !controller.chat.isGroup) {
-              Indicator show = cachedLatestMessage?.indicatorToShow ?? Indicator.NONE;
+            if (ss.settings.statusIndicatorsOnChats.value &&
+                (cachedLatestMessage?.isFromMe ?? false) &&
+                !controller.chat.isGroup) {
+              Indicator show =
+                  cachedLatestMessage?.indicatorToShow ?? Indicator.NONE;
               if (show != Indicator.NONE) {
                 indicatorText = show.name.toLowerCase().capitalizeFirst!;
               }
@@ -227,9 +266,14 @@ class _CupertinoTrailingState extends CustomState<CupertinoTrailing, void, Conve
                     color: (cachedLatestMessage?.error ?? 0) > 0
                         ? context.theme.colorScheme.error
                         : controller.shouldHighlight.value
-                            ? context.theme.colorScheme.onBubble(context, controller.chat.isIMessage)
+                            ? context.theme.colorScheme.onBubble(
+                                context,
+                                controller.chat.isIMessage,
+                              )
                             : context.theme.colorScheme.outline,
-                    fontWeight: controller.shouldHighlight.value ? FontWeight.w500 : null,
+                    fontWeight: controller.shouldHighlight.value
+                        ? FontWeight.w500
+                        : null,
                   )
                   .apply(fontSizeFactor: 1.1),
               overflow: TextOverflow.clip,
@@ -241,20 +285,27 @@ class _CupertinoTrailingState extends CustomState<CupertinoTrailing, void, Conve
               Icon(
                 CupertinoIcons.forward,
                 color: controller.shouldHighlight.value
-                    ? context.theme.colorScheme.onBubble(context, controller.chat.isIMessage)
+                    ? context.theme.colorScheme.onBubble(
+                        context,
+                        controller.chat.isIMessage,
+                      )
                     : context.theme.colorScheme.outline,
                 size: 15,
               ),
               if (controller.chat.muteType == "mute")
                 Padding(
-                    padding: const EdgeInsets.only(top: 5.0),
-                    child: Icon(
-                      CupertinoIcons.bell_slash_fill,
-                      color: controller.shouldHighlight.value
-                          ? context.theme.colorScheme.onBubble(context, controller.chat.isIMessage)
-                          : context.theme.colorScheme.outline,
-                      size: 12,
-                    ))
+                  padding: const EdgeInsets.only(top: 5.0),
+                  child: Icon(
+                    CupertinoIcons.bell_slash_fill,
+                    color: controller.shouldHighlight.value
+                        ? context.theme.colorScheme.onBubble(
+                            context,
+                            controller.chat.isIMessage,
+                          )
+                        : context.theme.colorScheme.outline,
+                    size: 12,
+                  ),
+                )
             ],
           ),
         ],
@@ -270,8 +321,8 @@ class UnreadIcon extends CustomStateful<ConversationTileController> {
   State<StatefulWidget> createState() => _UnreadIconState();
 }
 
-class _UnreadIconState extends CustomState<UnreadIcon, void, ConversationTileController> {
-
+class _UnreadIconState
+    extends CustomState<UnreadIcon, void, ConversationTileController> {
   @override
   void initState() {
     super.initState();
@@ -285,17 +336,18 @@ class _UnreadIconState extends CustomState<UnreadIcon, void, ConversationTileCon
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-      child: Obx(() => GlobalChatService.unreadState(controller.chat.guid).value
-          ? Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(35),
-                color: context.theme.colorScheme.primary,
-              ),
-              width: 10,
-              height: 10,
-            )
-          : const SizedBox(width: 10),
-      )
+      child: Obx(
+        () => GlobalChatService.unreadState(controller.chat.guid).value
+            ? Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(35),
+                  color: context.theme.colorScheme.primary,
+                ),
+                width: 10,
+                height: 10,
+              )
+            : const SizedBox(width: 10),
+      ),
     );
   }
 }

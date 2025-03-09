@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/message/popup/message_popup.dart';
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/message/reaction/reaction_clipper.dart';
 import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
@@ -48,20 +47,23 @@ class ReactionWidgetState extends OptimizedState<ReactionWidget> {
     super.initState();
     updateObx(() {
       if (!kIsWeb && widget.message != null) {
-        final messageQuery = Database.messages.query(Message_.id.equals(reaction.id!)).watch();
+        final messageQuery =
+            Database.messages.query(Message_.id.equals(reaction.id!)).watch();
         sub = messageQuery.listen((Query<Message> query) async {
           final _message = await runAsync(() {
             return Database.messages.get(reaction.id!);
           });
           if (_message != null) {
-            if (_message.guid != reaction.guid || _message.dateDelivered != reaction.dateDelivered) {
+            if (_message.guid != reaction.guid ||
+                _message.dateDelivered != reaction.dateDelivered) {
               setState(() {
                 reaction = _message;
               });
             } else {
               reaction = _message;
             }
-            getActiveMwc(widget.message!.guid!)?.updateAssociatedMessage(reaction, updateHolder: false);
+            getActiveMwc(widget.message!.guid!)
+                ?.updateAssociatedMessage(reaction, updateHolder: false);
           }
         });
 
@@ -74,7 +76,8 @@ class ReactionWidgetState extends OptimizedState<ReactionWidget> {
             setState(() {
               reaction = _message;
             });
-            getActiveMwc(widget.message!.guid!)?.updateAssociatedMessage(reaction, updateHolder: false);
+            getActiveMwc(widget.message!.guid!)
+                ?.updateAssociatedMessage(reaction, updateHolder: false);
           }
         });
       }
@@ -94,8 +97,12 @@ class ReactionWidgetState extends OptimizedState<ReactionWidget> {
         width: 30,
         height: 30,
         decoration: BoxDecoration(
-          color: reactionIsFromMe ? context.theme.colorScheme.primary : context.theme.colorScheme.properSurface,
-          border: Border.all(color: context.theme.colorScheme.background),
+          color: reactionIsFromMe
+              ? context.theme.colorScheme.primary
+              : context.theme.colorScheme.properSurface,
+          border: Border.all(
+            color: context.theme.colorScheme.surface,
+          ),
           shape: BoxShape.circle,
         ),
         child: GestureDetector(
@@ -115,16 +122,33 @@ class ReactionWidgetState extends OptimizedState<ReactionWidget> {
                     position: Tween<Offset>(
                       begin: const Offset(0.0, 1.0),
                       end: Offset.zero,
-                    ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+                    ).animate(
+                      CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeOut,
+                      ),
+                    ),
                     child: Theme(
                       data: context.theme.copyWith(
                         // in case some components still use legacy theming
-                        primaryColor: context.theme.colorScheme.bubble(context, true),
+                        primaryColor:
+                            context.theme.colorScheme.bubble(context, true),
                         colorScheme: context.theme.colorScheme.copyWith(
-                          primary: context.theme.colorScheme.bubble(context, true),
-                          onPrimary: context.theme.colorScheme.onBubble(context, true),
-                          surface: ss.settings.monetTheming.value == Monet.full ? null : (context.theme.extensions[BubbleColors] as BubbleColors?)?.receivedBubbleColor,
-                          onSurface: ss.settings.monetTheming.value == Monet.full ? null : (context.theme.extensions[BubbleColors] as BubbleColors?)?.onReceivedBubbleColor,
+                          primary:
+                              context.theme.colorScheme.bubble(context, true),
+                          onPrimary:
+                              context.theme.colorScheme.onBubble(context, true),
+                          surface: ss.settings.monetTheming.value == Monet.full
+                              ? null
+                              : (context.theme.extensions[BubbleColors]
+                                      as BubbleColors?)
+                                  ?.receivedBubbleColor,
+                          onSurface:
+                              ss.settings.monetTheming.value == Monet.full
+                                  ? null
+                                  : (context.theme.extensions[BubbleColors]
+                                          as BubbleColors?)
+                                      ?.onReceivedBubbleColor,
                         ),
                       ),
                       child: Stack(
@@ -139,7 +163,9 @@ class ReactionWidgetState extends OptimizedState<ReactionWidget> {
                             bottom: 10,
                             left: 15,
                             right: 15,
-                            child: ReactionDetails(reactions: reactions!)
+                            child: ReactionDetails(
+                              reactions: reactions!,
+                            ),
                           ),
                         ],
                       ),
@@ -153,26 +179,27 @@ class ReactionWidgetState extends OptimizedState<ReactionWidget> {
             );
           },
           child: Center(
-            child: Builder(
-                builder: (context) {
-                  final text = Text(
-                    ReactionTypes.reactionToEmoji[reactionType] ?? "X",
-                    style: const TextStyle(fontSize: 15, fontFamily: 'Apple Color Emoji'),
-                    textAlign: TextAlign.center,
-                  );
-                  // rotate thumbs down to match iOS
-                  if (reactionType == "dislike") {
-                    return Transform(
-                      transform: Matrix4.identity()..rotateY(pi),
-                      alignment: FractionalOffset.center,
-                      child: text,
-                    );
-                  }
-                  return text;
-                }
-            ),
+            child: Builder(builder: (context) {
+              final text = Text(
+                ReactionTypes.reactionToEmoji[reactionType] ?? "X",
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontFamily: 'Apple Color Emoji',
+                ),
+                textAlign: TextAlign.center,
+              );
+              // rotate thumbs down to match iOS
+              if (reactionType == "dislike") {
+                return Transform(
+                  transform: Matrix4.identity()..rotateY(pi),
+                  alignment: FractionalOffset.center,
+                  child: text,
+                );
+              }
+              return text;
+            }),
           ),
-        )
+        ),
       );
     }
     return Stack(
@@ -185,39 +212,52 @@ class ReactionWidgetState extends OptimizedState<ReactionWidget> {
           left: messageIsFromMe ? 0 : -1,
           right: !messageIsFromMe ? 0 : -1,
           child: ClipPath(
-            clipper: ReactionBorderClipper(isFromMe: messageIsFromMe),
+            clipper: ReactionBorderClipper(
+              isFromMe: messageIsFromMe,
+            ),
             child: Container(
               width: iosSize + 2,
               height: iosSize + 2,
-              color: context.theme.colorScheme.background,
+              color: context.theme.colorScheme.surface,
             ),
           ),
         ),
         ClipPath(
-          clipper: ReactionClipper(isFromMe: messageIsFromMe),
+          clipper: ReactionClipper(
+            isFromMe: messageIsFromMe,
+          ),
           child: Container(
             width: iosSize,
             height: iosSize,
             color: reactionIsFromMe
-                ? context.theme.colorScheme.primary.darkenAmount(reaction.guid!.startsWith("temp") ? 0.2 : 0)
+                ? context.theme.colorScheme.primary
+                    .darkenAmount(reaction.guid!.startsWith("temp") ? 0.2 : 0)
                 : context.theme.colorScheme.properSurface,
             alignment: messageIsFromMe ? Alignment.topRight : Alignment.topLeft,
             child: SizedBox(
-              width: iosSize*0.8,
-              height: iosSize*0.8,
+              width: iosSize * 0.8,
+              height: iosSize * 0.8,
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(6.5).add(EdgeInsets.only(right: reactionType == "emphasize" ? 1 : 0)),
+                  padding: const EdgeInsets.all(6.5).add(
+                    EdgeInsets.only(
+                      right: reactionType == "emphasize" ? 1 : 0,
+                    ),
+                  ),
                   child: SvgPicture.asset(
                     'assets/reactions/$reactionType-black.svg',
-                    colorFilter: ColorFilter.mode(reactionType == "love"
-                        ? Colors.pink
-                        : (reactionIsFromMe ? context.theme.colorScheme.onPrimary : context.theme.colorScheme.properOnSurface), BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(
+                        reactionType == "love"
+                            ? Colors.pink
+                            : (reactionIsFromMe
+                                ? context.theme.colorScheme.onPrimary
+                                : context.theme.colorScheme.properOnSurface),
+                        BlendMode.srcIn),
                   ),
-                )
+                ),
               ),
-            )
-          )
+            ),
+          ),
         ),
         Positioned(
           left: !messageIsFromMe ? 0 : -75,
@@ -235,7 +275,9 @@ class ReactionWidgetState extends OptimizedState<ReactionWidget> {
               return DeferPointer(
                 child: GestureDetector(
                   child: Icon(
-                    ss.settings.skin.value == Skins.iOS ? CupertinoIcons.exclamationmark_circle : Icons.error_outline,
+                    ss.settings.skin.value == Skins.iOS
+                        ? CupertinoIcons.exclamationmark_circle
+                        : Icons.error_outline,
                     color: context.theme.colorScheme.error,
                   ),
                   onTap: () {
@@ -243,67 +285,94 @@ class ReactionWidgetState extends OptimizedState<ReactionWidget> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          backgroundColor: context.theme.colorScheme.properSurface,
-                          title: Text("Message failed to send", style: context.theme.textTheme.titleLarge),
-                          content: Text("Error ($errorCode): $errorText", style: context.theme.textTheme.bodyLarge),
+                          backgroundColor:
+                              context.theme.colorScheme.properSurface,
+                          title: Text(
+                            "Message failed to send",
+                            style: context.theme.textTheme.titleLarge,
+                          ),
+                          content: Text(
+                            "Error ($errorCode): $errorText",
+                            style: context.theme.textTheme.bodyLarge,
+                          ),
                           actions: <Widget>[
                             TextButton(
                               child: Text(
-                                  "Retry",
-                                  style: context.theme.textTheme.bodyLarge!.copyWith(color: Get.context!.theme.colorScheme.primary)
+                                "Retry",
+                                style:
+                                    context.theme.textTheme.bodyLarge!.copyWith(
+                                  color: Get.context!.theme.colorScheme.primary,
+                                ),
                               ),
                               onPressed: () async {
                                 // Remove the original message and notification
                                 Navigator.of(context).pop();
                                 Message.delete(reaction.guid!);
-                                await notif.clearFailedToSend(cm.activeChat!.chat.id!);
-                                getActiveMwc(reaction.associatedMessageGuid!)?.removeAssociatedMessage(reaction);
+                                await notif
+                                    .clearFailedToSend(cm.activeChat!.chat.id!);
+                                getActiveMwc(reaction.associatedMessageGuid!)
+                                    ?.removeAssociatedMessage(reaction);
                                 // Re-send
-                                final selected = getActiveMwc(reaction.associatedMessageGuid!)!.message;
-                                outq.queue(OutgoingItem(
-                                  type: QueueType.sendMessage,
-                                  chat: cm.activeChat!.chat,
-                                  message: Message(
-                                    associatedMessageGuid: selected.guid,
-                                    associatedMessageType: reaction.associatedMessageType,
-                                    associatedMessagePart: reaction.associatedMessagePart,
-                                    dateCreated: DateTime.now(),
-                                    hasAttachments: false,
-                                    isFromMe: true,
-                                    handleId: 0,
+                                final selected = getActiveMwc(
+                                        reaction.associatedMessageGuid!)!
+                                    .message;
+                                outq.queue(
+                                  OutgoingItem(
+                                    type: QueueType.sendMessage,
+                                    chat: cm.activeChat!.chat,
+                                    message: Message(
+                                      associatedMessageGuid: selected.guid,
+                                      associatedMessageType:
+                                          reaction.associatedMessageType,
+                                      associatedMessagePart:
+                                          reaction.associatedMessagePart,
+                                      dateCreated: DateTime.now(),
+                                      hasAttachments: false,
+                                      isFromMe: true,
+                                      handleId: 0,
+                                    ),
+                                    selected: selected,
+                                    reaction: reaction.associatedMessageType!,
                                   ),
-                                  selected: selected,
-                                  reaction: reaction.associatedMessageType!,
-                                ));
+                                );
                               },
                             ),
                             TextButton(
                               child: Text(
-                                  "Remove",
-                                  style: context.theme.textTheme.bodyLarge!.copyWith(color: Get.context!.theme.colorScheme.primary)
+                                "Remove",
+                                style:
+                                    context.theme.textTheme.bodyLarge!.copyWith(
+                                  color: Get.context!.theme.colorScheme.primary,
+                                ),
                               ),
                               onPressed: () async {
                                 Navigator.of(context).pop();
                                 // Delete the message from the DB
                                 Message.delete(reaction.guid!);
                                 // Remove the message from the Bloc
-                                getActiveMwc(reaction.associatedMessageGuid!)?.removeAssociatedMessage(reaction);
+                                getActiveMwc(reaction.associatedMessageGuid!)
+                                    ?.removeAssociatedMessage(reaction);
                                 final chat = cm.activeChat!.chat;
                                 await notif.clearFailedToSend(chat.id!);
                                 // Get the "new" latest info
-                                List<Message> latest = Chat.getMessages(chat, limit: 1);
+                                List<Message> latest =
+                                    Chat.getMessages(chat, limit: 1);
                                 chat.latestMessage = latest.first;
                                 chat.save();
                               },
                             ),
                             TextButton(
                               child: Text(
-                                  "Cancel",
-                                  style: context.theme.textTheme.bodyLarge!.copyWith(color: Get.context!.theme.colorScheme.primary)
+                                "Cancel",
+                                style:
+                                    context.theme.textTheme.bodyLarge!.copyWith(
+                                  color: Get.context!.theme.colorScheme.primary,
+                                ),
                               ),
                               onPressed: () async {
                                 Navigator.of(context).pop();
-                                await notif.clearFailedToSend(cm.activeChat!.chat.id!);
+                                await notif
+                                    .clearFailedToSend(cm.activeChat!.chat.id!);
                               },
                             )
                           ],
@@ -321,4 +390,3 @@ class ReactionWidgetState extends OptimizedState<ReactionWidget> {
     );
   }
 }
-

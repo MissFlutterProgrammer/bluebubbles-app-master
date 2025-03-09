@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:bluebubbles/database/database.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/database/models.dart';
@@ -33,8 +32,10 @@ class Contact {
   StructuredName? structuredName;
   Uint8List? avatar;
 
-  String? get dbStructuredName => structuredName == null ? null : jsonEncode(structuredName!.toMap());
-  set dbStructuredName(String? json) => structuredName = json == null ? null : StructuredName.fromMap(jsonDecode(json));
+  String? get dbStructuredName =>
+      structuredName == null ? null : jsonEncode(structuredName!.toMap());
+  set dbStructuredName(String? json) => structuredName =
+      json == null ? null : StructuredName.fromMap(jsonDecode(json));
 
   String? get initials {
     String initials = (structuredName?.givenName.characters.firstOrNull ?? "") +
@@ -74,8 +75,10 @@ class Contact {
       query.close();
       return result;
     } else if (address != null) {
-      final query =
-          Database.contacts.query(Contact_.phones.containsElement(address) | Contact_.emails.containsElement(address)).build();
+      final query = Database.contacts
+          .query(Contact_.phones.containsElement(address) |
+              Contact_.emails.containsElement(address))
+          .build();
       query.limit = 1;
       final result = query.findFirst();
       query.close();
@@ -86,7 +89,8 @@ class Contact {
 
   bool hasMatchingAddress(String search) {
     String term = slugify(search, delimiter: "");
-    return phones.any((element) => slugify(element, delimiter: "").contains(term)) ||
+    return phones
+            .any((element) => slugify(element, delimiter: "").contains(term)) ||
         emails.any((element) => slugify(element, delimiter: "").contains(term));
   }
 
@@ -120,11 +124,16 @@ class Contact {
       (other is Contact &&
           runtimeType == other.runtimeType &&
           displayName == other.displayName &&
-          listEquals(getUniqueNumbers(phones), getUniqueNumbers(other.phones)) &&
+          listEquals(
+              getUniqueNumbers(phones), getUniqueNumbers(other.phones)) &&
           listEquals(getUniqueEmails(emails), getUniqueEmails(other.emails)) &&
           avatar?.length == other.avatar?.length);
 
   @override
-  int get hashCode =>
-      Object.hashAllUnordered([displayName, avatar?.length, ...getUniqueNumbers(phones), ...getUniqueEmails(emails)]);
+  int get hashCode => Object.hashAllUnordered([
+        displayName,
+        avatar?.length,
+        ...getUniqueNumbers(phones),
+        ...getUniqueEmails(emails)
+      ]);
 }

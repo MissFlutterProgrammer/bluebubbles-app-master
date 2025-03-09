@@ -12,7 +12,9 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
-SocketService socket = Get.isRegistered<SocketService>() ? Get.find<SocketService>() : Get.put(SocketService());
+SocketService socket = Get.isRegistered<SocketService>()
+    ? Get.find<SocketService>()
+    : Get.put(SocketService());
 
 enum SocketState {
   connected,
@@ -67,34 +69,58 @@ class SocketService extends GetxService {
     if (isNullOrEmpty(serverAddress)) return;
 
     socket.onConnect((data) => handleStatusUpdate(SocketState.connected, data));
-    socket.onReconnect((data) => handleStatusUpdate(SocketState.connected, data));
+    socket
+        .onReconnect((data) => handleStatusUpdate(SocketState.connected, data));
 
-    socket.onReconnectAttempt((data) => handleStatusUpdate(SocketState.connecting, data));
-    socket.onReconnecting((data) => handleStatusUpdate(SocketState.connecting, data));
-    socket.onConnecting((data) => handleStatusUpdate(SocketState.connecting, data));
+    socket.onReconnectAttempt(
+        (data) => handleStatusUpdate(SocketState.connecting, data));
+    socket.onReconnecting(
+        (data) => handleStatusUpdate(SocketState.connecting, data));
+    socket.onConnecting(
+        (data) => handleStatusUpdate(SocketState.connecting, data));
 
-    socket.onDisconnect((data) => handleStatusUpdate(SocketState.disconnected, data));
+    socket.onDisconnect(
+        (data) => handleStatusUpdate(SocketState.disconnected, data));
 
-    socket.onConnectError((data) => handleStatusUpdate(SocketState.error, data));
-    socket.onConnectTimeout((data) => handleStatusUpdate(SocketState.error, data));
+    socket
+        .onConnectError((data) => handleStatusUpdate(SocketState.error, data));
+    socket.onConnectTimeout(
+        (data) => handleStatusUpdate(SocketState.error, data));
     socket.onError((data) => handleStatusUpdate(SocketState.error, data));
 
     // custom events
     // only listen to these events from socket on web/desktop (FCM handles on Android)
     if (kIsWeb || kIsDesktop) {
-      socket.on("group-name-change", (data) => ah.handleEvent("group-name-change", data, 'DartSocket'));
-      socket.on("participant-removed", (data) => ah.handleEvent("participant-removed", data, 'DartSocket'));
-      socket.on("participant-added", (data) => ah.handleEvent("participant-added", data, 'DartSocket'));
-      socket.on("participant-left", (data) => ah.handleEvent("participant-left", data, 'DartSocket'));
-      socket.on("incoming-facetime", (data) => ah.handleEvent("incoming-facetime", jsonDecode(data), 'DartSocket'));
+      socket.on("group-name-change",
+          (data) => ah.handleEvent("group-name-change", data, 'DartSocket'));
+      socket.on("participant-removed",
+          (data) => ah.handleEvent("participant-removed", data, 'DartSocket'));
+      socket.on("participant-added",
+          (data) => ah.handleEvent("participant-added", data, 'DartSocket'));
+      socket.on("participant-left",
+          (data) => ah.handleEvent("participant-left", data, 'DartSocket'));
+      socket.on(
+          "incoming-facetime",
+          (data) => ah.handleEvent(
+              "incoming-facetime", jsonDecode(data), 'DartSocket'));
     }
 
-    socket.on("ft-call-status-changed", (data) => ah.handleEvent("ft-call-status-changed", data, 'DartSocket'));
-    socket.on("new-message", (data) => ah.handleEvent("new-message", data, 'DartSocket'));
-    socket.on("updated-message", (data) => ah.handleEvent("updated-message", data, 'DartSocket'));
-    socket.on("typing-indicator", (data) => ah.handleEvent("typing-indicator", data, 'DartSocket'));
-    socket.on("chat-read-status-changed", (data) => ah.handleEvent("chat-read-status-changed", data, 'DartSocket'));
-    socket.on("imessage-aliases-removed", (data) => ah.handleEvent("imessage-aliases-removed", data, 'DartSocket'));
+    socket.on("ft-call-status-changed",
+        (data) => ah.handleEvent("ft-call-status-changed", data, 'DartSocket'));
+    socket.on("new-message",
+        (data) => ah.handleEvent("new-message", data, 'DartSocket'));
+    socket.on("updated-message",
+        (data) => ah.handleEvent("updated-message", data, 'DartSocket'));
+    socket.on("typing-indicator",
+        (data) => ah.handleEvent("typing-indicator", data, 'DartSocket'));
+    socket.on(
+        "chat-read-status-changed",
+        (data) =>
+            ah.handleEvent("chat-read-status-changed", data, 'DartSocket'));
+    socket.on(
+        "imessage-aliases-removed",
+        (data) =>
+            ah.handleEvent("imessage-aliases-removed", data, 'DartSocket'));
 
     socket.connect();
   }
@@ -106,7 +132,9 @@ class SocketService extends GetxService {
   }
 
   void reconnect() {
-    if (state.value == SocketState.connected || isNullOrEmpty(serverAddress)) return;
+    if (state.value == SocketState.connected || isNullOrEmpty(serverAddress)) {
+      return;
+    }
     state.value = SocketState.connecting;
     socket.connect();
   }
@@ -128,12 +156,14 @@ class SocketService extends GetxService {
     clearServerUrl(saveAdditionalSettings: ["guidAuthKey"]);
   }
 
-  Future<Map<String, dynamic>> sendMessage(String event, Map<String, dynamic> message) {
+  Future<Map<String, dynamic>> sendMessage(
+      String event, Map<String, dynamic> message) {
     Completer<Map<String, dynamic>> completer = Completer();
 
     socket.emitWithAck(event, message, ack: (response) {
       if (response['encrypted'] == true) {
-        response['data'] = jsonDecode(decryptAESCryptoJS(response['data'], password));
+        response['data'] =
+            jsonDecode(decryptAESCryptoJS(response['data'], password));
       }
 
       if (!completer.isCompleted) {
@@ -185,8 +215,6 @@ class SocketService extends GetxService {
             notif.createSocketError();
           }
         });
-        return;
-      default:
         return;
     }
   }

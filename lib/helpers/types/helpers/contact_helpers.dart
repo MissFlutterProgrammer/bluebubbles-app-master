@@ -18,13 +18,19 @@ Future<String> formatPhoneNumber(dynamic item) async {
   }
 
   // If we don't have a valid address, or it's an email, return it
-  if (isNullOrEmpty(address) || address!.isEmail || address.contains("urn:biz")) return address ?? "Unknown";
+  if (isNullOrEmpty(address) ||
+      address!.isEmail ||
+      address.contains("urn:biz")) {
+    return address ?? "Unknown";
+  }
   address = address.trim();
 
   String? formatted;
   try {
-    final parsed = PhoneNumberUtil.instance.parse(address, address.startsWith("+") ? null : cc);
-    formatted = PhoneNumberUtil.instance.format(parsed, PhoneNumberFormat.international);
+    final parsed = PhoneNumberUtil.instance
+        .parse(address, address.startsWith("+") ? null : cc);
+    formatted = PhoneNumberUtil.instance
+        .format(parsed, PhoneNumberFormat.international);
   } catch (_) {}
 
   return formatted ?? address;
@@ -68,7 +74,12 @@ List<String> getUniqueEmails(Iterable<String> list) {
   return emails;
 }
 
-String getDisplayName(String? displayName, String? firstName, String? lastName) {
+String getDisplayName(
+    String? displayName, String? firstName, String? lastName) {
   String? _displayName = (displayName?.isEmpty ?? false) ? null : displayName;
-  return _displayName ?? [firstName, lastName].where((e) => e?.isNotEmpty ?? false).toList().join(" ");
+  return _displayName ??
+      [firstName, lastName]
+          .where((e) => e?.isNotEmpty ?? false)
+          .toList()
+          .join(" ");
 }

@@ -3,7 +3,12 @@ import 'package:bluebubbles/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-Map<String, int> defaultTimeframes = {"1 Hour": 1, "1 Day": 24, "1 Week": 168, "1 Month": 720};
+Map<String, int> defaultTimeframes = {
+  "1 Hour": 1,
+  "1 Day": 24,
+  "1 Week": 168,
+  "1 Month": 720
+};
 
 Future<DateTime?> showTimeframePicker(String title, BuildContext context,
     {bool showHourPicker = true,
@@ -17,7 +22,12 @@ Future<DateTime?> showTimeframePicker(String title, BuildContext context,
   // Sort the selections by the value
   Map<String, int> tfSelections = (customTimeframes ?? defaultTimeframes);
   tfSelections.addAll(additionalTimeframes ?? {});
-  tfSelections = Map.fromEntries(tfSelections.entries.toList()..sort((e1, e2) => e1.value.compareTo(e2.value)));
+  tfSelections = Map.fromEntries(
+    tfSelections.entries.toList()
+      ..sort(
+        (e1, e2) => e1.value.compareTo(e2.value),
+      ),
+  );
 
   // Create a list of row widgets where the left side of the row is the "relative" timeframe
   // and the right side is the raw date range
@@ -57,59 +67,85 @@ Future<DateTime?> showTimeframePicker(String title, BuildContext context,
     if (tmpDate.isToday()) {
       dateStr = buildTime(tmpDate);
     } else {
-      dateStr = buildFullDate(tmpDate, includeTime: tmpDate.isToday(), useTodayYesterday: useTodayYesterday);
+      dateStr = buildFullDate(tmpDate,
+          includeTime: tmpDate.isToday(), useTodayYesterday: useTodayYesterday);
     }
 
     return InkWell(
-        onTap: () {
-          finalDate = tmpDate;
-          if (ns.isTabletMode(context)){
-            Get.close(1);
-          } else {
-            Navigator.of(context).pop();
-          }
-        },
-        child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            decoration:
-                BoxDecoration(border: Border(bottom: BorderSide(color: context.theme.dividerColor.withOpacity(0.2)))),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      onTap: () {
+        finalDate = tmpDate;
+        if (ns.isTabletMode(context)) {
+          Get.close(1);
+        } else {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
+        decoration: BoxDecoration(
+            border: Border(
+          bottom: BorderSide(
+            // ignore: deprecated_member_use
+            color: context.theme.dividerColor.withOpacity(0.2),
+          ),
+        )),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Icon(icon, color: context.theme.colorScheme.secondary),
-                    Container(
-                      constraints: const BoxConstraints(minWidth: 5),
-                    ),
-                    Text("${entry.key}${(selectionSuffix != null ? " $selectionSuffix" : "")}",
-                        style: context.theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w400)),
-                  ],
-                ),
+                Icon(icon, color: context.theme.colorScheme.secondary),
                 Container(
-                  constraints: const BoxConstraints(minWidth: 20),
+                  constraints: const BoxConstraints(minWidth: 5),
                 ),
-                Text(dateStr,
-                    style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.secondary), overflow: TextOverflow.fade),
+                Text(
+                  "${entry.key}${(selectionSuffix != null ? " $selectionSuffix" : "")}",
+                  style: context.theme.textTheme.bodyLarge!.copyWith(
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
               ],
-            )));
+            ),
+            Container(
+              constraints: const BoxConstraints(minWidth: 20),
+            ),
+            Text(dateStr,
+                style: context.theme.textTheme.bodyLarge!.copyWith(
+                  color: context.theme.colorScheme.secondary,
+                ),
+                overflow: TextOverflow.fade),
+          ],
+        ),
+      ),
+    );
   }).toList();
 
   // Add a custom date picker to the selections list
-  selections.add(InkWell(
+  selections.add(
+    InkWell(
       onTap: () async {
         finalDate = await showDatePicker(
-            context: context,
-            initialDate: DateTime.now().toLocal(),
-            firstDate: DateTime.now().toLocal().subtract(const Duration(days: 365)),
-            lastDate: DateTime.now().toLocal().add(const Duration(days: 365)));
+          context: context,
+          initialDate: DateTime.now().toLocal(),
+          firstDate:
+              DateTime.now().toLocal().subtract(const Duration(days: 365)),
+          lastDate: DateTime.now().toLocal().add(
+                const Duration(days: 365),
+              ),
+        );
 
         // If the user selected a date and the time picker is enabled, show the time picker
         if (showHourPicker && finalDate != null) {
-          final messageTime = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+          final messageTime = await showTimePicker(
+              context: context, initialTime: TimeOfDay.now());
           if (messageTime != null) {
-            finalDate =
-                DateTime(finalDate!.year, finalDate!.month, finalDate!.day, messageTime.hour, messageTime.minute);
+            finalDate = DateTime(
+              finalDate!.year,
+              finalDate!.month,
+              finalDate!.day,
+              messageTime.hour,
+              messageTime.minute,
+            );
           } else {
             finalDate = null;
           }
@@ -118,10 +154,12 @@ Future<DateTime?> showTimeframePicker(String title, BuildContext context,
 
           // If the selected date is not in the future, show an error
           if (!presetsAhead && now.isBefore(finalDate!)) {
-            showSnackbar("Invalid Date Selection", "Please select a date in the future");
+            showSnackbar(
+                "Invalid Date Selection", "Please select a date in the future");
             finalDate = null;
           } else if (presetsAhead && now.isAfter(finalDate!)) {
-            showSnackbar("Invalid Date Selection", "Please select a date in the past");
+            showSnackbar(
+                "Invalid Date Selection", "Please select a date in the past");
             finalDate = null;
           }
 
@@ -133,29 +171,40 @@ Future<DateTime?> showTimeframePicker(String title, BuildContext context,
         }
       },
       child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.edit_calendar_outlined, color: context.theme.colorScheme.secondary),
-                  Container(
-                    constraints: const BoxConstraints(minWidth: 5),
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.edit_calendar_outlined,
+                  color: context.theme.colorScheme.secondary,
+                ),
+                Container(
+                  constraints: const BoxConstraints(minWidth: 5),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text(
+                    "Custom Date",
+                    style: context.theme.textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
-                  Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text("Custom Date",
-                          style: context.theme.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w400))),
-                ],
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 14,
-                color: context.theme.colorScheme.secondary,
-              )
-            ],
-          ))));
+                ),
+              ],
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 14,
+              color: context.theme.colorScheme.secondary,
+            )
+          ],
+        ),
+      ),
+    ),
+  );
 
   final ScrollController controller = ScrollController();
 
@@ -167,16 +216,23 @@ Future<DateTime?> showTimeframePicker(String title, BuildContext context,
           title,
           style: context.theme.textTheme.titleLarge,
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         content: Scrollbar(
-            thumbVisibility: true,
+          thumbVisibility: true,
+          controller: controller,
+          radius: const Radius.circular(10.0),
+          child: SingleChildScrollView(
             controller: controller,
-            radius: const Radius.circular(10.0),
-            child: SingleChildScrollView(
-              controller: controller,
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: selections)))),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: selections,
+              ),
+            ),
+          ),
+        ),
         backgroundColor: context.theme.colorScheme.properSurface,
       );
     },

@@ -5,7 +5,7 @@
 ///
 /// It is not recommended to import this library without an import alias as it
 /// contains classes with the same name as flutter and dart:ui core classes
-library engine;
+library;
 
 export 'colors.dart';
 export 'theme.dart';

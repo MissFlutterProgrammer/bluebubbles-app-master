@@ -28,7 +28,7 @@ class Fireworks extends LeafRenderObjectWidget {
 class RenderFireworks extends RenderBox {
   RenderFireworks({
     required FireworkController controller,
-  })   : _controller = controller;
+  }) : _controller = controller;
 
   /// The controller that manages the fireworks and tells the render box what
   /// and when to paint.
@@ -93,7 +93,7 @@ class RenderFireworks extends RenderBox {
     for (final rocket in controller.rockets) {
       final paint = Paint()
         ..color =
-        HSVColor.fromAHSV(1, rocket.hue, 1, rocket.brightness).toColor()
+            HSVColor.fromAHSV(1, rocket.hue, 1, rocket.brightness).toColor()
         ..strokeWidth = rocket.size
         ..style = PaintingStyle.stroke;
 
@@ -124,8 +124,12 @@ class RenderFireworks extends RenderBox {
           ),
         Paint()
           ..color = HSVColor.fromAHSV(
-              particle.alpha, particle.saturation != null
-              ? particle.hue : particle.hue % 360, particle.saturation ?? 1, particle.brightness)
+                  particle.alpha,
+                  particle.saturation != null
+                      ? particle.hue
+                      : particle.hue % 360,
+                  particle.saturation ?? 1,
+                  particle.brightness)
               .toColor()
           ..blendMode = BlendMode.screen
           ..strokeWidth = particle.size

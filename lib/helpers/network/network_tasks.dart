@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/services/services.dart';
 import 'package:bluebubbles/utils/logger/logger.dart';
@@ -16,16 +15,18 @@ import 'package:network_tools/network_tools.dart'
 class NetworkTasks {
   static Future<void> onConnect() async {
     if (ss.settings.finishedSetup.value) {
-      
       // Separate functionality for android vs. other
       if (!Platform.isAndroid) {
         // Only start incremental sync if the app is active and the previous state wasn't just hidden
         // or if the app was never resumed before
-        if (!ls.hasResumed || (ls.currentState == AppLifecycleState.resumed && (ls.wasPaused || ls.wasHidden))) {
+        if (!ls.hasResumed ||
+            (ls.currentState == AppLifecycleState.resumed &&
+                (ls.wasPaused || ls.wasHidden))) {
           await sync.startIncrementalSync();
         }
       } else {
-        if (!ls.hasResumed || (ls.currentState == AppLifecycleState.resumed && ls.wasPaused)) {
+        if (!ls.hasResumed ||
+            (ls.currentState == AppLifecycleState.resumed && ls.wasPaused)) {
           await sync.startIncrementalSync();
         }
       }
@@ -54,8 +55,10 @@ class NetworkTasks {
       return;
     }
 
-    List<ConnectivityResult> status = await (Connectivity().checkConnectivity());
-    if (!status.contains(ConnectivityResult.wifi) && !status.contains(ConnectivityResult.ethernet)) {
+    List<ConnectivityResult> status =
+        await (Connectivity().checkConnectivity());
+    if (!status.contains(ConnectivityResult.wifi) &&
+        !status.contains(ConnectivityResult.ethernet)) {
       http.originOverride = null;
       return;
     }
@@ -64,13 +67,18 @@ class NetworkTasks {
 
     try {
       await http.serverInfo().then((response) async {
-        List<String> localIpv4s = ((response.data?['data']?['local_ipv4s'] ?? []) as List).cast<String>();
-        List<String> localIpv6s = ((response.data?['data']?['local_ipv6s'] ?? []) as List).cast<String>();
+        List<String> localIpv4s =
+            ((response.data?['data']?['local_ipv4s'] ?? []) as List)
+                .cast<String>();
+        List<String> localIpv6s =
+            ((response.data?['data']?['local_ipv6s'] ?? []) as List)
+                .cast<String>();
         String? address;
         if (ss.settings.useLocalIpv6.value) {
           for (String ip in localIpv6s) {
             for (String scheme in schemes) {
-              String addr = "$scheme://[$ip]:${ss.settings.localhostPort.value!}";
+              String addr =
+                  "$scheme://[$ip]:${ss.settings.localhostPort.value!}";
               try {
                 Response response = await http.ping(customUrl: addr);
                 if (response.data.toString().contains("pong")) {
@@ -138,7 +146,8 @@ class NetworkTasks {
         String? address;
         for (ActiveHost h in hosts) {
           for (String scheme in schemes) {
-            String addr = "$scheme://${h.address}:${ss.settings.localhostPort.value!}";
+            String addr =
+                "$scheme://${h.address}:${ss.settings.localhostPort.value!}";
             try {
               Response response = await http.ping(customUrl: addr);
               if (response.data.toString().contains("pong")) {

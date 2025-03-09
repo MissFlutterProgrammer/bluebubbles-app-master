@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bluebubbles/app/components/avatars/contact_avatar_widget.dart';
 import 'package:bluebubbles/app/wrappers/theme_switcher.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
@@ -43,10 +42,12 @@ class ContactSelectorViewState extends OptimizedState<ContactSelectorView> {
     searchController.addListener(() {
       _debounce?.cancel();
       _debounce = Timer(const Duration(milliseconds: 250), () async {
-        final searchContacts = await SchedulerBinding.instance.scheduleTask(() async {
+        final searchContacts =
+            await SchedulerBinding.instance.scheduleTask(() async {
           final query = slugify(searchController.text, delimiter: "");
           return cs.contacts.filter((element) =>
-              slugify(element.displayName, delimiter: "").contains(query) || element.hasMatchingAddress(query));
+              slugify(element.displayName, delimiter: "").contains(query) ||
+              element.hasMatchingAddress(query));
         }, Priority.animation);
 
         _debounce = null;
@@ -67,32 +68,36 @@ class ContactSelectorViewState extends OptimizedState<ContactSelectorView> {
       value: SystemUiOverlayStyle(
         systemNavigationBarColor: ss.settings.immersiveMode.value
             ? Colors.transparent
-            : context.theme.colorScheme.background, // navigation bar color
-        systemNavigationBarIconBrightness: context.theme.colorScheme.brightness.opposite,
+            : context.theme.colorScheme.surface, // navigation bar color
+        systemNavigationBarIconBrightness:
+            context.theme.colorScheme.brightness.opposite,
         statusBarColor: Colors.transparent, // status bar color
         statusBarIconBrightness: context.theme.colorScheme.brightness.opposite,
       ),
       child: Scaffold(
         backgroundColor: ss.settings.windowEffect.value != WindowEffect.disabled
             ? Colors.transparent
-            : context.theme.colorScheme.background,
+            : context.theme.colorScheme.surface,
         appBar: PreferredSize(
-            preferredSize: Size(ns.width(context), kIsDesktop ? 90 : 50),
-            child: AppBar(
-                systemOverlayStyle: context.theme.colorScheme.brightness == Brightness.dark
+          preferredSize: Size(ns.width(context), kIsDesktop ? 90 : 50),
+          child: AppBar(
+            systemOverlayStyle:
+                context.theme.colorScheme.brightness == Brightness.dark
                     ? SystemUiOverlayStyle.light
                     : SystemUiOverlayStyle.dark,
-                toolbarHeight: kIsDesktop ? 90 : 50,
-                elevation: 0,
-                scrolledUnderElevation: 3,
-                surfaceTintColor: context.theme.colorScheme.primary,
-                leading: buildBackButton(context),
-                backgroundColor: Colors.transparent,
-                centerTitle: ss.settings.skin.value == Skins.iOS,
-                title: Text(
-                  "Select a Contact",
-                  style: context.theme.textTheme.titleLarge,
-                ))),
+            toolbarHeight: kIsDesktop ? 90 : 50,
+            elevation: 0,
+            scrolledUnderElevation: 3,
+            surfaceTintColor: context.theme.colorScheme.primary,
+            leading: buildBackButton(context),
+            backgroundColor: Colors.transparent,
+            centerTitle: ss.settings.skin.value == Skins.iOS,
+            title: Text(
+              "Select a Contact",
+              style: context.theme.textTheme.titleLarge,
+            ),
+          ),
+        ),
         body: FocusScope(
           child: Column(
             children: [
@@ -103,96 +108,116 @@ class ContactSelectorViewState extends OptimizedState<ContactSelectorView> {
                   focusNode: searchNode,
                   style: context.theme.textTheme.bodyLarge,
                   decoration: InputDecoration(
-                      hintText: "Search for a contact...",
-                      hintStyle: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.outline),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: context.theme.colorScheme.outline,
-                      ),
-                      suffixIcon: searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: () {
-                                searchController.clear();
-                              },
-                            )
-                          : null,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: false),
+                    hintText: "Search for a contact...",
+                    hintStyle: context.theme.textTheme.bodyLarge!.copyWith(
+                      color: context.theme.colorScheme.outline,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: context.theme.colorScheme.outline,
+                    ),
+                    suffixIcon: searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              searchController.clear();
+                            },
+                          )
+                        : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: false,
+                  ),
                 ),
               ),
               Expanded(
                 child: Obx(() {
                   return Align(
-                      alignment: Alignment.topCenter,
-                      child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 150),
-                          child: CustomScrollView(
-                            shrinkWrap: true,
-                            physics: ThemeSwitcher.getScrollPhysics(),
-                            slivers: <Widget>[
-                              SliverList(
-                                delegate: SliverChildBuilderDelegate((context, index) {
-                                  if (filteredContacts.isEmpty) {
-                                    return Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            "Loading contacts...",
-                                            style: context.theme.textTheme.labelLarge,
+                    alignment: Alignment.topCenter,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 150),
+                      child: CustomScrollView(
+                        shrinkWrap: true,
+                        physics: ThemeSwitcher.getScrollPhysics(),
+                        slivers: <Widget>[
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                if (filteredContacts.isEmpty) {
+                                  return Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "Loading contacts...",
+                                          style: context
+                                              .theme.textTheme.labelLarge,
+                                        ),
+                                      ),
+                                      buildProgressIndicator(
+                                        context,
+                                        size: 15,
+                                      ),
+                                    ],
+                                  );
+                                }
+                                final contact = filteredContacts[index];
+                                final hideInfo =
+                                    ss.settings.redactedMode.value &&
+                                        ss.settings.hideContactInfo.value;
+                                String _title = contact.displayName;
+                                if (hideInfo) {
+                                  _title = "Contact";
+                                }
+
+                                return Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      widget.onSelect(contact);
+                                      Get.back();
+                                    },
+                                    child: ListTile(
+                                      mouseCursor: MouseCursor.defer,
+                                      enableFeedback: true,
+                                      dense: ss.settings.denseChatTiles.value,
+                                      minVerticalPadding: 10,
+                                      horizontalTitleGap: 10,
+                                      title: RichText(
+                                        text: TextSpan(
+                                          children:
+                                              MessageHelper.buildEmojiText(
+                                            _title,
+                                            context.theme.textTheme.bodyLarge!,
                                           ),
                                         ),
-                                        buildProgressIndicator(context, size: 15),
-                                      ],
-                                    );
-                                  }
-                                  final contact = filteredContacts[index];
-                                  final hideInfo = ss.settings.redactedMode.value && ss.settings.hideContactInfo.value;
-                                  String _title = contact.displayName;
-                                  if (hideInfo) {
-                                    _title = "Contact";
-                                  }
-
-                                  return Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      onTap: () {
-                                        widget.onSelect(contact);
-                                        Get.back();
-                                      },
-                                      child: ListTile(
-                                          mouseCursor: MouseCursor.defer,
-                                          enableFeedback: true,
-                                          dense: ss.settings.denseChatTiles.value,
-                                          minVerticalPadding: 10,
-                                          horizontalTitleGap: 10,
-                                          title: RichText(
-                                            text: TextSpan(
-                                              children: MessageHelper.buildEmojiText(
-                                                _title,
-                                                context.theme.textTheme.bodyLarge!,
-                                              ),
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          leading: Padding(
-                                            padding: const EdgeInsets.only(right: 5.0),
-                                            child: ContactAvatarWidget(
-                                              contact: contact,
-                                              editable: false,
-                                            ),
-                                          )),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      leading: Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 5.0,
+                                        ),
+                                        child: ContactAvatarWidget(
+                                          contact: contact,
+                                          editable: false,
+                                        ),
+                                      ),
                                     ),
-                                  );
-                                }, childCount: filteredContacts.length.clamp(1, double.infinity).toInt()),
-                              )
-                            ],
-                          )));
+                                  ),
+                                );
+                              },
+                              childCount: filteredContacts.length
+                                  .clamp(1, double.infinity)
+                                  .toInt(),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
                 }),
               ),
             ],

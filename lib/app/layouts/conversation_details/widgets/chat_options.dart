@@ -40,36 +40,48 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 15.0, bottom: 5.0),
-              child: Text("OPTIONS & ACTIONS",
-                  style: context.theme.textTheme.bodyMedium!.copyWith(color: context.theme.colorScheme.outline)),
+              padding: const EdgeInsets.only(left: 15, bottom: 5.0),
+              child: Text(
+                "OPTIONS & ACTIONS",
+                style: context.theme.textTheme.bodyMedium!.copyWith(
+                  color: context.theme.colorScheme.outline,
+                ),
+              ),
             ),
             SettingsSection(
               backgroundColor: tileColor,
               children: [
-                if (!kIsWeb && !kIsDesktop && (fs.androidInfo?.version.sdkInt ?? 0) >= 30)
+                if (!kIsWeb &&
+                    !kIsDesktop &&
+                    (fs.androidInfo?.version.sdkInt ?? 0) >= 30)
                   SettingsTile(
                     title: "Notification Settings",
-                    subtitle: "Customize notification sounds, importance, and more for this specific chat",
+                    subtitle:
+                        "Customize notification sounds, importance, and more for this specific chat",
                     trailing: Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
+                      padding: const EdgeInsets.only(right: 15),
                       child: Icon(
                         iOS ? CupertinoIcons.bell : Icons.notifications_on,
                       ),
                     ),
                     isThreeLine: true,
                     onTap: () async {
-                      await mcs.invokeMethod("open-conversation-notification-settings",
-                          {"channel_id": chat.guid, "display_name": chat.getTitle()});
+                      await mcs.invokeMethod(
+                          "open-conversation-notification-settings", {
+                        "channel_id": chat.guid,
+                        "display_name": chat.getTitle()
+                      });
                     },
                   ),
                 if (!kIsWeb)
                   SettingsTile(
                     title: "Change Chat Avatar",
                     trailing: Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
+                      padding: const EdgeInsets.only(right: 15),
                       child: Icon(
-                        ss.settings.skin.value == Skins.iOS ? CupertinoIcons.person : Icons.person_outlined,
+                        ss.settings.skin.value == Skins.iOS
+                            ? CupertinoIcons.person
+                            : Icons.person_outlined,
                       ),
                     ),
                     onTap: () {
@@ -78,48 +90,67 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                                backgroundColor: context.theme.colorScheme.properSurface,
-                                title: Text("Custom Avatar", style: context.theme.textTheme.titleLarge),
-                                content: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("You already have a custom avatar for this chat. What would you like to do?",
-                                        style: context.theme.textTheme.bodyLarge),
-                                  ],
+                              backgroundColor:
+                                  context.theme.colorScheme.properSurface,
+                              title: Text(
+                                "Custom Avatar",
+                                style: context.theme.textTheme.titleLarge,
+                              ),
+                              content: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "You already have a custom avatar for this chat. What would you like to do?",
+                                    style: context.theme.textTheme.bodyLarge,
+                                  ),
+                                ],
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text(
+                                    "Cancel",
+                                    style: context.theme.textTheme.bodyLarge!
+                                        .copyWith(
+                                      color: context.theme.colorScheme.primary,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
                                 ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text("Cancel",
-                                        style: context.theme.textTheme.bodyLarge!
-                                            .copyWith(color: context.theme.colorScheme.primary)),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
+                                TextButton(
+                                  child: Text(
+                                    "Reset",
+                                    style: context.theme.textTheme.bodyLarge!
+                                        .copyWith(
+                                      color: context.theme.colorScheme.primary,
+                                    ),
                                   ),
-                                  TextButton(
-                                    child: Text("Reset",
-                                        style: context.theme.textTheme.bodyLarge!
-                                            .copyWith(color: context.theme.colorScheme.primary)),
-                                    onPressed: () {
-                                      File file = File(chat.customAvatarPath!);
-                                      file.delete();
-                                      chat.customAvatarPath = null;
-                                      chat.save(updateCustomAvatarPath: true);
-                                      Get.back();
-                                    },
+                                  onPressed: () {
+                                    File file = File(chat.customAvatarPath!);
+                                    file.delete();
+                                    chat.customAvatarPath = null;
+                                    chat.save(updateCustomAvatarPath: true);
+                                    Get.back();
+                                  },
+                                ),
+                                TextButton(
+                                  child: Text(
+                                    "Set New",
+                                    style: context.theme.textTheme.bodyLarge!
+                                        .copyWith(
+                                      color: context.theme.colorScheme.primary,
+                                    ),
                                   ),
-                                  TextButton(
-                                    child: Text("Set New",
-                                        style: context.theme.textTheme.bodyLarge!
-                                            .copyWith(color: context.theme.colorScheme.primary)),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      Get.to(() => AvatarCrop(chat: chat));
-                                    },
-                                  ),
-                                ]);
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Get.to(() => AvatarCrop(chat: chat));
+                                  },
+                                ),
+                              ],
+                            );
                           },
                         );
                       } else {
@@ -133,19 +164,24 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                       subtitle: "See your bookmarked messages",
                       backgroundColor: tileColor,
                       trailing: Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
-                        child: Icon(iOS ? CupertinoIcons.bookmark : Icons.bookmark),
+                        padding: const EdgeInsets.only(right: 15),
+                        child: Icon(
+                          iOS ? CupertinoIcons.bookmark : Icons.bookmark,
+                        ),
                       ),
                       onTap: () async {
                         showBookmarksThread(cvc(widget.chat), context);
                       }),
                 SettingsTile(
                     title: "Fetch Chat Details",
-                    subtitle: "Get the latest chat title and participants from the server",
+                    subtitle:
+                        "Get the latest chat title and participants from the server",
                     backgroundColor: tileColor,
                     trailing: Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
-                      child: Icon(iOS ? CupertinoIcons.chat_bubble : Icons.sms),
+                      padding: const EdgeInsets.only(right: 15),
+                      child: Icon(
+                        iOS ? CupertinoIcons.chat_bubble : Icons.sms,
+                      ),
                     ),
                     onTap: () async {
                       await cm.fetchChat(chat.guid);
@@ -153,11 +189,14 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                     }),
                 SettingsTile(
                   title: "Fetch More Messages",
-                  subtitle: "Fetches up to 100 messages after the last message stored locally",
+                  subtitle:
+                      "Fetches up to 100 messages after the last message stored locally",
                   isThreeLine: true,
                   trailing: Padding(
-                    padding: const EdgeInsets.only(right: 15.0),
-                    child: Icon(iOS ? CupertinoIcons.cloud_download : Icons.file_download),
+                    padding: const EdgeInsets.only(right: 15),
+                    child: Icon(iOS
+                        ? CupertinoIcons.cloud_download
+                        : Icons.file_download),
                   ),
                   onTap: () async {
                     await showDialog(
@@ -174,32 +213,48 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                 ),
                 SettingsTile(
                   title: "Sync Last 25 Messages",
-                  subtitle: "Resyncs the 25 most recent messages from the server",
+                  subtitle:
+                      "Resyncs the 25 most recent messages from the server",
                   trailing: Padding(
-                    padding: const EdgeInsets.only(right: 15.0),
-                    child: Icon(iOS ? CupertinoIcons.arrow_counterclockwise : Icons.replay),
+                    padding: const EdgeInsets.only(right: 15),
+                    child: Icon(
+                      iOS
+                          ? CupertinoIcons.arrow_counterclockwise
+                          : Icons.replay,
+                    ),
                   ),
                   onTap: () {
                     showDialog(
                       context: context,
                       barrierDismissible: false,
-                      builder: (context) =>
-                          ChatSyncDialog(chat: chat, initialMessage: "Resyncing messages...", limit: 25),
+                      builder: (context) => ChatSyncDialog(
+                        chat: chat,
+                        initialMessage: "Resyncing messages...",
+                        limit: 25,
+                      ),
                     );
                   },
                 ),
-                if (!kIsWeb && !chat.isGroup && ss.settings.enablePrivateAPI.value) const SettingsDivider(),
-                if (!kIsWeb && !chat.isGroup && ss.settings.enablePrivateAPI.value)
+                if (!kIsWeb &&
+                    !chat.isGroup &&
+                    ss.settings.enablePrivateAPI.value)
+                  const SettingsDivider(),
+                if (!kIsWeb &&
+                    !chat.isGroup &&
+                    ss.settings.enablePrivateAPI.value)
                   SettingsSwitch(
                     title: "Send Typing Indicators",
-                    initialVal: chat.autoSendTypingIndicators ?? ss.settings.privateSendTypingIndicators.value,
+                    initialVal: chat.autoSendTypingIndicators ??
+                        ss.settings.privateSendTypingIndicators.value,
                     onChanged: (value) {
                       chat.toggleAutoType(value);
                       setState(() {});
                     },
                     backgroundColor: tileColor,
                   ),
-                if (!kIsWeb && !chat.isGroup && ss.settings.enablePrivateAPI.value)
+                if (!kIsWeb &&
+                    !chat.isGroup &&
+                    ss.settings.enablePrivateAPI.value)
                   SettingsSwitch(
                       title: "Follow Global Setting",
                       subtitle:
@@ -207,24 +262,34 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                       initialVal: chat.autoSendTypingIndicators == null,
                       onChanged: (value) {
                         if (!value) {
-                          chat.toggleAutoType(ss.settings.privateSendTypingIndicators.value);
+                          chat.toggleAutoType(
+                              ss.settings.privateSendTypingIndicators.value);
                         } else {
                           chat.toggleAutoType(null);
                         }
                         setState(() {});
                       }),
-                if (!kIsWeb && !chat.isGroup && ss.settings.enablePrivateAPI.value) const SettingsDivider(),
-                if (!kIsWeb && !chat.isGroup && ss.settings.enablePrivateAPI.value)
+                if (!kIsWeb &&
+                    !chat.isGroup &&
+                    ss.settings.enablePrivateAPI.value)
+                  const SettingsDivider(),
+                if (!kIsWeb &&
+                    !chat.isGroup &&
+                    ss.settings.enablePrivateAPI.value)
                   SettingsSwitch(
-                    title: "${ss.settings.privateManualMarkAsRead.value ? "Automatically " : ""}Send Read Receipts",
-                    initialVal: chat.autoSendReadReceipts ?? ss.settings.privateMarkChatAsRead.value,
+                    title:
+                        "${ss.settings.privateManualMarkAsRead.value ? "Automatically " : ""}Send Read Receipts",
+                    initialVal: chat.autoSendReadReceipts ??
+                        ss.settings.privateMarkChatAsRead.value,
                     onChanged: (value) {
                       chat.toggleAutoRead(value);
                       setState(() {});
                     },
                     backgroundColor: tileColor,
                   ),
-                if (!kIsWeb && !chat.isGroup && ss.settings.enablePrivateAPI.value)
+                if (!kIsWeb &&
+                    !chat.isGroup &&
+                    ss.settings.enablePrivateAPI.value)
                   SettingsSwitch(
                     title: "Follow Global Setting",
                     subtitle:
@@ -232,19 +297,24 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                     initialVal: chat.autoSendReadReceipts == null,
                     onChanged: (value) {
                       if (!value) {
-                        chat.toggleAutoRead(ss.settings.privateMarkChatAsRead.value);
+                        chat.toggleAutoRead(
+                            ss.settings.privateMarkChatAsRead.value);
                       } else {
                         chat.toggleAutoRead(null);
                       }
                       setState(() {});
                     },
                   ),
-                if ((!kIsWeb && !chat.isGroup && ss.settings.enablePrivateAPI.value) || chat.isGroup)
+                if ((!kIsWeb &&
+                        !chat.isGroup &&
+                        ss.settings.enablePrivateAPI.value) ||
+                    chat.isGroup)
                   const SettingsDivider(),
                 if (chat.isGroup)
                   SettingsSwitch(
                     title: "Lock Chat Name",
-                    subtitle: "Keep the current chat name on this device, even if someone else in the chat changes it",
+                    subtitle:
+                        "Keep the current chat name on this device, even if someone else in the chat changes it",
                     initialVal: chat.lockChatName,
                     onChanged: (value) {
                       chat.lockChatName = value;
@@ -255,7 +325,8 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                 if (chat.isGroup)
                   SettingsSwitch(
                     title: "Lock Chat Icon",
-                    subtitle: "Keep the current chat icon on this device, even if someone else in the chat changes it",
+                    subtitle:
+                        "Keep the current chat icon on this device, even if someone else in the chat changes it",
                     initialVal: chat.lockChatIcon,
                     onChanged: (value) {
                       chat.lockChatIcon = value;
@@ -297,42 +368,56 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                 if (!kIsWeb)
                   SettingsTile(
                     title: "Clear Transcript",
-                    subtitle: "Delete all messages for this chat on this device",
+                    subtitle:
+                        "Delete all messages for this chat on this device",
                     trailing: Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
-                      child: Icon(iOS ? CupertinoIcons.trash : Icons.delete_outlined),
+                      padding: const EdgeInsets.only(right: 15),
+                      child: Icon(
+                          iOS ? CupertinoIcons.trash : Icons.delete_outlined),
                     ),
                     onTap: () {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                              backgroundColor: context.theme.colorScheme.properSurface,
-                              title: Text("Are You Sure?", style: context.theme.textTheme.titleLarge),
-                              content: Text(
-                                'Clearing the transcript will permanently delete all messages in this chat. It will also prevent any previous messages from being loaded by the app, until you perform a full reset.',
-                                style: context.theme.textTheme.bodyLarge,
+                            backgroundColor:
+                                context.theme.colorScheme.properSurface,
+                            title: Text("Are You Sure?",
+                                style: context.theme.textTheme.titleLarge),
+                            content: Text(
+                              'Clearing the transcript will permanently delete all messages in this chat. It will also prevent any previous messages from being loaded by the app, until you perform a full reset.',
+                              style: context.theme.textTheme.bodyLarge,
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text(
+                                  "Cancel",
+                                  style: context.theme.textTheme.bodyLarge!
+                                      .copyWith(
+                                    color: context.theme.colorScheme.primary,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
                               ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text("Cancel",
-                                      style: context.theme.textTheme.bodyLarge!
-                                          .copyWith(color: context.theme.colorScheme.primary)),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
+                              TextButton(
+                                child: Text(
+                                  "Yes",
+                                  style: context.theme.textTheme.bodyLarge!
+                                      .copyWith(
+                                    color: context.theme.colorScheme.primary,
+                                  ),
                                 ),
-                                TextButton(
-                                  child: Text("Yes",
-                                      style: context.theme.textTheme.bodyLarge!
-                                          .copyWith(color: context.theme.colorScheme.primary)),
-                                  onPressed: () async {
-                                    Navigator.of(context).pop();
-                                    chat.clearTranscript();
-                                    eventDispatcher.emit("refresh-messagebloc", {"chatGuid": chat.guid});
-                                  },
-                                ),
-                              ]);
+                                onPressed: () async {
+                                  Navigator.of(context).pop();
+                                  chat.clearTranscript();
+                                  eventDispatcher.emit("refresh-messagebloc",
+                                      {"chatGuid": chat.guid});
+                                },
+                              ),
+                            ],
+                          );
                         },
                       );
                     },
@@ -345,32 +430,38 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                         : "Tap for a plaintext transcript\nTap and hold for a PDF transcript",
                     isThreeLine: true,
                     trailing: Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
-                      child: Icon(iOS ? CupertinoIcons.doc_text : Icons.note_outlined),
+                      padding: const EdgeInsets.only(right: 15),
+                      child: Icon(
+                        iOS ? CupertinoIcons.doc_text : Icons.note_outlined,
+                      ),
                     ),
                     onTap: () async {
-                      final date =
-                          await showTimeframePicker("Select Timeframe", context, additionalTimeframes: {"6 Hours": 6});
+                      final date = await showTimeframePicker(
+                          "Select Timeframe", context,
+                          additionalTimeframes: {"6 Hours": 6});
                       if (date == null) return;
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: Text("Generating document...", style: context.theme.textTheme.titleLarge),
+                          title: Text(
+                            "Generating document...",
+                            style: context.theme.textTheme.titleLarge,
+                          ),
                           content: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              const SizedBox(
-                                height: 15.0,
-                              ),
+                              const SizedBox(height: 15),
                               buildProgressIndicator(context),
                             ],
                           ),
-                          backgroundColor: context.theme.colorScheme.properSurface,
+                          backgroundColor:
+                              context.theme.colorScheme.properSurface,
                         ),
                         barrierDismissible: false,
                       );
-                      final messages = (await Chat.getMessagesAsync(chat, limit: 0, includeDeleted: true))
+                      final messages = (await Chat.getMessagesAsync(chat,
+                              limit: 0, includeDeleted: true))
                           .reversed
                           .where((e) => e.dateCreated!.isAfter(date));
                       if (messages.isEmpty) {
@@ -380,11 +471,16 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                       }
                       final List<String> lines = [];
                       for (Message m in messages) {
-                        final readStr = m.dateRead != null ? "Read: ${buildFullDate(m.dateRead!)}, " : "";
-                        final deliveredStr =
-                            m.dateDelivered != null ? "Delivered: ${buildFullDate(m.dateDelivered!)}, " : "";
-                        final sentStr = "Sent: ${buildFullDate(m.dateCreated!)}";
-                        final text = MessageHelper.getNotificationText(m, withSender: true);
+                        final readStr = m.dateRead != null
+                            ? "Read: ${buildFullDate(m.dateRead!)}, "
+                            : "";
+                        final deliveredStr = m.dateDelivered != null
+                            ? "Delivered: ${buildFullDate(m.dateDelivered!)}, "
+                            : "";
+                        final sentStr =
+                            "Sent: ${buildFullDate(m.dateCreated!)}";
+                        final text = MessageHelper.getNotificationText(m,
+                            withSender: true);
                         final line = "($readStr$deliveredStr$sentStr) $text";
                         lines.add(line);
                       }
@@ -399,30 +495,35 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                       await file.create(recursive: true);
                       await file.writeAsString(lines.join('\n'));
                       Get.back();
-                      showSnackbar("Success", "Saved transcript to the downloads folder");
+                      showSnackbar("Success",
+                          "Saved transcript to the downloads folder");
                     },
                     onLongPress: () async {
-                      final date =
-                          await showTimeframePicker("Select Timeframe", context, additionalTimeframes: {"6 Hours": 6});
+                      final date = await showTimeframePicker(
+                          "Select Timeframe", context,
+                          additionalTimeframes: {"6 Hours": 6});
                       if (date == null) return;
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: Text("Generating PDF...", style: context.theme.textTheme.titleLarge),
+                          title: Text("Generating PDF...",
+                              style: context.theme.textTheme.titleLarge),
                           content: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 const SizedBox(
-                                  height: 15.0,
+                                  height: 15,
                                 ),
                                 buildProgressIndicator(context),
                               ]),
-                          backgroundColor: context.theme.colorScheme.properSurface,
+                          backgroundColor:
+                              context.theme.colorScheme.properSurface,
                         ),
                         barrierDismissible: false,
                       );
-                      final messages = (await Chat.getMessagesAsync(chat, limit: 0, includeDeleted: true))
+                      final messages = (await Chat.getMessagesAsync(chat,
+                              limit: 0, includeDeleted: true))
                           .reversed
                           .where((e) => e.dateCreated!.isAfter(date));
                       if (messages.isEmpty) {
@@ -435,35 +536,49 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                       final List<dynamic> content = [];
                       final List<Size?> dimensions = [];
                       for (Message m in messages) {
-                        final readStr = m.dateRead != null ? "Read: ${buildFullDate(m.dateRead!)}, " : "";
-                        final deliveredStr =
-                            m.dateDelivered != null ? "Delivered: ${buildFullDate(m.dateDelivered!)}, " : "";
-                        final sentStr = "Sent: ${buildFullDate(m.dateCreated!)}";
+                        final readStr = m.dateRead != null
+                            ? "Read: ${buildFullDate(m.dateRead!)}, "
+                            : "";
+                        final deliveredStr = m.dateDelivered != null
+                            ? "Delivered: ${buildFullDate(m.dateDelivered!)}, "
+                            : "";
+                        final sentStr =
+                            "Sent: ${buildFullDate(m.dateCreated!)}";
                         if (m.hasAttachments) {
-                          final attachments = m.attachments.where(
-                              (e) => e?.guid != null && ["image/png", "image/jpg", "image/jpeg"].contains(e!.mimeType));
-                          final files =
-                              attachments.map((e) => as.getContent(e!, autoDownload: false)).whereType<PlatformFile>();
+                          final attachments = m.attachments.where((e) =>
+                              e?.guid != null &&
+                              ["image/png", "image/jpg", "image/jpeg"]
+                                  .contains(e!.mimeType));
+                          final files = attachments
+                              .map(
+                                  (e) => as.getContent(e!, autoDownload: false))
+                              .whereType<PlatformFile>();
                           if (files.isNotEmpty) {
                             for (PlatformFile f in files) {
-                              final a = attachments.firstWhere((e) => e!.transferName == f.name);
+                              final a = attachments
+                                  .firstWhere((e) => e!.transferName == f.name);
                               timestamps.add(readStr + deliveredStr + sentStr);
-                              content.add(pw.MemoryImage(await File(f.path!).readAsBytes()));
-                              final aspectRatio = (a!.width ?? 150.0) / (a.height ?? 150.0);
+                              content.add(pw.MemoryImage(
+                                  await File(f.path!).readAsBytes()));
+                              final aspectRatio =
+                                  (a!.width ?? 150.0) / (a.height ?? 150.0);
                               dimensions.add(Size(400, aspectRatio * 400));
                             }
                           }
                           timestamps.add(readStr + deliveredStr + sentStr);
-                          content.add(MessageHelper.getNotificationText(m, withSender: true));
+                          content.add(MessageHelper.getNotificationText(m,
+                              withSender: true));
                           dimensions.add(null);
                         } else {
                           timestamps.add(readStr + deliveredStr + sentStr);
-                          content.add(MessageHelper.getNotificationText(m, withSender: true));
+                          content.add(MessageHelper.getNotificationText(m,
+                              withSender: true));
                           dimensions.add(null);
                         }
                       }
                       final font = await PdfGoogleFonts.openSansRegular();
-                      doc.addPage(pw.MultiPage(
+                      doc.addPage(
+                        pw.MultiPage(
                           maxPages: 1000,
                           header: (pw.Context context) => pw.Padding(
                               padding: const pw.EdgeInsets.only(bottom: 10),
@@ -471,35 +586,63 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                                   textScaleFactor: 2,
                                   style: pw.Theme.of(context)
                                       .defaultTextStyle
-                                      .copyWith(fontWeight: pw.FontWeight.bold, font: font))),
+                                      .copyWith(
+                                          fontWeight: pw.FontWeight.bold,
+                                          font: font))),
                           build: (pw.Context context) => [
-                                pw.Partitions(children: [
-                                  pw.Partition(
-                                      child: pw.Table(
-                                          children: List.generate(
-                                              timestamps.length,
-                                              (index) => pw.TableRow(children: [
-                                                    pw.Padding(
-                                                      padding:
-                                                          const pw.EdgeInsets.symmetric(horizontal: 3, vertical: 10),
-                                                      child: pw.Text(timestamps[index],
-                                                          style: pw.Theme.of(context)
-                                                              .defaultTextStyle
-                                                              .copyWith(font: font)),
+                            pw.Partitions(
+                              children: [
+                                pw.Partition(
+                                  child: pw.Table(
+                                    children: List.generate(
+                                      timestamps.length,
+                                      (index) => pw.TableRow(
+                                        children: [
+                                          pw.Padding(
+                                            padding:
+                                                const pw.EdgeInsets.symmetric(
+                                                    horizontal: 3,
+                                                    vertical: 10),
+                                            child: pw.Text(
+                                              timestamps[index],
+                                              style: pw.Theme.of(context)
+                                                  .defaultTextStyle
+                                                  .copyWith(
+                                                    font: font,
+                                                  ),
+                                            ),
+                                          ),
+                                          pw.Container(
+                                            child: pw.Padding(
+                                              padding:
+                                                  const pw.EdgeInsets.symmetric(
+                                                      horizontal: 3,
+                                                      vertical: 10),
+                                              child: content[index]
+                                                      is pw.MemoryImage
+                                                  ? pw.Image(content[index],
+                                                      width: dimensions[index]!
+                                                          .width,
+                                                      height: dimensions[index]!
+                                                          .height)
+                                                  : pw.Text(
+                                                      content[index].toString(),
+                                                      style: pw.TextStyle(
+                                                        font: font,
+                                                      ),
                                                     ),
-                                                    pw.Container(
-                                                        child: pw.Padding(
-                                                            padding: const pw.EdgeInsets.symmetric(
-                                                                horizontal: 3, vertical: 10),
-                                                            child: content[index] is pw.MemoryImage
-                                                                ? pw.Image(content[index],
-                                                                    width: dimensions[index]!.width,
-                                                                    height: dimensions[index]!.height)
-                                                                : pw.Text(content[index].toString(),
-                                                                    style: pw.TextStyle(font: font))))
-                                                  ])))),
-                                ]),
-                              ]));
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
                       final now = DateTime.now().toLocal();
                       String filePath = "/storage/emulated/0/Download/";
                       if (kIsDesktop) {
@@ -511,7 +654,8 @@ class _ChatOptionsState extends OptimizedState<ChatOptions> {
                       await file.create(recursive: true);
                       await file.writeAsBytes(await doc.save());
                       Get.back();
-                      showSnackbar("Success", "Saved transcript to the downloads folder");
+                      showSnackbar("Success",
+                          "Saved transcript to the downloads folder");
                     },
                   ),
               ],

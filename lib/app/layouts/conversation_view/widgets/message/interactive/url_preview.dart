@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:ui';
-
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/message/reply/reply_bubble.dart';
 import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
@@ -31,7 +30,8 @@ class UrlPreview extends StatefulWidget {
   OptimizedState createState() => _UrlPreviewState();
 }
 
-class _UrlPreviewState extends OptimizedState<UrlPreview> with AutomaticKeepAliveClientMixin {
+class _UrlPreviewState extends OptimizedState<UrlPreview>
+    with AutomaticKeepAliveClientMixin {
   UrlPreviewData get data => widget.data;
   UrlPreviewData? dataOverride;
   dynamic get file => File(content.path!);
@@ -56,27 +56,41 @@ class _UrlPreviewState extends OptimizedState<UrlPreview> with AutomaticKeepAliv
           title: data.title,
           siteName: data.siteName,
         );
-        dataOverride!.url = as.parseAppleLocationUrl(_location)?.replaceAll("\\", "").replaceAll("http:", "https:").replaceAll("/?", "/place?").replaceAll(",", "%2C");
+        dataOverride!.url = as
+            .parseAppleLocationUrl(_location)
+            ?.replaceAll("\\", "")
+            .replaceAll("http:", "https:")
+            .replaceAll("/?", "/place?")
+            .replaceAll(",", "%2C");
         if (dataOverride!.url == null) return;
         final response = await http.dio.get(dataOverride!.url!);
         final document = parser.parse(response.data);
-        final link = document.getElementsByClassName("sc-platter-cell").firstOrNull?.children.firstWhereOrNull((e) => e.localName == "a");
+        final link = document
+            .getElementsByClassName("sc-platter-cell")
+            .firstOrNull
+            ?.children
+            .firstWhereOrNull((e) => e.localName == "a");
         final url = link?.attributes["href"];
         if (url != null) {
           MetadataFetch.extract(dataOverride!.url!).then((metadata) {
             if (metadata?.image != null) {
-              dataOverride!.imageMetadata = MediaMetadata(size: const Size.square(1), url: metadata!.image);
+              dataOverride!.imageMetadata = MediaMetadata(
+                size: const Size.square(1),
+                url: metadata!.image,
+              );
               dataOverride!.summary = metadata.description ?? metadata.title;
               dataOverride!.url = url;
               setState(() {});
             }
           });
         }
-      } else if (data.imageMetadata?.url == null && data.iconMetadata?.url == null) {
-        final attachment = widget.message.attachments
-            .firstWhereOrNull((e) => e?.transferName?.contains("pluginPayloadAttachment") ?? false);
+      } else if (data.imageMetadata?.url == null &&
+          data.iconMetadata?.url == null) {
+        final attachment = widget.message.attachments.firstWhereOrNull((e) =>
+            e?.transferName?.contains("pluginPayloadAttachment") ?? false);
         if (attachment != null) {
-          content = as.getContent(attachment, autoDownload: true, onComplete: (file) {
+          content =
+              as.getContent(attachment, autoDownload: true, onComplete: (file) {
             setState(() {
               content = file;
             });
@@ -85,15 +99,26 @@ class _UrlPreviewState extends OptimizedState<UrlPreview> with AutomaticKeepAliv
             setState(() {});
           }
         } else {
-          MetadataFetch.extract((data.url ?? data.originalUrl)!).then((metadata) async {
+          MetadataFetch.extract((data.url ?? data.originalUrl)!)
+              .then((metadata) async {
             if (metadata?.image != null) {
-              data.imageMetadata = MediaMetadata(size: const Size.square(1), url: metadata!.image);
+              data.imageMetadata = MediaMetadata(
+                size: const Size.square(1),
+                url: metadata!.image,
+              );
               widget.message.save();
               setState(() {});
             } else {
-              final response = await http.dio.get((data.url ?? data.originalUrl)!);
-              if (response.headers.value('content-type')?.startsWith("image/") ?? false) {
-                data.imageMetadata = MediaMetadata(size: const Size.square(1), url: (data.url ?? data.originalUrl)!);
+              final response =
+                  await http.dio.get((data.url ?? data.originalUrl)!);
+              if (response.headers
+                      .value('content-type')
+                      ?.startsWith("image/") ??
+                  false) {
+                data.imageMetadata = MediaMetadata(
+                  size: const Size.square(1),
+                  url: (data.url ?? data.originalUrl)!,
+                );
                 widget.message.save();
                 setState(() {});
               }
@@ -107,21 +132,27 @@ class _UrlPreviewState extends OptimizedState<UrlPreview> with AutomaticKeepAliv
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final siteText = widget.file != null ? (dataOverride?.siteName ?? "") : Uri.tryParse(data.url ?? data.originalUrl ?? "")?.host ?? data.siteName;
-    final hasAppleImage = (data.imageMetadata?.url == null || (data.iconMetadata?.url == null && data.imageMetadata?.size == Size.zero));
+    final siteText = widget.file != null
+        ? (dataOverride?.siteName ?? "")
+        : Uri.tryParse(data.url ?? data.originalUrl ?? "")?.host ??
+            data.siteName;
+    final hasAppleImage = (data.imageMetadata?.url == null ||
+        (data.iconMetadata?.url == null &&
+            data.imageMetadata?.size == Size.zero));
     final _data = dataOverride ?? data;
     return InkWell(
-      onTap: widget.file != null && _data.url != null ? () async {
-        await launchUrl(
-          Uri.parse(_data.url!),
-          mode: LaunchMode.externalApplication
-        );
-      } : null,
+      onTap: widget.file != null && _data.url != null
+          ? () async {
+              await launchUrl(Uri.parse(_data.url!),
+                  mode: LaunchMode.externalApplication);
+            }
+          : null,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (_data.imageMetadata?.url != null && ReplyScope.maybeOf(context) == null)
+          if (_data.imageMetadata?.url != null &&
+              ReplyScope.maybeOf(context) == null)
             Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -135,14 +166,18 @@ class _UrlPreviewState extends OptimizedState<UrlPreview> with AutomaticKeepAliv
                   child: Center(
                     heightFactor: 1,
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(maxHeight: context.height * 0.4),
+                      constraints:
+                          BoxConstraints(maxHeight: context.height * 0.4),
                       child: Image.network(
                         _data.imageMetadata!.url!,
                         gaplessPlayback: true,
                         filterQuality: FilterQuality.none,
                         errorBuilder: (context, object, stacktrace) => Center(
                           heightFactor: 1,
-                          child: Text("Failed to display image", style: context.theme.textTheme.bodyLarge),
+                          child: Text(
+                            "Failed to display image",
+                            style: context.theme.textTheme.bodyLarge,
+                          ),
                         ),
                       ),
                     ),
@@ -150,34 +185,45 @@ class _UrlPreviewState extends OptimizedState<UrlPreview> with AutomaticKeepAliv
                 ),
               ),
             ),
-          if (content is PlatformFile && hasAppleImage && content.bytes != null && ReplyScope.maybeOf(context) == null)
-           Container(
-             decoration: BoxDecoration(
-               image: DecorationImage(
-                 image: MemoryImage(content.bytes!),
-                 fit: BoxFit.cover,
-               ),
-             ),
-             child: BackdropFilter(
+          if (content is PlatformFile &&
+              hasAppleImage &&
+              content.bytes != null &&
+              ReplyScope.maybeOf(context) == null)
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: MemoryImage(content.bytes!),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                 child: Center(
                   heightFactor: 1,
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: context.height * 0.4),
+                    constraints:
+                        BoxConstraints(maxHeight: context.height * 0.4),
                     child: Image.memory(
                       content.bytes!,
                       gaplessPlayback: true,
                       filterQuality: FilterQuality.none,
                       errorBuilder: (context, object, stacktrace) => Center(
                         heightFactor: 1,
-                        child: Text("Failed to display image", style: context.theme.textTheme.bodyLarge),
+                        child: Text(
+                          "Failed to display image",
+                          style: context.theme.textTheme.bodyLarge,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-           ),
-          if (content is PlatformFile && hasAppleImage && content.bytes == null && content.path != null && ReplyScope.maybeOf(context) == null)
+            ),
+          if (content is PlatformFile &&
+              hasAppleImage &&
+              content.bytes == null &&
+              content.path != null &&
+              ReplyScope.maybeOf(context) == null)
             Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -190,14 +236,18 @@ class _UrlPreviewState extends OptimizedState<UrlPreview> with AutomaticKeepAliv
                 child: Center(
                   heightFactor: 1,
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: context.height * 0.4),
+                    constraints:
+                        BoxConstraints(maxHeight: context.height * 0.4),
                     child: Image.file(
                       file,
                       gaplessPlayback: true,
                       filterQuality: FilterQuality.none,
                       errorBuilder: (context, object, stacktrace) => Center(
                         heightFactor: 1,
-                        child: Text("Failed to display image", style: context.theme.textTheme.bodyLarge),
+                        child: Text(
+                          "Failed to display image",
+                          style: context.theme.textTheme.bodyLarge,
+                        ),
                       ),
                     ),
                   ),
@@ -218,8 +268,10 @@ class _UrlPreviewState extends OptimizedState<UrlPreview> with AutomaticKeepAliv
                         !isNullOrEmpty(_data.title)
                             ? _data.title!
                             : !isNullOrEmpty(siteText)
-                            ? siteText! : widget.message.text!,
-                        style: context.theme.textTheme.bodyMedium!.apply(fontWeightDelta: 2),
+                                ? siteText!
+                                : widget.message.text!,
+                        style: context.theme.textTheme.bodyMedium!
+                            .apply(fontWeightDelta: 2),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -230,22 +282,25 @@ class _UrlPreviewState extends OptimizedState<UrlPreview> with AutomaticKeepAliv
                           _data.summary ?? "",
                           maxLines: ReplyScope.maybeOf(context) == null ? 3 : 1,
                           overflow: TextOverflow.ellipsis,
-                          style: context.theme.textTheme.labelMedium!.copyWith(fontWeight: FontWeight.normal)
+                          style: context.theme.textTheme.labelMedium!.copyWith(
+                            fontWeight: FontWeight.normal,
+                          ),
                         ),
-                      if (!isNullOrEmpty(siteText))
-                        const SizedBox(height: 5),
+                      if (!isNullOrEmpty(siteText)) const SizedBox(height: 5),
                       if (!isNullOrEmpty(siteText))
                         Text(
                           siteText!,
-                          style: context.theme.textTheme.labelMedium!.copyWith(fontWeight: FontWeight.normal, color: context.theme.colorScheme.outline),
+                          style: context.theme.textTheme.labelMedium!.copyWith(
+                            fontWeight: FontWeight.normal,
+                            color: context.theme.colorScheme.outline,
+                          ),
                           overflow: TextOverflow.clip,
                           maxLines: 1,
                         ),
-                    ]
+                    ],
                   ),
                 ),
-                if (_data.iconMetadata?.url != null)
-                  const SizedBox(width: 10),
+                if (_data.iconMetadata?.url != null) const SizedBox(width: 10),
                 if (_data.iconMetadata?.url != null)
                   ConstrainedBox(
                     constraints: const BoxConstraints(

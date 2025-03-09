@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:ui';
-
 import 'package:bluebubbles/app/animations/fireworks_classes.dart';
 
 class CelebrationController extends FireworkController {

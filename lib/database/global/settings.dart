@@ -1,6 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/message/popup/details_menu_action.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/services/services.dart';
@@ -117,15 +118,19 @@ class Settings {
 
   // Quick tapback settings
   final RxBool enableQuickTapback = false.obs;
-  final RxString quickTapbackType = ReactionTypes.toList()[0].obs; // The 'love' reaction
+  final RxString quickTapbackType =
+      ReactionTypes.toList()[0].obs; // The 'love' reaction
 
   // Slideable action settings
-  final Rx<MaterialSwipeAction> materialRightAction = MaterialSwipeAction.pin.obs;
-  final Rx<MaterialSwipeAction> materialLeftAction = MaterialSwipeAction.archive.obs;
+  final Rx<MaterialSwipeAction> materialRightAction =
+      MaterialSwipeAction.pin.obs;
+  final Rx<MaterialSwipeAction> materialLeftAction =
+      MaterialSwipeAction.archive.obs;
 
   // Security settings
   final RxBool shouldSecure = RxBool(false);
-  final Rx<SecurityLevel> securityLevel = Rx<SecurityLevel>(SecurityLevel.locked);
+  final Rx<SecurityLevel> securityLevel =
+      Rx<SecurityLevel>(SecurityLevel.locked);
   final RxBool incognitoKeyboard = RxBool(false);
 
   final Rx<Skins> skin = Skins.iOS.obs;
@@ -155,7 +160,8 @@ class Settings {
   final Rx<Level> logLevel = Level.info.obs;
 
   // Notification actions
-  final RxList<int> selectedActionIndices = Platform.isWindows ? [0, 1, 2, 3, 4].obs : [0, 1, 2].obs;
+  final RxList<int> selectedActionIndices =
+      Platform.isWindows ? [0, 1, 2, 3, 4].obs : [0, 1, 2].obs;
   final RxList<String> actionList = RxList.from([
     "Mark Read",
     ReactionTypes.LOVE,
@@ -167,7 +173,8 @@ class Settings {
   ]);
 
   // Message options order
-  final RxList<DetailsMenuAction> _detailsMenuActions = RxList.from(DetailsMenuAction.values);
+  final RxList<DetailsMenuAction> _detailsMenuActions =
+      RxList.from(DetailsMenuAction.values);
 
   /// Use [setDetailsMenuActions] to set this value
   List<DetailsMenuAction> get detailsMenuActions => _detailsMenuActions;
@@ -180,7 +187,9 @@ class Settings {
 
   Future<DisplayMode> getDisplayMode() async {
     List<DisplayMode> modes = await FlutterDisplayMode.supported;
-    return modes.firstWhereOrNull((element) => element.refreshRate.round() == refreshRate.value) ?? DisplayMode.auto;
+    return modes.firstWhereOrNull(
+            (element) => element.refreshRate.round() == refreshRate.value) ??
+        DisplayMode.auto;
   }
 
   Future<void> _savePref(String key, dynamic value) async {
@@ -193,7 +202,8 @@ class Settings {
     } else if (value is double) {
       await ss.prefs.setDouble(key, value);
     } else if (value is List<DetailsMenuAction>) {
-      await ss.prefs.setString(key, jsonEncode(value.map((action) => action.name).toList()));
+      await ss.prefs.setString(
+          key, jsonEncode(value.map((action) => action.name).toList()));
     } else if (value is List || value is Map) {
       await ss.prefs.setString(key, jsonEncode(value));
     } else if (value == null) {
@@ -308,7 +318,8 @@ class Settings {
       'minimizeToTray': minimizeToTray.value,
       'selectedActionIndices': selectedActionIndices,
       'actionList': actionList,
-      'detailsMenuActions': detailsMenuActions.map((action) => action.name).toList(),
+      'detailsMenuActions':
+          detailsMenuActions.map((action) => action.name).toList(),
       'askWhereToSave': askWhereToSave.value,
       'indicatorsOnPinnedChats': statusIndicatorsOnChats.value,
       'apiTimeout': apiTimeout.value,
@@ -390,8 +401,10 @@ class Settings {
     ss.settings.autoDownload.value = map['autoDownload'] ?? true;
     ss.settings.onlyWifiDownload.value = map['onlyWifiDownload'] ?? false;
     ss.settings.autoSave.value = map['autoSave'] ?? false;
-    ss.settings.autoSavePicsLocation.value = map['autoSavePicsLocation'] ?? "Pictures";
-    ss.settings.autoSaveDocsLocation.value = map['autoSaveDocsLocation'] ?? "/storage/emulated/0/Download/";
+    ss.settings.autoSavePicsLocation.value =
+        map['autoSavePicsLocation'] ?? "Pictures";
+    ss.settings.autoSaveDocsLocation.value =
+        map['autoSaveDocsLocation'] ?? "/storage/emulated/0/Download/";
     ss.settings.autoOpenKeyboard.value = map['autoOpenKeyboard'] ?? true;
     ss.settings.hideTextPreviews.value = map['hideTextPreviews'] ?? false;
     ss.settings.showIncrementalSync.value = map['showIncrementalSync'] ?? false;
@@ -405,73 +418,97 @@ class Settings {
     ss.settings.doubleTapForDetails.value = map['doubleTapForDetails'] ?? false;
     ss.settings.denseChatTiles.value = map['denseChatTiles'] ?? false;
     ss.settings.smartReply.value = map['smartReply'] ?? false;
-    ss.settings.showConnectionIndicator.value = map['showConnectionIndicator'] ?? false;
+    ss.settings.showConnectionIndicator.value =
+        map['showConnectionIndicator'] ?? false;
     ss.settings.showSyncIndicator.value = map['showSyncIndicator'] ?? true;
     ss.settings.sendDelay.value = map['sendDelay'] ?? 0;
-    ss.settings.recipientAsPlaceholder.value = map['recipientAsPlaceholder'] ?? false;
-    ss.settings.hideKeyboardOnScroll.value = map['hideKeyboardOnScroll'] ?? false;
-    ss.settings.moveChatCreatorToHeader.value = map['moveChatCreatorToHeader'] ?? false;
+    ss.settings.recipientAsPlaceholder.value =
+        map['recipientAsPlaceholder'] ?? false;
+    ss.settings.hideKeyboardOnScroll.value =
+        map['hideKeyboardOnScroll'] ?? false;
+    ss.settings.moveChatCreatorToHeader.value =
+        map['moveChatCreatorToHeader'] ?? false;
     ss.settings.cameraFAB.value = map['cameraFAB'] ?? false;
-    ss.settings.swipeToCloseKeyboard.value = map['swipeToCloseKeyboard'] ?? false;
+    ss.settings.swipeToCloseKeyboard.value =
+        map['swipeToCloseKeyboard'] ?? false;
     ss.settings.swipeToOpenKeyboard.value = map['swipeToOpenKeyboard'] ?? false;
     ss.settings.openKeyboardOnSTB.value = map['openKeyboardOnSTB'] ?? false;
-    ss.settings.swipableConversationTiles.value = map['swipableConversationTiles'] ?? false;
-    ss.settings.showDeliveryTimestamps.value = map['showDeliveryTimestamps'] ?? false;
+    ss.settings.swipableConversationTiles.value =
+        map['swipableConversationTiles'] ?? false;
+    ss.settings.showDeliveryTimestamps.value =
+        map['showDeliveryTimestamps'] ?? false;
     ss.settings.filteredChatList.value = map['filteredChatList'] ?? false;
     ss.settings.startVideosMuted.value = map['startVideosMuted'] ?? true;
-    ss.settings.startVideosMutedFullscreen.value = map['startVideosMutedFullscreen'] ?? true;
+    ss.settings.startVideosMutedFullscreen.value =
+        map['startVideosMutedFullscreen'] ?? true;
     ss.settings.use24HrFormat.value = map['use24HrFormat'] ?? false;
     ss.settings.alwaysShowAvatars.value = map['alwaysShowAvatars'] ?? false;
     ss.settings.notifyOnChatList.value = map['notifyOnChatList'] ?? false;
     ss.settings.notifyReactions.value = map['notifyReactions'] ?? true;
     ss.settings.notificationSound.value = map['notificationSound'] ?? "default";
     ss.settings.globalTextDetection.value = map['globalTextDetection'] ?? "";
-    ss.settings.filterUnknownSenders.value = map['filterUnknownSenders'] ?? false;
+    ss.settings.filterUnknownSenders.value =
+        map['filterUnknownSenders'] ?? false;
     ss.settings.tabletMode.value = kIsDesktop || (map['tabletMode'] ?? true);
     ss.settings.immersiveMode.value = map['immersiveMode'] ?? false;
     ss.settings.avatarScale.value = map['avatarScale']?.toDouble() ?? 1.0;
     ss.settings.launchAtStartup.value = map['launchAtStartup'] ?? false;
-    ss.settings.launchAtStartupMinimized.value = map['launchAtStartupMinimized'] ?? false;
+    ss.settings.launchAtStartupMinimized.value =
+        map['launchAtStartupMinimized'] ?? false;
     ss.settings.closeToTray.value = map['closeToTray'] ?? true;
     ss.settings.spellcheck.value = map['spellcheck'] ?? true;
     ss.settings.spellcheckLanguage.value = map['spellcheckLanguage'] ?? 'auto';
     ss.settings.minimizeToTray.value = map['minimizeToTray'] ?? false;
     ss.settings.askWhereToSave.value = map['askWhereToSave'] ?? false;
-    ss.settings.statusIndicatorsOnChats.value = map['indicatorsOnPinnedChats'] ?? false;
+    ss.settings.statusIndicatorsOnChats.value =
+        map['indicatorsOnPinnedChats'] ?? false;
     ss.settings.apiTimeout.value = map['apiTimeout'] ?? 15000;
-    ss.settings.allowUpsideDownRotation.value = map['allowUpsideDownRotation'] ?? false;
-    ss.settings.cancelQueuedMessages.value = map['cancelQueuedMessages'] ?? false;
+    ss.settings.allowUpsideDownRotation.value =
+        map['allowUpsideDownRotation'] ?? false;
+    ss.settings.cancelQueuedMessages.value =
+        map['cancelQueuedMessages'] ?? false;
     ss.settings.repliesToPrevious.value = map['repliesToPrevious'] ?? false;
     ss.settings.localhostPort.value = map['useLocalhost'];
     ss.settings.useLocalIpv6.value = map['useLocalIpv6'] ?? false;
     ss.settings.sendSoundPath.value = map['sendSoundPath'];
     ss.settings.receiveSoundPath.value = map['receiveSoundPath'];
     ss.settings.soundVolume.value = map['soundVolume'] ?? 100;
-    ss.settings.syncContactsAutomatically.value = map['syncContactsAutomatically'] ?? false;
-    ss.settings.scrollToBottomOnSend.value = map['scrollToBottomOnSend'] ?? true;
+    ss.settings.syncContactsAutomatically.value =
+        map['syncContactsAutomatically'] ?? false;
+    ss.settings.scrollToBottomOnSend.value =
+        map['scrollToBottomOnSend'] ?? true;
     ss.settings.sendEventsToTasker.value = map['sendEventsToTasker'] ?? true;
     ss.settings.keepAppAlive.value = map['keepAppAlive'] ?? false;
-    ss.settings.unarchiveOnNewMessage.value = map['unarchiveOnNewMessage'] ?? false;
+    ss.settings.unarchiveOnNewMessage.value =
+        map['unarchiveOnNewMessage'] ?? false;
     ss.settings.scrollToLastUnread.value = map['scrollToLastUnread'] ?? false;
     ss.settings.userName.value = map['userName'] ?? "You";
     ss.settings.privateAPISend.value = map['privateAPISend'] ?? false;
-    ss.settings.privateAPIAttachmentSend.value = map['privateAPIAttachmentSend'] ?? false;
+    ss.settings.privateAPIAttachmentSend.value =
+        map['privateAPIAttachmentSend'] ?? false;
     ss.settings.enablePrivateAPI.value = map['enablePrivateAPI'] ?? false;
-    ss.settings.privateSendTypingIndicators.value = map['privateSendTypingIndicators'] ?? false;
-    ss.settings.privateMarkChatAsRead.value = map['privateMarkChatAsRead'] ?? false;
-    ss.settings.privateManualMarkAsRead.value = map['privateManualMarkAsRead'] ?? false;
+    ss.settings.privateSendTypingIndicators.value =
+        map['privateSendTypingIndicators'] ?? false;
+    ss.settings.privateMarkChatAsRead.value =
+        map['privateMarkChatAsRead'] ?? false;
+    ss.settings.privateManualMarkAsRead.value =
+        map['privateManualMarkAsRead'] ?? false;
     ss.settings.privateSubjectLine.value = map['privateSubjectLine'] ?? false;
-    ss.settings.editLastSentMessageOnUpArrow.value = map['editLastSentMessageOnUpArrow'] ?? false;
+    ss.settings.editLastSentMessageOnUpArrow.value =
+        map['editLastSentMessageOnUpArrow'] ?? false;
     ss.settings.redactedMode.value = map['redactedMode'] ?? false;
     ss.settings.hideMessageContent.value = map['hideMessageContent'] ?? true;
     ss.settings.hideAttachments.value = map['hideAttachments'] ?? true;
     ss.settings.hideContactInfo.value = map['hideContactInfo'] ?? true;
-    ss.settings.generateFakeContactNames.value = map['generateFakeContactNames'] ?? false;
-    ss.settings.hideMessageContent.value = map['generateFakeMessageContent'] ?? false;
+    ss.settings.generateFakeContactNames.value =
+        map['generateFakeContactNames'] ?? false;
+    ss.settings.hideMessageContent.value =
+        map['generateFakeMessageContent'] ?? false;
     ss.settings.enableUnifiedPush.value = map['enableUnifiedPush'] ?? false;
     ss.settings.endpointUnifiedPush.value = map['endpointUnifiedPush'] ?? "";
     ss.settings.enableQuickTapback.value = map['enableQuickTapback'] ?? false;
-    ss.settings.quickTapbackType.value = map['quickTapbackType'] ?? ReactionTypes.toList()[0];
+    ss.settings.quickTapbackType.value =
+        map['quickTapbackType'] ?? ReactionTypes.toList()[0];
     ss.settings.materialRightAction.value = map['materialRightAction'] != null
         ? MaterialSwipeAction.values[map['materialRightAction']]
         : MaterialSwipeAction.pin;
@@ -479,35 +516,50 @@ class Settings {
         ? MaterialSwipeAction.values[map['materialLeftAction']]
         : MaterialSwipeAction.archive;
     ss.settings.shouldSecure.value = map['shouldSecure'] ?? false;
-    ss.settings.securityLevel.value =
-        map['securityLevel'] != null ? SecurityLevel.values[map['securityLevel']] : SecurityLevel.locked;
+    ss.settings.securityLevel.value = map['securityLevel'] != null
+        ? SecurityLevel.values[map['securityLevel']]
+        : SecurityLevel.locked;
     ss.settings.incognitoKeyboard.value = map['incognitoKeyboard'] ?? false;
-    ss.settings.skin.value = map['skin'] != null ? Skins.values[map['skin']] : Skins.iOS;
-    ss.settings.theme.value = map['theme'] != null ? ThemeMode.values[map['theme']] : ThemeMode.system;
-    ss.settings.fullscreenViewerSwipeDir.value = map['fullscreenViewerSwipeDir'] != null
-        ? SwipeDirection.values[map['fullscreenViewerSwipeDir']]
-        : SwipeDirection.RIGHT;
+    ss.settings.skin.value =
+        map['skin'] != null ? Skins.values[map['skin']] : Skins.iOS;
+    ss.settings.theme.value = map['theme'] != null
+        ? ThemeMode.values[map['theme']]
+        : ThemeMode.system;
+    ss.settings.fullscreenViewerSwipeDir.value =
+        map['fullscreenViewerSwipeDir'] != null
+            ? SwipeDirection.values[map['fullscreenViewerSwipeDir']]
+            : SwipeDirection.RIGHT;
     ss.settings.pinRowsPortrait.value = map['pinRowsPortrait'] ?? 3;
     ss.settings.pinColumnsPortrait.value = map['pinColumnsPortrait'] ?? 3;
     ss.settings.pinRowsLandscape.value = map['pinRowsLandscape'] ?? 1;
     ss.settings.pinColumnsLandscape.value = map['pinColumnsLandscape'] ?? 4;
-    ss.settings.maxAvatarsInGroupWidget.value = map['maxAvatarsInGroupWidget'] ?? 4;
+    ss.settings.maxAvatarsInGroupWidget.value =
+        map['maxAvatarsInGroupWidget'] ?? 4;
     ss.settings.useCustomTitleBar.value = map['useCustomTitleBar'] ?? true;
 
-    ss.settings.selectedActionIndices.value = _processSelectedActionIndices(map['selectedActionIndices']);
+    ss.settings.selectedActionIndices.value =
+        _processSelectedActionIndices(map['selectedActionIndices']);
     ss.settings.actionList.value = _processActionList(map['actionList']);
-    ss.settings._detailsMenuActions.value = _processDetailsMenuActions(map['detailsMenuActions'], ss.settings.detailsMenuActions);
+    ss.settings._detailsMenuActions.value = _processDetailsMenuActions(
+        map['detailsMenuActions'], ss.settings.detailsMenuActions);
 
     ss.settings.windowEffect.value = kIsDesktop && Platform.isWindows
-        ? WindowEffect.values.firstWhereOrNull((e) => e.name == map['windowEffect']) ?? WindowEffect.disabled
+        ? WindowEffect.values
+                .firstWhereOrNull((e) => e.name == map['windowEffect']) ??
+            WindowEffect.disabled
         : WindowEffect.disabled;
-    ss.settings.windowEffectCustomOpacityLight.value = map['windowEffectCustomOpacityLight']?.toDouble() ?? 0.5;
-    ss.settings.windowEffectCustomOpacityDark.value = map['windowEffectCustomOpacityDark']?.toDouble() ?? 0.5;
+    ss.settings.windowEffectCustomOpacityLight.value =
+        map['windowEffectCustomOpacityLight']?.toDouble() ?? 0.5;
+    ss.settings.windowEffectCustomOpacityDark.value =
+        map['windowEffectCustomOpacityDark']?.toDouble() ?? 0.5;
     ss.settings.useWindowsAccent.value = map['useWindowsAccent'] ?? false;
     ss.settings.firstFcmRegisterDate.value = map['firstFcmRegisterDate'] ?? 0;
-    ss.settings.logLevel.value = map['logLevel'] != null ? Level.values[map['logLevel']] : Level.info;
-    ss.settings.hideNamesForReactions.value = map['hideNamesForReactions'] ?? false;
-    ss.settings.replaceEmoticonsWithEmoji.value = map['replaceEmoticonsWithEmoji'] ?? false;
+    ss.settings.logLevel.value =
+        map['logLevel'] != null ? Level.values[map['logLevel']] : Level.info;
+    ss.settings.hideNamesForReactions.value =
+        map['hideNamesForReactions'] ?? false;
+    ss.settings.replaceEmoticonsWithEmoji.value =
+        map['replaceEmoticonsWithEmoji'] ?? false;
     ss.settings.save();
 
     eventDispatcher.emit("theme-update", null);
@@ -523,7 +575,8 @@ class Settings {
     s.autoDownload.value = map['autoDownload'] ?? true;
     s.autoSave.value = map['autoSave'] ?? false;
     s.autoSavePicsLocation.value = map['autoSavePicsLocation'] ?? "Pictures";
-    s.autoSaveDocsLocation.value = map['autoSaveDocsLocation'] ?? "/storage/emulated/0/Download/";
+    s.autoSaveDocsLocation.value =
+        map['autoSaveDocsLocation'] ?? "/storage/emulated/0/Download/";
     s.onlyWifiDownload.value = map['onlyWifiDownload'] ?? false;
     s.autoOpenKeyboard.value = map['autoOpenKeyboard'] ?? true;
     s.hideTextPreviews.value = map['hideTextPreviews'] ?? false;
@@ -550,18 +603,22 @@ class Settings {
     s.swipeToCloseKeyboard.value = map['swipeToCloseKeyboard'] ?? false;
     s.swipeToOpenKeyboard.value = map['swipeToOpenKeyboard'] ?? false;
     s.openKeyboardOnSTB.value = map['openKeyboardOnSTB'] ?? false;
-    s.swipableConversationTiles.value = map['swipableConversationTiles'] ?? false;
+    s.swipableConversationTiles.value =
+        map['swipableConversationTiles'] ?? false;
     s.showDeliveryTimestamps.value = map['showDeliveryTimestamps'] ?? false;
     s.filteredChatList.value = map['filteredChatList'] ?? false;
     s.startVideosMuted.value = map['startVideosMuted'] ?? true;
-    s.startVideosMutedFullscreen.value = map['startVideosMutedFullscreen'] ?? true;
+    s.startVideosMutedFullscreen.value =
+        map['startVideosMutedFullscreen'] ?? true;
     s.use24HrFormat.value = map['use24HrFormat'] ?? false;
     s.alwaysShowAvatars.value = map['alwaysShowAvatars'] ?? false;
     s.notifyOnChatList.value = map['notifyOnChatList'] ?? false;
     s.notifyReactions.value = map['notifyReactions'] ?? true;
     s.notificationSound.value = map['notificationSound'] ?? "default";
     s.colorsFromMedia.value = map['colorsFromMedia'] ?? false;
-    s.monetTheming.value = map['monetTheming'] != null ? Monet.values[map['monetTheming']] : Monet.none;
+    s.monetTheming.value = map['monetTheming'] != null
+        ? Monet.values[map['monetTheming']]
+        : Monet.none;
     s.globalTextDetection.value = map['globalTextDetection'] ?? "";
     s.filterUnknownSenders.value = map['filterUnknownSenders'] ?? false;
     s.tabletMode.value = kIsDesktop || (map['tabletMode'] ?? true);
@@ -585,7 +642,8 @@ class Settings {
     s.sendSoundPath.value = map['sendSoundPath'];
     s.receiveSoundPath.value = map['receiveSoundPath'];
     s.soundVolume.value = map['soundVolume'] ?? 100;
-    s.syncContactsAutomatically.value = map['syncContactsAutomatically'] ?? false;
+    s.syncContactsAutomatically.value =
+        map['syncContactsAutomatically'] ?? false;
     s.scrollToBottomOnSend.value = map['scrollToBottomOnSend'] ?? true;
     s.sendEventsToTasker.value = map['sendEventsToTasker'] ?? false;
     s.keepAppAlive.value = map['keepAppAlive'] ?? false;
@@ -596,11 +654,13 @@ class Settings {
     s.privateAPISend.value = map['privateAPISend'] ?? false;
     s.privateAPIAttachmentSend.value = map['privateAPIAttachmentSend'] ?? false;
     s.enablePrivateAPI.value = map['enablePrivateAPI'] ?? false;
-    s.privateSendTypingIndicators.value = map['privateSendTypingIndicators'] ?? false;
+    s.privateSendTypingIndicators.value =
+        map['privateSendTypingIndicators'] ?? false;
     s.privateMarkChatAsRead.value = map['privateMarkChatAsRead'] ?? false;
     s.privateManualMarkAsRead.value = map['privateManualMarkAsRead'] ?? false;
     s.privateSubjectLine.value = map['privateSubjectLine'] ?? false;
-    s.editLastSentMessageOnUpArrow.value = map['editLastSentMessageOnUpArrow'] ?? false;
+    s.editLastSentMessageOnUpArrow.value =
+        map['editLastSentMessageOnUpArrow'] ?? false;
     s.redactedMode.value = map['redactedMode'] ?? false;
     s.hideMessageContent.value = map['hideMessageContent'] ?? true;
     s.hideAttachments.value = map['hideAttachments'] ?? true;
@@ -610,7 +670,8 @@ class Settings {
     s.enableUnifiedPush.value = map['enableUnifiedPush'] ?? false;
     s.endpointUnifiedPush.value = map['endpointUnifiedPush'] ?? "";
     s.enableQuickTapback.value = map['enableQuickTapback'] ?? false;
-    s.quickTapbackType.value = map['quickTapbackType'] ?? ReactionTypes.toList()[0];
+    s.quickTapbackType.value =
+        map['quickTapbackType'] ?? ReactionTypes.toList()[0];
     s.materialRightAction.value = map['materialRightAction'] != null
         ? MaterialSwipeAction.values[map['materialRightAction']]
         : MaterialSwipeAction.pin;
@@ -618,11 +679,14 @@ class Settings {
         ? MaterialSwipeAction.values[map['materialLeftAction']]
         : MaterialSwipeAction.archive;
     s.shouldSecure.value = map['shouldSecure'] ?? false;
-    s.securityLevel.value =
-        map['securityLevel'] != null ? SecurityLevel.values[map['securityLevel']] : SecurityLevel.locked;
+    s.securityLevel.value = map['securityLevel'] != null
+        ? SecurityLevel.values[map['securityLevel']]
+        : SecurityLevel.locked;
     s.incognitoKeyboard.value = map['incognitoKeyboard'] ?? false;
     s.skin.value = map['skin'] != null ? Skins.values[map['skin']] : Skins.iOS;
-    s.theme.value = map['theme'] != null ? ThemeMode.values[map['theme']] : ThemeMode.system;
+    s.theme.value = map['theme'] != null
+        ? ThemeMode.values[map['theme']]
+        : ThemeMode.system;
     s.fullscreenViewerSwipeDir.value = map['fullscreenViewerSwipeDir'] != null
         ? SwipeDirection.values[map['fullscreenViewerSwipeDir']]
         : SwipeDirection.RIGHT;
@@ -633,27 +697,36 @@ class Settings {
     s.maxAvatarsInGroupWidget.value = map['maxAvatarsInGroupWidget'] ?? 4;
     s.useCustomTitleBar.value = map['useCustomTitleBar'] ?? true;
 
-    s.selectedActionIndices.value = _processSelectedActionIndices(map['selectedActionIndices']);
+    s.selectedActionIndices.value =
+        _processSelectedActionIndices(map['selectedActionIndices']);
     s.actionList.value = _processActionList(map['actionList']);
-    s._detailsMenuActions.value = _processDetailsMenuActions(map['detailsMenuActions'], DetailsMenuAction.values);
+    s._detailsMenuActions.value = _processDetailsMenuActions(
+        map['detailsMenuActions'], DetailsMenuAction.values);
 
     s.windowEffect.value = (kIsDesktop && Platform.isWindows)
-        ? WindowEffect.values.firstWhereOrNull((e) => e.name == map['windowEffect']) ?? WindowEffect.disabled
+        ? WindowEffect.values
+                .firstWhereOrNull((e) => e.name == map['windowEffect']) ??
+            WindowEffect.disabled
         : WindowEffect.disabled;
-    s.windowEffectCustomOpacityLight.value = map['windowEffectCustomOpacityLight']?.toDouble() ?? 0.5;
-    s.windowEffectCustomOpacityDark.value = map['windowEffectCustomOpacityDark']?.toDouble() ?? 0.5;
+    s.windowEffectCustomOpacityLight.value =
+        map['windowEffectCustomOpacityLight']?.toDouble() ?? 0.5;
+    s.windowEffectCustomOpacityDark.value =
+        map['windowEffectCustomOpacityDark']?.toDouble() ?? 0.5;
     s.useWindowsAccent.value = map['useWindowsAccent'] ?? false;
     s.firstFcmRegisterDate.value = map['firstFcmRegisterDate'] ?? 0;
-    s.logLevel.value = map['logLevel'] != null ? Level.values[map['logLevel']] : Level.info;
+    s.logLevel.value =
+        map['logLevel'] != null ? Level.values[map['logLevel']] : Level.info;
     s.hideNamesForReactions.value = map['hideNamesForReactions'] ?? false;
-    s.replaceEmoticonsWithEmoji.value = map['replaceEmoticonsWithEmoji'] ?? false;
+    s.replaceEmoticonsWithEmoji.value =
+        map['replaceEmoticonsWithEmoji'] ?? false;
     s.lastReviewRequestTimestamp.value = map['lastReviewRequestTimestamp'] ?? 0;
     return s;
   }
 
   /// function to set detailsMenuActions from a subset of allActions
   void setDetailsMenuActions(List<DetailsMenuAction> actions) {
-    ss.settings._detailsMenuActions.value = _filterDetailsMenuActions(actions, ss.settings.detailsMenuActions);
+    ss.settings._detailsMenuActions.value =
+        _filterDetailsMenuActions(actions, ss.settings.detailsMenuActions);
     ss.settings.save();
   }
 
@@ -665,7 +738,8 @@ class Settings {
 
 Map<String, String> _processCustomHeaders(dynamic rawJson) {
   try {
-    return (rawJson is Map ? rawJson : jsonDecode(rawJson) as Map).cast<String, String>();
+    return (rawJson is Map ? rawJson : jsonDecode(rawJson) as Map)
+        .cast<String, String>();
   } catch (e) {
     debugPrint("Using default customHeaders");
     return {};
@@ -674,7 +748,10 @@ Map<String, String> _processCustomHeaders(dynamic rawJson) {
 
 List<int> _processSelectedActionIndices(dynamic rawJson) {
   try {
-    return (rawJson is List ? rawJson : jsonDecode(rawJson) as List).cast<int>().take(Platform.isWindows ? 5 : 3).toList();
+    return (rawJson is List ? rawJson : jsonDecode(rawJson) as List)
+        .cast<int>()
+        .take(Platform.isWindows ? 5 : 3)
+        .toList();
   } catch (e) {
     debugPrint("Using default selectedActionIndices");
     return [0, 1, 2, 3, 4].take(Platform.isWindows ? 5 : 3).toList();
@@ -683,7 +760,8 @@ List<int> _processSelectedActionIndices(dynamic rawJson) {
 
 List<String> _processActionList(dynamic rawJson) {
   try {
-    return (rawJson is List ? rawJson : jsonDecode(rawJson) as List).cast<String>();
+    return (rawJson is List ? rawJson : jsonDecode(rawJson) as List)
+        .cast<String>();
   } catch (e) {
     debugPrint("Using default actionList");
     return [
@@ -698,13 +776,16 @@ List<String> _processActionList(dynamic rawJson) {
   }
 }
 
-List<DetailsMenuAction> _processDetailsMenuActions(dynamic rawJson, List<DetailsMenuAction> allActions) {
+List<DetailsMenuAction> _processDetailsMenuActions(
+    dynamic rawJson, List<DetailsMenuAction> allActions) {
   try {
-    List<DetailsMenuAction> actions = (rawJson is List ? rawJson : jsonDecode(rawJson) as List)
-        .cast<String>()
-        .map((s) => DetailsMenuAction.values.firstWhereOrNull((action) => action.name == s))
-        .whereNotNull()
-        .toList();
+    List<DetailsMenuAction> actions =
+        (rawJson is List ? rawJson : jsonDecode(rawJson) as List)
+            .cast<String>()
+            .map((s) => DetailsMenuAction.values
+                .firstWhereOrNull((action) => action.name == s))
+            .whereNotNull()
+            .toList();
     return _filterDetailsMenuActions(actions, allActions);
   } catch (e) {
     debugPrint("Using default detailsMenuActions");
@@ -712,9 +793,13 @@ List<DetailsMenuAction> _processDetailsMenuActions(dynamic rawJson, List<Details
   }
 }
 
-List<DetailsMenuAction> _filterDetailsMenuActions(List<DetailsMenuAction> actions, List<DetailsMenuAction> allActions) {
+List<DetailsMenuAction> _filterDetailsMenuActions(
+    List<DetailsMenuAction> actions, List<DetailsMenuAction> allActions) {
   // Keep existing order of other keys
-  List<(DetailsMenuAction, int)> remainingIndexed = allActions.mapIndexed((i, action) => (action, i)).whereNot((mapEntry) => actions.contains(mapEntry.$1)).toList();
+  List<(DetailsMenuAction, int)> remainingIndexed = allActions
+      .mapIndexed((i, action) => (action, i))
+      .whereNot((mapEntry) => actions.contains(mapEntry.$1))
+      .toList();
 
   for ((DetailsMenuAction, int) item in remainingIndexed) {
     actions.insert(item.$2, item.$1);

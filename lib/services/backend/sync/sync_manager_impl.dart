@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:bluebubbles/utils/logger/logger.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:get/get.dart';
@@ -8,7 +7,13 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:tuple/tuple.dart';
 
-enum SyncStatus { IDLE, IN_PROGRESS, STOPPING, COMPLETED_SUCCESS, COMPLETED_ERROR }
+enum SyncStatus {
+  IDLE,
+  IN_PROGRESS,
+  STOPPING,
+  COMPLETED_SUCCESS,
+  COMPLETED_ERROR
+}
 
 abstract class SyncManager {
   String name;
@@ -129,8 +134,8 @@ abstract class SyncManager {
       if (kIsDesktop) {
         filePath = (await getDownloadsDirectory())!.path;
       }
-      filePath = p.join(
-          filePath, "BlueBubbles-sync-${now.year}${now.month}${now.day}_${now.hour}${now.minute}${now.second}.txt");
+      filePath = p.join(filePath,
+          "BlueBubbles-sync-${now.year}${now.month}${now.day}_${now.hour}${now.minute}${now.second}.txt");
       File file = File(filePath);
       await file.create(recursive: true);
       await file.writeAsString(text.join('\n'));

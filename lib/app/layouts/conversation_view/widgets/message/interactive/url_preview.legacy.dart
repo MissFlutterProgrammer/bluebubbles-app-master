@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/message/reply/reply_bubble.dart';
 import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
 import 'package:bluebubbles/utils/logger/logger.dart';
@@ -22,10 +21,13 @@ class LegacyUrlPreview extends StatefulWidget {
   OptimizedState createState() => _LegacyUrlPreviewState();
 }
 
-class _LegacyUrlPreviewState extends OptimizedState<LegacyUrlPreview> with AutomaticKeepAliveClientMixin {
+class _LegacyUrlPreviewState extends OptimizedState<LegacyUrlPreview>
+    with AutomaticKeepAliveClientMixin {
   Message get message => widget.message;
 
-  late Metadata? metadata = MetadataHelper.mapIsNotEmpty(message.metadata) ? Metadata.fromJson(message.metadata!) : null;
+  late Metadata? metadata = MetadataHelper.mapIsNotEmpty(message.metadata)
+      ? Metadata.fromJson(message.metadata!)
+      : null;
 
   @override
   void initState() {
@@ -77,16 +79,18 @@ class _LegacyUrlPreviewState extends OptimizedState<LegacyUrlPreview> with Autom
               ),
               child: ClipRect(
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: Center(
                     heightFactor: 1,
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(maxHeight: context.height * 0.4),
+                      constraints:
+                          BoxConstraints(maxHeight: context.height * 0.4),
                       child: Image.network(
                         metadata!.image!,
                         gaplessPlayback: true,
                         filterQuality: FilterQuality.none,
-                        errorBuilder: (context, object, stacktrace) => const SizedBox.shrink(),
+                        errorBuilder: (context, object, stacktrace) =>
+                            const SizedBox.shrink(),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -104,8 +108,10 @@ class _LegacyUrlPreviewState extends OptimizedState<LegacyUrlPreview> with Autom
                   !isNullOrEmpty(metadata?.title) && metadata?.title != "www"
                       ? metadata!.title!
                       : !isNullOrEmpty(siteText)
-                      ? siteText! : message.text!,
-                  style: context.theme.textTheme.bodyMedium!.apply(fontWeightDelta: 2),
+                          ? siteText!
+                          : message.text!,
+                  style: context.theme.textTheme.bodyMedium!
+                      .apply(fontWeightDelta: 2),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -116,18 +122,22 @@ class _LegacyUrlPreviewState extends OptimizedState<LegacyUrlPreview> with Autom
                     metadata!.description!,
                     maxLines: ReplyScope.maybeOf(context) == null ? 3 : 1,
                     overflow: TextOverflow.ellipsis,
-                    style: context.theme.textTheme.labelMedium!.copyWith(fontWeight: FontWeight.normal)
+                    style: context.theme.textTheme.labelMedium!.copyWith(
+                      fontWeight: FontWeight.normal,
+                    ),
                   ),
-                if (!isNullOrEmpty(siteText))
-                  const SizedBox(height: 5),
+                if (!isNullOrEmpty(siteText)) const SizedBox(height: 5),
                 if (!isNullOrEmpty(siteText))
                   Text(
                     siteText!,
-                    style: context.theme.textTheme.labelMedium!.copyWith(fontWeight: FontWeight.normal, color: context.theme.colorScheme.outline),
+                    style: context.theme.textTheme.labelMedium!.copyWith(
+                      fontWeight: FontWeight.normal,
+                      color: context.theme.colorScheme.outline,
+                    ),
                     overflow: TextOverflow.clip,
                     maxLines: 1,
                   ),
-              ]
+              ],
             ),
           )
         ],

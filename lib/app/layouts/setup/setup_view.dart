@@ -58,10 +58,10 @@ class _SetupViewState extends OptimizedState<SetupView> {
     super.initState();
 
     ever(socket.state, (event) {
-      if (event == SocketState.error
-          && !ss.settings.finishedSetup.value
-          && controller.pageController.hasClients
-          && controller.currentPage > controller.pageOfNoReturn) {
+      if (event == SocketState.error &&
+          !ss.settings.finishedSetup.value &&
+          controller.pageController.hasClients &&
+          controller.currentPage > controller.pageOfNoReturn) {
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -85,7 +85,9 @@ class _SetupViewState extends OptimizedState<SetupView> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: ss.settings.windowEffect.value != WindowEffect.disabled ? Colors.transparent : context.theme.colorScheme.background,
+        backgroundColor: ss.settings.windowEffect.value != WindowEffect.disabled
+            ? Colors.transparent
+            : context.theme.colorScheme.surface,
         body: SafeArea(
           child: Column(
             children: <Widget>[
@@ -115,12 +117,17 @@ class SetupHeader extends StatelessWidget {
             children: [
               Hero(
                 tag: "setup-icon",
-                child: Image.asset("assets/icon/icon.png", width: 30, fit: BoxFit.contain)
+                child: Image.asset(
+                  "assets/icon/icon.png",
+                  width: 30,
+                  fit: BoxFit.contain,
+                ),
               ),
               const SizedBox(width: 10),
               Text(
                 "BlueBubbles",
-                style: context.theme.textTheme.bodyLarge!.apply(fontWeightDelta: 2, fontSizeFactor: 1.35),
+                style: context.theme.textTheme.bodyLarge!
+                    .apply(fontWeightDelta: 2, fontSizeFactor: 1.35),
               ),
             ],
           ),
@@ -129,11 +136,15 @@ class SetupHeader extends StatelessWidget {
               borderRadius: BorderRadius.circular(25),
               gradient: LinearGradient(
                 begin: AlignmentDirectional.topStart,
-                colors: [HexColor('2772C3'), HexColor('5CA7F8').darkenPercent(5)],
+                colors: [
+                  HexColor('2772C3'),
+                  HexColor('5CA7F8').darkenPercent(5)
+                ],
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 13),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 13),
               child: PageNumber(parentController: controller),
             ),
           ),
@@ -150,8 +161,8 @@ class PageNumber extends CustomStateful<SetupViewController> {
   State<StatefulWidget> createState() => _PageNumberState();
 }
 
-class _PageNumberState extends CustomState<PageNumber, int, SetupViewController> {
-
+class _PageNumberState
+    extends CustomState<PageNumber, int, SetupViewController> {
   @override
   void updateWidget(int newVal) {
     controller.currentPage = newVal;
@@ -164,13 +175,13 @@ class _PageNumberState extends CustomState<PageNumber, int, SetupViewController>
       text: TextSpan(
         children: [
           TextSpan(
-            text: "${controller.currentPage}",
-            style: context.theme.textTheme.bodyLarge!.copyWith(color: Colors.white, fontWeight: FontWeight.bold)
-          ),
+              text: "${controller.currentPage}",
+              style: context.theme.textTheme.bodyLarge!
+                  .copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
           TextSpan(
-            text: " of ${kIsWeb ? "4" : kIsDesktop ? "5" : "7"}",
-            style: context.theme.textTheme.bodyLarge!.copyWith(color: Colors.white38, fontWeight: FontWeight.bold)
-          ),
+              text: " of ${kIsWeb ? "4" : kIsDesktop ? "5" : "7"}",
+              style: context.theme.textTheme.bodyLarge!.copyWith(
+                  color: Colors.white38, fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -186,7 +197,10 @@ class SetupPages extends StatelessWidget {
       child: PageView(
         onPageChanged: (page) {
           // skip pages if the things required are already complete
-          if (!kIsWeb && !kIsDesktop && page == 1 && controller.currentPage == 1) {
+          if (!kIsWeb &&
+              !kIsDesktop &&
+              page == 1 &&
+              controller.currentPage == 1) {
             Permission.contacts.status.then((status) {
               if (status.isGranted) {
                 controller.pageController.nextPage(
@@ -196,8 +210,12 @@ class SetupPages extends StatelessWidget {
               }
             });
           }
-          if (!kIsWeb && !kIsDesktop && page == 2 && controller.currentPage == 2) {
-            DisableBatteryOptimization.isAllBatteryOptimizationDisabled.then((isDisabled) {
+          if (!kIsWeb &&
+              !kIsDesktop &&
+              page == 2 &&
+              controller.currentPage == 2) {
+            DisableBatteryOptimization.isAllBatteryOptimizationDisabled
+                .then((isDisabled) {
               if (isDisabled ?? false) {
                 controller.pageController.nextPage(
                   duration: const Duration(milliseconds: 300),
@@ -216,8 +234,7 @@ class SetupPages extends StatelessWidget {
           if (!kIsWeb && !kIsDesktop) BatteryOptimizationCheck(),
           MacSetupCheck(),
           ServerCredentials(),
-          if (!kIsWeb)
-            SyncSettings(),
+          if (!kIsWeb) SyncSettings(),
           SyncProgress(),
           //ThemeSelector(),
         ],

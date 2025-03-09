@@ -20,7 +20,8 @@ class GamePigeon extends StatefulWidget {
   OptimizedState createState() => _GamePigeonState();
 }
 
-class _GamePigeonState extends OptimizedState<GamePigeon> with AutomaticKeepAliveClientMixin {
+class _GamePigeonState extends OptimizedState<GamePigeon>
+    with AutomaticKeepAliveClientMixin {
   iMessageAppData get data => widget.data;
   dynamic get file => File(content.path!);
   dynamic content;
@@ -34,7 +35,8 @@ class _GamePigeonState extends OptimizedState<GamePigeon> with AutomaticKeepAliv
     updateObx(() async {
       final attachment = widget.message.attachments.firstOrNull;
       if (attachment != null) {
-        content = as.getContent(attachment, autoDownload: true, onComplete: (file) {
+        content =
+            as.getContent(attachment, autoDownload: true, onComplete: (file) {
           setState(() {
             content = file;
           });
@@ -60,17 +62,25 @@ class _GamePigeonState extends OptimizedState<GamePigeon> with AutomaticKeepAliv
             filterQuality: FilterQuality.none,
             errorBuilder: (context, object, stacktrace) => Center(
               heightFactor: 1,
-              child: Text("Failed to display image", style: context.theme.textTheme.bodyLarge),
+              child: Text(
+                "Failed to display image",
+                style: context.theme.textTheme.bodyLarge,
+              ),
             ),
           ),
-        if (content is PlatformFile && content.bytes == null && content.path != null)
+        if (content is PlatformFile &&
+            content.bytes == null &&
+            content.path != null)
           Image.file(
             file,
             gaplessPlayback: true,
             filterQuality: FilterQuality.none,
             errorBuilder: (context, object, stacktrace) => Center(
               heightFactor: 1,
-              child: Text("Failed to display image", style: context.theme.textTheme.bodyLarge),
+              child: Text(
+                "Failed to display image",
+                style: context.theme.textTheme.bodyLarge,
+              ),
             ),
           ),
         Padding(
@@ -78,7 +88,8 @@ class _GamePigeonState extends OptimizedState<GamePigeon> with AutomaticKeepAliv
           child: Center(
             child: Text(
               data.userInfo!.caption!.toUpperCase(),
-              style: context.theme.textTheme.bodyMedium!.apply(fontWeightDelta: 2),
+              style:
+                  context.theme.textTheme.bodyMedium!.apply(fontWeightDelta: 2),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),

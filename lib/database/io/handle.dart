@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:bluebubbles/database/database.dart';
 import 'package:bluebubbles/database/models.dart';
 import 'package:bluebubbles/services/services.dart';
@@ -48,10 +47,14 @@ class Handle {
     if (contact != null) return contact!.displayName;
     return address.contains("@") ? address : (formattedAddress ?? address);
   }
+
   String? get initials {
     // Remove any numbers, certain symbols, and non-alphabet characters
     if (address.startsWith("urn:biz")) return null;
-    String importantChars = displayName.toUpperCase().replaceAll(RegExp(r'[^a-zA-Z _-]'), "").trim();
+    String importantChars = displayName
+        .toUpperCase()
+        .replaceAll(RegExp(r'[^a-zA-Z _-]'), "")
+        .trim();
     if (importantChars.isEmpty) return null;
 
     // Split by a space or special character delimiter, take each of the items and
@@ -88,17 +91,18 @@ class Handle {
   }
 
   factory Handle.fromMap(Map<String, dynamic> json) => Handle(
-    id: json["ROWID"] ?? json["id"],
-    originalROWID: json["originalROWID"],
-    address: json["address"],
-    formattedAddress: json["formattedAddress"],
-    service: json["service"] ?? "iMessage",
-    uniqueAddressAndService: json["uniqueAddrAndService"] ?? "${json["address"]}/${json["service"] ?? "iMessage"}",
-    country: json["country"],
-    handleColor: json["color"],
-    defaultPhone: json["defaultPhone"],
-    defaultEmail: json["defaultEmail"],
-  );
+        id: json["ROWID"] ?? json["id"],
+        originalROWID: json["originalROWID"],
+        address: json["address"],
+        formattedAddress: json["formattedAddress"],
+        service: json["service"] ?? "iMessage",
+        uniqueAddressAndService: json["uniqueAddrAndService"] ??
+            "${json["address"]}/${json["service"] ?? "iMessage"}",
+        country: json["country"],
+        handleColor: json["color"],
+        defaultPhone: json["defaultPhone"],
+        defaultEmail: json["defaultEmail"],
+      );
 
   /// Save a single handle - prefer [bulkSave] for multiple handles rather
   /// than iterating through them
@@ -129,7 +133,8 @@ class Handle {
   }
 
   /// Save a list of handles
-  static List<Handle> bulkSave(List<Handle> handles, {matchOnOriginalROWID = false}) {
+  static List<Handle> bulkSave(List<Handle> handles,
+      {matchOnOriginalROWID = false}) {
     Database.runInTransaction(TxMode.write, () {
       /// Match existing to the handles to save, where possible
       for (Handle h in handles) {
@@ -137,7 +142,8 @@ class Handle {
         if (matchOnOriginalROWID) {
           existing = Handle.findOne(originalROWID: h.originalROWID);
         } else {
-          existing = Handle.findOne(addressAndService: Tuple2(h.address, h.service));
+          existing =
+              Handle.findOne(addressAndService: Tuple2(h.address, h.service));
         }
 
         if (existing != null) {
@@ -174,19 +180,28 @@ class Handle {
     return this;
   }
 
-  static Handle? findOne({int? id, int? originalROWID, Tuple2<String, String>? addressAndService}) {
+  static Handle? findOne(
+      {int? id,
+      int? originalROWID,
+      Tuple2<String, String>? addressAndService}) {
     if (kIsWeb || id == 0) return null;
     if (id != null) {
-      final handle = Database.handles.get(id) ?? Handle.findOne(originalROWID: id);
+      final handle =
+          Database.handles.get(id) ?? Handle.findOne(originalROWID: id);
       return handle;
     } else if (originalROWID != null) {
-      final query = Database.handles.query(Handle_.originalROWID.equals(originalROWID)).build();
+      final query = Database.handles
+          .query(Handle_.originalROWID.equals(originalROWID))
+          .build();
       query.limit = 1;
       final result = query.findFirst();
       query.close();
       return result;
     } else if (addressAndService != null) {
-      final query = Database.handles.query(Handle_.address.equals(addressAndService.item1) & Handle_.service.equals(addressAndService.item2)).build();
+      final query = Database.handles
+          .query(Handle_.address.equals(addressAndService.item1) &
+              Handle_.service.equals(addressAndService.item2))
+          .build();
       query.limit = 1;
       final result = query.findFirst();
       query.close();
@@ -219,7 +234,6 @@ class Handle {
   }
 
   Map<String, dynamic> toMap({includeObjects = false}) {
-
     final output = {
       "ROWID": id,
       "originalROWID": originalROWID,

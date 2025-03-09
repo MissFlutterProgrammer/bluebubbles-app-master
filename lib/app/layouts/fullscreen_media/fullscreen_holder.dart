@@ -22,7 +22,7 @@ class FullscreenMediaHolder extends StatefulWidget {
     required this.showInteractions,
     this.currentChat,
     this.videoController,
-    this.mute
+    this.mute,
   });
 
   final ChatLifecycleManager? currentChat;
@@ -38,10 +38,13 @@ class FullscreenMediaHolder extends StatefulWidget {
 class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
   final focusNode = FocusNode();
   late final PageController controller;
-  late final messageService = widget.currentChat == null ? null : ms(widget.currentChat!.chat.guid);
+  late final messageService =
+      widget.currentChat == null ? null : ms(widget.currentChat!.chat.guid);
   late List<Attachment> attachments = widget.currentChat == null
       ? [attachment]
-      : messageService!.struct.attachments.where((e) => e.mimeStart == "image" || e.mimeStart == "video").toList();
+      : messageService!.struct.attachments
+          .where((e) => e.mimeStart == "image" || e.mimeStart == "video")
+          .toList();
 
   int currentIndex = 0;
   ScrollPhysics? physics;
@@ -58,7 +61,8 @@ class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
         currentIndex = attachments.indexWhere((e) => e.guid == attachment.guid);
         if (currentIndex == -1) {
           attachments.add(attachment);
-          currentIndex = attachments.indexWhere((e) => e.guid == attachment.guid);
+          currentIndex =
+              attachments.indexWhere((e) => e.guid == attachment.guid);
         }
       }
       controller = PageController(initialPage: currentIndex);
@@ -78,11 +82,13 @@ class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
         value: SystemUiOverlayStyle(
           systemNavigationBarColor: ss.settings.immersiveMode.value
               ? Colors.transparent
-              : context.theme.colorScheme.background, // navigation bar color
-          systemNavigationBarIconBrightness: context.theme.colorScheme.brightness.opposite,
+              : context.theme.colorScheme.surface, // navigation bar color
+          systemNavigationBarIconBrightness:
+              context.theme.colorScheme.brightness.opposite,
           statusBarColor: Colors.transparent, // status bar color
-          statusBarIconBrightness:
-              ss.settings.skin.value != Skins.iOS ? Brightness.light : context.theme.colorScheme.brightness.opposite,
+          statusBarIconBrightness: ss.settings.skin.value != Skins.iOS
+              ? Brightness.light
+              : context.theme.colorScheme.brightness.opposite,
         ),
         child: Actions(
           actions: {
@@ -91,7 +97,9 @@ class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
           child: Scaffold(
             appBar: !iOS || !showAppBar
                 // AppBar placeholder to prevent shifting of content when toggling the app bar
-                ? PreferredSize(preferredSize: const Size.fromHeight(56), child: Container())
+                ? PreferredSize(
+                    preferredSize: const Size.fromHeight(56),
+                    child: Container())
                 : AppBar(
                     leading: XGestureDetector(
                       supportTouch: true,
@@ -101,9 +109,12 @@ class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
                               Navigator.of(context).pop();
                             },
                       child: TextButton(
-                        child: Text("Done",
-                            style:
-                                context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
+                        child: Text(
+                          "Done",
+                          style: context.theme.textTheme.bodyLarge!.copyWith(
+                            color: context.theme.colorScheme.primary,
+                          ),
+                        ),
                         onPressed: () {
                           if (kIsDesktop) return;
                           Navigator.of(context).pop();
@@ -112,17 +123,23 @@ class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
                     ),
                     leadingWidth: 75,
                     title: Text(
-                        kIsWeb || !widget.showInteractions || widget.currentChat == null
-                            ? "Media"
-                            : "${currentIndex + 1} of ${attachments.length}",
-                        style: context.theme.textTheme.titleLarge!
-                            .copyWith(color: context.theme.colorScheme.properOnSurface)),
+                      kIsWeb ||
+                              !widget.showInteractions ||
+                              widget.currentChat == null
+                          ? "Media"
+                          : "${currentIndex + 1} of ${attachments.length}",
+                      style: context.theme.textTheme.titleLarge!.copyWith(
+                        color: context.theme.colorScheme.properOnSurface,
+                      ),
+                    ),
                     centerTitle: iOS,
-                    iconTheme: IconThemeData(color: context.theme.colorScheme.primary),
+                    iconTheme:
+                        IconThemeData(color: context.theme.colorScheme.primary),
                     backgroundColor: context.theme.colorScheme.properSurface,
-                    systemOverlayStyle: context.theme.colorScheme.brightness == Brightness.dark
-                        ? SystemUiOverlayStyle.light
-                        : SystemUiOverlayStyle.dark,
+                    systemOverlayStyle:
+                        context.theme.colorScheme.brightness == Brightness.dark
+                            ? SystemUiOverlayStyle.light
+                            : SystemUiOverlayStyle.dark,
                   ),
             backgroundColor: Colors.black,
             body: FocusScope(
@@ -134,16 +151,26 @@ class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
                       "Got device label ${event.deviceType.label}, physical key ${event.physicalKey.toString()}, logical key ${event.logicalKey.toString()}",
                       tag: "RawKeyboardListener");
                   if (event.physicalKey.debugName == "Arrow Right") {
-                    if (ss.settings.fullscreenViewerSwipeDir.value == SwipeDirection.RIGHT) {
-                      controller.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+                    if (ss.settings.fullscreenViewerSwipeDir.value ==
+                        SwipeDirection.RIGHT) {
+                      controller.previousPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn);
                     } else {
-                      controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+                      controller.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn);
                     }
                   } else if (event.physicalKey.debugName == "Arrow Left") {
-                    if (ss.settings.fullscreenViewerSwipeDir.value == SwipeDirection.LEFT) {
-                      controller.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+                    if (ss.settings.fullscreenViewerSwipeDir.value ==
+                        SwipeDirection.LEFT) {
+                      controller.previousPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn);
                     } else {
-                      controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+                      controller.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn);
                     }
                   } else if (event.physicalKey.debugName == "Escape") {
                     Navigator.of(context).pop();
@@ -156,7 +183,8 @@ class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
                       (attachments.length == 1
                           ? const NeverScrollableScrollPhysics()
                           : ThemeSwitcher.getScrollPhysics()),
-                  reverse: ss.settings.fullscreenViewerSwipeDir.value == SwipeDirection.RIGHT,
+                  reverse: ss.settings.fullscreenViewerSwipeDir.value ==
+                      SwipeDirection.RIGHT,
                   itemCount: attachments.length,
                   onPageChanged: (int val) {
                     widget.videoController?.player.pause();
@@ -167,9 +195,13 @@ class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
                   controller: controller,
                   itemBuilder: (BuildContext context, int index) {
                     final attachment = attachments[index];
-                    dynamic content =
-                        as.getContent(attachment, path: attachment.guid == null ? attachment.transferName : null);
-                    final key = attachment.guid ?? attachment.transferName ?? randomString(8);
+                    dynamic content = as.getContent(attachment,
+                        path: attachment.guid == null
+                            ? attachment.transferName
+                            : null);
+                    final key = attachment.guid ??
+                        attachment.transferName ??
+                        randomString(8);
 
                     if (content is PlatformFile) {
                       if (attachment.mimeStart == "image") {
@@ -210,7 +242,8 @@ class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
                       return InkWell(
                         onTap: () {
                           setState(() {
-                            content = attachmentDownloader.startDownload(content, onComplete: (file) {
+                            content = attachmentDownloader
+                                .startDownload(content, onComplete: (file) {
                               setState(() {
                                 content = file;
                               });
@@ -224,14 +257,21 @@ class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
                               height: 40,
                               width: 40,
                               child: Center(
-                                  child: Icon(iOS ? CupertinoIcons.cloud_download : Icons.cloud_download_outlined,
-                                      size: 30)),
+                                child: Icon(
+                                  iOS
+                                      ? CupertinoIcons.cloud_download
+                                      : Icons.cloud_download_outlined,
+                                  size: 30,
+                                ),
+                              ),
                             ),
                             const SizedBox(height: 5),
                             Text(
                               (_content.mimeType ?? ""),
                               style: context.theme.textTheme.bodyLarge!
-                                  .copyWith(color: context.theme.colorScheme.properOnSurface),
+                                  .copyWith(
+                                      color: context
+                                          .theme.colorScheme.properOnSurface),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -239,7 +279,9 @@ class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
                             Text(
                               _content.getFriendlySize(),
                               style: context.theme.textTheme.bodyMedium!
-                                  .copyWith(color: context.theme.colorScheme.properOnSurface),
+                                  .copyWith(
+                                      color: context
+                                          .theme.colorScheme.properOnSurface),
                               maxLines: 1,
                             ),
                           ],
@@ -251,8 +293,10 @@ class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
                         onTap: () {
                           final AttachmentDownloadController _content = content;
                           if (!_content.error.value) return;
-                          Get.delete<AttachmentDownloadController>(tag: _content.attachment.guid);
-                          content = attachmentDownloader.startDownload(_content.attachment, onComplete: (file) {
+                          Get.delete<AttachmentDownloadController>(
+                              tag: _content.attachment.guid);
+                          content = attachmentDownloader.startDownload(
+                              _content.attachment, onComplete: (file) {
                             setState(() {
                               content = file;
                             });
@@ -269,19 +313,35 @@ class FullscreenMediaHolderState extends OptimizedState<FullscreenMediaHolder> {
                                   width: 40,
                                   child: Center(
                                     child: _content.error.value
-                                        ? Icon(iOS ? CupertinoIcons.arrow_clockwise : Icons.refresh, size: 30)
+                                        ? Icon(
+                                            iOS
+                                                ? CupertinoIcons.arrow_clockwise
+                                                : Icons.refresh,
+                                            size: 30,
+                                          )
                                         : CircleProgressBar(
-                                            value: _content.progress.value?.toDouble() ?? 0,
-                                            backgroundColor: context.theme.colorScheme.outline,
-                                            foregroundColor: context.theme.colorScheme.properOnSurface,
+                                            value: _content.progress.value
+                                                    ?.toDouble() ??
+                                                0,
+                                            backgroundColor: context
+                                                .theme.colorScheme.outline,
+                                            foregroundColor: context.theme
+                                                .colorScheme.properOnSurface,
                                           ),
                                   ),
                                 ),
-                                _content.error.value ? const SizedBox(height: 10) : const SizedBox(height: 5),
+                                _content.error.value
+                                    ? const SizedBox(height: 10)
+                                    : const SizedBox(height: 5),
                                 Text(
-                                  _content.error.value ? "Failed to download!" : (_content.attachment.mimeType ?? ""),
+                                  _content.error.value
+                                      ? "Failed to download!"
+                                      : (_content.attachment.mimeType ?? ""),
                                   style: context.theme.textTheme.bodyLarge!
-                                      .copyWith(color: context.theme.colorScheme.properOnSurface),
+                                      .copyWith(
+                                    color: context
+                                        .theme.colorScheme.properOnSurface,
+                                  ),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 )

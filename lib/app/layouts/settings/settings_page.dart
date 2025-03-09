@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:bluebubbles/app/components/avatars/contact_avatar_widget.dart';
 import 'package:bluebubbles/app/layouts/settings/pages/advanced/notification_providers_panel.dart';
@@ -82,7 +84,7 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
       value: SystemUiOverlayStyle(
         systemNavigationBarColor: ss.settings.immersiveMode.value
             ? Colors.transparent
-            : context.theme.colorScheme.background, // navigation bar color
+            : context.theme.colorScheme.surface, // navigation bar color
         systemNavigationBarIconBrightness:
             context.theme.colorScheme.brightness.opposite,
         statusBarColor: Colors.transparent, // status bar color
@@ -93,8 +95,7 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
             GoBackIntent: GoBackAction(context),
           },
           child: Obx(() => Container(
-                color:
-                    context.theme.colorScheme.background.themeOpacity(context),
+                color: context.theme.colorScheme.surface.themeOpacity(context),
                 child: TabletModeWrapper(
                   initialRatio: 0.4,
                   minRatio: kIsDesktop || kIsWeb ? 0.2 : 0.33,
@@ -102,8 +103,11 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                   allowResize: true,
                   left: SettingsScaffold(
                       title: "Settings",
-                      initialHeader:
-                          kIsWeb ? "Server & Message Management" : (!iOS) ? "Profile" : null,
+                      initialHeader: kIsWeb
+                          ? "Server & Message Management"
+                          : (!iOS)
+                              ? "Profile"
+                              : null,
                       iosSubtitle: iosSubtitle,
                       materialSubtitle: materialSubtitle,
                       tileColor: tileColor,
@@ -143,9 +147,10 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                 ),
                               if (!kIsWeb)
                                 SettingsHeader(
-                                    iosSubtitle: iosSubtitle,
-                                    materialSubtitle: materialSubtitle,
-                                    text: "Server & Message Management"),
+                                  iosSubtitle: iosSubtitle,
+                                  materialSubtitle: materialSubtitle,
+                                  text: "Server & Message Management",
+                                ),
                               SettingsSection(
                                 backgroundColor: tileColor,
                                 children: [
@@ -163,9 +168,6 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                         break;
                                       case SocketState.connecting:
                                         subtitle = "Connecting";
-                                        break;
-                                      default:
-                                        subtitle = "Error";
                                         break;
                                     }
 
@@ -258,12 +260,17 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                         children: [
                                           Text(
                                             subtitle,
-                                            style: context.theme.textTheme.bodyMedium!.apply(color: context.theme.colorScheme.outline.withOpacity(0.85)),
+                                            style: context
+                                                .theme.textTheme.bodyMedium!
+                                                .apply(
+                                                    color: context.theme
+                                                        .colorScheme.outline
+                                                        .withOpacity(0.85)),
                                           ),
                                           const SizedBox(width: 5),
                                           const NextButton(),
-                                        ]
-                                      )
+                                        ],
+                                      ),
                                     );
                                   }),
                                   if (ss.serverDetailsSync().item4 >= 205)
@@ -331,12 +338,16 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                         children: [
                                           Text(
                                             "${ss.settings.skin.value.toString().split(".").last}  |  ${AdaptiveTheme.of(context).mode.toString().split(".").last.capitalizeFirst!}",
-                                            style: context.theme.textTheme.bodyMedium!.apply(color: context.theme.colorScheme.outline.withOpacity(0.85)),
+                                            style: context
+                                                .theme.textTheme.bodyMedium!
+                                                .apply(
+                                                    color: context.theme
+                                                        .colorScheme.outline
+                                                        .withOpacity(0.85)),
                                           ),
                                           const SizedBox(width: 5),
                                           const NextButton(),
-                                        ]
-                                      ),
+                                        ]),
                                     leading: const SettingsLeadingIcon(
                                         iosIcon: CupertinoIcons.paintbrush_fill,
                                         materialIcon: Icons.palette,
@@ -441,8 +452,7 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                       ),
                                       trailing: const NextButton(),
                                     ),
-                                  if (kIsDesktop)
-                                    const SettingsDivider(),
+                                  if (kIsDesktop) const SettingsDivider(),
                                   SettingsTile(
                                     backgroundColor: tileColor,
                                     title: "More Settings",
@@ -454,7 +464,8 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                       );
                                     },
                                     leading: const SettingsLeadingIcon(
-                                      iosIcon: CupertinoIcons.ellipsis_circle_fill,
+                                      iosIcon:
+                                          CupertinoIcons.ellipsis_circle_fill,
                                       materialIcon: Icons.more_vert,
                                     ),
                                     trailing: const NextButton(),
@@ -472,16 +483,29 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                         backgroundColor: tileColor,
                                         title: "Private API Features",
                                         trailing: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              ss.settings.enablePrivateAPI.value ? ss.settings.serverPrivateAPI.value == false ? "Not Set Up" : "Enabled" : "Disabled",
-                                              style: context.theme.textTheme.bodyMedium!.apply(color: context.theme.colorScheme.outline.withOpacity(0.85)),
-                                            ),
-                                            const SizedBox(width: 5),
-                                            const NextButton(),
-                                          ]
-                                        ),
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                ss.settings.enablePrivateAPI
+                                                        .value
+                                                    ? ss
+                                                                .settings
+                                                                .serverPrivateAPI
+                                                                .value ==
+                                                            false
+                                                        ? "Not Set Up"
+                                                        : "Enabled"
+                                                    : "Disabled",
+                                                style: context
+                                                    .theme.textTheme.bodyMedium!
+                                                    .apply(
+                                                        color: context.theme
+                                                            .colorScheme.outline
+                                                            .withOpacity(0.85)),
+                                              ),
+                                              const SizedBox(width: 5),
+                                              const NextButton(),
+                                            ]),
                                         onTap: () async {
                                           ns.pushAndRemoveSettingsUntil(
                                             context,
@@ -508,16 +532,22 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                         backgroundColor: tileColor,
                                         title: "Redacted Mode",
                                         trailing: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              ss.settings.redactedMode.value ? "Enabled" : "Disabled",
-                                              style: context.theme.textTheme.bodyMedium!.apply(color: context.theme.colorScheme.outline.withOpacity(0.85)),
-                                            ),
-                                            const SizedBox(width: 5),
-                                            const NextButton(),
-                                          ]
-                                        ),
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                ss.settings.redactedMode.value
+                                                    ? "Enabled"
+                                                    : "Disabled",
+                                                style: context
+                                                    .theme.textTheme.bodyMedium!
+                                                    .apply(
+                                                        color: context.theme
+                                                            .colorScheme.outline
+                                                            .withOpacity(0.85)),
+                                              ),
+                                              const SizedBox(width: 5),
+                                              const NextButton(),
+                                            ]),
                                         onTap: () async {
                                           ns.pushAndRemoveSettingsUntil(
                                             context,
@@ -571,23 +601,24 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                           containerColor: Colors.green)),
                                   const SettingsDivider(),
                                   SettingsTile(
-                                      backgroundColor: tileColor,
-                                      onTap: () async {
-                                        ns.pushAndRemoveSettingsUntil(
-                                          context,
-                                          TroubleshootPanel(),
-                                          (route) => route.isFirst,
-                                        );
-                                      },
-                                      leading: const SettingsLeadingIcon(
-                                        iosIcon: CupertinoIcons.wrench_fill,
-                                        materialIcon: Icons.adb,
-                                        containerColor: Colors.blueAccent,
-                                      ),
-                                      title: "Developer Tools",
-                                      subtitle: "View logs, troubleshoot bugs, and more",
-                                      trailing: const NextButton(),
-                                    )
+                                    backgroundColor: tileColor,
+                                    onTap: () async {
+                                      ns.pushAndRemoveSettingsUntil(
+                                        context,
+                                        TroubleshootPanel(),
+                                        (route) => route.isFirst,
+                                      );
+                                    },
+                                    leading: const SettingsLeadingIcon(
+                                      iosIcon: CupertinoIcons.wrench_fill,
+                                      materialIcon: Icons.adb,
+                                      containerColor: Colors.blueAccent,
+                                    ),
+                                    title: "Developer Tools",
+                                    subtitle:
+                                        "View logs, troubleshoot bugs, and more",
+                                    trailing: const NextButton(),
+                                  )
                                 ],
                               ),
                               SettingsHeader(
@@ -608,7 +639,8 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                       },
                                       trailing: const NextButton(),
                                       leading: const SettingsLeadingIcon(
-                                        iosIcon: CupertinoIcons.cloud_upload_fill,
+                                        iosIcon:
+                                            CupertinoIcons.cloud_upload_fill,
                                         materialIcon: Icons.backup,
                                         containerColor: Colors.amber,
                                       ),
@@ -780,15 +812,20 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                               SettingsSection(
                                 backgroundColor: tileColor,
                                 children: [
-                                  if (!kIsWeb && (Platform.isAndroid || Platform.isWindows))
+                                  if (!kIsWeb &&
+                                      (Platform.isAndroid ||
+                                          Platform.isWindows))
                                     SettingsTile(
                                       title: "Leave Us a Review",
-                                      subtitle: "Enjoying the app? Leave us a review on the ${Platform.isAndroid ? 'Google Play Store' : 'Microsoft Store'}!",
+                                      subtitle:
+                                          "Enjoying the app? Leave us a review on the ${Platform.isAndroid ? 'Google Play Store' : 'Microsoft Store'}!",
                                       onTap: () async {
                                         // Just open the listing for now. We don't want to actually open the dialog here.
                                         // If a review has been left, nothing will happen if tapped, which we don't want.
-                                        final InAppReview inAppReview = InAppReview.instance;
-                                        inAppReview.openStoreListing(microsoftStoreId: '9P3XF8KJ0LSM');
+                                        final InAppReview inAppReview =
+                                            InAppReview.instance;
+                                        inAppReview.openStoreListing(
+                                            microsoftStoreId: '9P3XF8KJ0LSM');
                                       },
                                       leading: const SettingsLeadingIcon(
                                         iosIcon: CupertinoIcons.star_fill,
@@ -797,16 +834,25 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                       ),
                                       isThreeLine: false,
                                     ),
-                                  if (!kIsWeb && (Platform.isAndroid || Platform.isWindows))
+                                  if (!kIsWeb &&
+                                      (Platform.isAndroid ||
+                                          Platform.isWindows))
                                     const SettingsDivider(),
                                   SettingsTile(
                                     title: "Make a Donation",
-                                    subtitle: "Support the developers by making a one-time or recurring donation to the BlueBubbles Team!",
+                                    subtitle:
+                                        "Support the developers by making a one-time or recurring donation to the BlueBubbles Team!",
                                     onTap: () async {
-                                      await launchUrl(Uri(scheme: "https", host: "bluebubbles.app", path: "donate"), mode: LaunchMode.externalApplication);
+                                      await launchUrl(
+                                          Uri(
+                                              scheme: "https",
+                                              host: "bluebubbles.app",
+                                              path: "donate"),
+                                          mode: LaunchMode.externalApplication);
                                     },
                                     leading: const SettingsLeadingIcon(
-                                      iosIcon: CupertinoIcons.money_dollar_circle,
+                                      iosIcon:
+                                          CupertinoIcons.money_dollar_circle,
                                       materialIcon: Icons.attach_money,
                                       containerColor: Colors.green,
                                     ),
@@ -815,9 +861,15 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                   const SettingsDivider(),
                                   SettingsTile(
                                     title: "Join Our Discord",
-                                    subtitle: "Join our Discord server to chat with other BlueBubbles users and the developers",
+                                    subtitle:
+                                        "Join our Discord server to chat with other BlueBubbles users and the developers",
                                     onTap: () async {
-                                      await launchUrl(Uri(scheme: "https", host: "discord.gg", path: "hbx7EhNFjp"), mode: LaunchMode.externalApplication);
+                                      await launchUrl(
+                                          Uri(
+                                              scheme: "https",
+                                              host: "discord.gg",
+                                              path: "hbx7EhNFjp"),
+                                          mode: LaunchMode.externalApplication);
                                     },
                                     leading: SettingsLeadingIcon(
                                       iosIcon: Icons.discord,
@@ -864,63 +916,69 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                               return AlertDialog(
                                                 title: Text(
                                                   "Are you sure?",
-                                                  style: context
-                                                      .theme.textTheme.titleLarge,
+                                                  style: context.theme.textTheme
+                                                      .titleLarge,
                                                 ),
                                                 content: Text(
                                                   "This will remove all attachments from this app. Recent attachments will be automatically re-downloaded when you enter a chat. This will not delete attachments from your server.",
-                                                  style: context
-                                                      .theme.textTheme.bodyLarge,
+                                                  style: context.theme.textTheme
+                                                      .bodyLarge,
                                                 ),
                                                 backgroundColor: context.theme
                                                     .colorScheme.properSurface,
                                                 actions: <Widget>[
                                                   TextButton(
                                                     child: Text("No",
-                                                        style: context.theme
-                                                            .textTheme.bodyLarge!
+                                                        style: context
+                                                            .theme
+                                                            .textTheme
+                                                            .bodyLarge!
                                                             .copyWith(
                                                                 color: context
                                                                     .theme
                                                                     .colorScheme
                                                                     .primary)),
                                                     onPressed: () {
-                                                      Navigator.of(context).pop();
+                                                      Navigator.of(context)
+                                                          .pop();
                                                     },
                                                   ),
                                                   TextButton(
-                                                    child: Text("Yes",
-                                                        style: context.theme
-                                                            .textTheme.bodyLarge!
-                                                            .copyWith(
-                                                                color: context
-                                                                    .theme
-                                                                    .colorScheme
-                                                                    .primary)),
-                                                    onPressed: () async {
-                                                      final dir = Directory(
-                                                          "${fs.appDocDir.path}/attachments");
-                                                      await dir.delete(
-                                                          recursive: true);
-                                                      showSnackbar("Success",
-                                                          "Deleted cached attachments");
-                                                    }
-                                                  ),
+                                                      child: Text("Yes",
+                                                          style: context
+                                                              .theme
+                                                              .textTheme
+                                                              .bodyLarge!
+                                                              .copyWith(
+                                                                  color: context
+                                                                      .theme
+                                                                      .colorScheme
+                                                                      .primary)),
+                                                      onPressed: () async {
+                                                        final dir = Directory(
+                                                            "${fs.appDocDir.path}/attachments");
+                                                        await dir.delete(
+                                                            recursive: true);
+                                                        showSnackbar("Success",
+                                                            "Deleted cached attachments");
+                                                      }),
                                                 ],
                                               );
                                             },
                                           );
                                         },
                                         leading: SettingsLeadingIcon(
-                                          iosIcon: CupertinoIcons.trash_slash_fill,
-                                          materialIcon: Icons.delete_forever_outlined,
+                                          iosIcon:
+                                              CupertinoIcons.trash_slash_fill,
+                                          materialIcon:
+                                              Icons.delete_forever_outlined,
                                           containerColor: Colors.red[700],
                                         ),
                                         title: "Delete All Attachments",
-                                        subtitle: "Remove all attachments from this app",
+                                        subtitle:
+                                            "Remove all attachments from this app",
                                       ),
-                                    if (!kIsWeb)
-                                      const SettingsDivider(),
+                                    if (!kIsWeb) const SettingsDivider(),
                                     SettingsTile(
                                       backgroundColor: tileColor,
                                       onTap: () {
@@ -968,23 +1026,34 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                                     fs.deleteDB();
                                                     socket.forgetConnection();
                                                     ss.settings = Settings();
-                                                    await ss.settings.saveAsync();
+                                                    await ss.settings
+                                                        .saveAsync();
 
                                                     await ss.prefs.clear();
-                                                    await ss.prefs.setString("selected-dark", "OLED Dark");
-                                                    await ss.prefs.setString("selected-light", "Bright White");
-                                                    Database.themes.putMany(ts.defaultThemes);
-                                                    
+                                                    await ss.prefs.setString(
+                                                        "selected-dark",
+                                                        "OLED Dark");
+                                                    await ss.prefs.setString(
+                                                        "selected-light",
+                                                        "Bright White");
+                                                    Database.themes.putMany(
+                                                        ts.defaultThemes);
+
                                                     // Clear the FCM data from the database, shared preferences, and locally
-                                                    await FCMData.deleteFcmData();
+                                                    await FCMData
+                                                        .deleteFcmData();
 
                                                     // Delete the Firebase FCM token
                                                     try {
                                                       if (fcm.token != null) {
-                                                        await mcs.invokeMethod("firebase-delete-token");
+                                                        await mcs.invokeMethod(
+                                                            "firebase-delete-token");
                                                       }
                                                     } catch (e, s) {
-                                                      Logger.error("Failed to delete Firebase FCM token", error: e, trace: s);
+                                                      Logger.error(
+                                                          "Failed to delete Firebase FCM token",
+                                                          error: e,
+                                                          trace: s);
                                                     }
 
                                                     // Fully close the app
@@ -997,7 +1066,8 @@ class _SettingsPageState extends OptimizedState<SettingsPage> {
                                         );
                                       },
                                       leading: SettingsLeadingIcon(
-                                        iosIcon: CupertinoIcons.refresh_circled_solid,
+                                        iosIcon: CupertinoIcons
+                                            .refresh_circled_solid,
                                         materialIcon: Icons.refresh_rounded,
                                         containerColor: Colors.red[700],
                                       ),

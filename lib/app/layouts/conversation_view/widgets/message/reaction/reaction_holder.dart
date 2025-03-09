@@ -20,7 +20,8 @@ class ReactionHolder extends StatefulWidget {
 }
 
 class _ReactionHolderState extends OptimizedState<ReactionHolder> {
-  Iterable<Message> get reactions => getUniqueReactionMessages(widget.reactions.toList());
+  Iterable<Message> get reactions =>
+      getUniqueReactionMessages(widget.reactions.toList());
 
   @override
   Widget build(BuildContext context) {
@@ -34,19 +35,25 @@ class _ReactionHolderState extends OptimizedState<ReactionHolder> {
       width: 35,
       child: Stack(
         clipBehavior: Clip.none,
-        children: reactions.mapIndexed((i, e) => Positioned(
-          key: ValueKey(e.guid),
-          top: 0,
-          left: !widget.message.isFromMe! ? null : -i * 2.0,
-          right: widget.message.isFromMe! ? null : -i * 2.0,
-          child: DeferPointer(
-            child: ReactionWidget(
-              message: widget.message,
-              reaction: e,
-              reactions: reactions.toList(),
-            ),
-          ),
-        )).toList().reversed.toList(),
+        children: reactions
+            .mapIndexed(
+              (i, e) => Positioned(
+                key: ValueKey(e.guid),
+                top: 0,
+                left: !widget.message.isFromMe! ? null : -i * 2.0,
+                right: widget.message.isFromMe! ? null : -i * 2.0,
+                child: DeferPointer(
+                  child: ReactionWidget(
+                    message: widget.message,
+                    reaction: e,
+                    reactions: reactions.toList(),
+                  ),
+                ),
+              ),
+            )
+            .toList()
+            .reversed
+            .toList(),
       ),
     );
   }

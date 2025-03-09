@@ -34,7 +34,7 @@ class SettingsTile extends StatelessWidget {
       child: InkWell(
         onTap: onTap as void Function()?,
         onLongPress: onLongPress as void Function()?,
-        splashColor: context.theme.colorScheme.surfaceVariant,
+        splashColor: context.theme.colorScheme.surfaceContainerHighest,
         splashFactory: context.theme.splashFactory,
         child: GestureDetector(
           onSecondaryTapUp: (details) async {
@@ -49,27 +49,40 @@ class SettingsTile extends StatelessWidget {
             minVerticalPadding: 10,
             horizontalTitleGap: 10,
             dense: ss.settings.skin.value == Skins.iOS ? true : false,
-            leading: leading == null ? null : Padding(
-              padding: EdgeInsets.only(bottom: isThreeLine ? 10 : 0.0, right: 5, left: 5),
-              child: leading,
-            ),
-            title: title != null ? Text(
-              title!,
-              style: context.theme.textTheme.bodyLarge,
-            ) : null,
-            trailing: trailing == null ? null : Padding(
-              padding: EdgeInsets.only(bottom: isThreeLine ? 10 : 0.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  trailing!,
-                ],
-              ),
-            ),
-            subtitle: subtitle != null ? Text(
-              subtitle!,
-              style: context.theme.textTheme.bodySmall!.copyWith(color: context.theme.colorScheme.properOnSurface.withOpacity(0.75), height: 1.5),
-            ) : null,
+            leading: leading == null
+                ? null
+                : Padding(
+                    padding: EdgeInsets.only(
+                        bottom: isThreeLine ? 10 : 0.0, right: 5, left: 5),
+                    child: leading,
+                  ),
+            title: title != null
+                ? Text(
+                    title!,
+                    style: context.theme.textTheme.bodyLarge,
+                  )
+                : null,
+            trailing: trailing == null
+                ? null
+                : Padding(
+                    padding: EdgeInsets.only(bottom: isThreeLine ? 10 : 0.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        trailing!,
+                      ],
+                    ),
+                  ),
+            subtitle: subtitle != null
+                ? Text(
+                    subtitle!,
+                    style: context.theme.textTheme.bodySmall!.copyWith(
+                        color: context.theme.colorScheme.properOnSurface
+                            // ignore: deprecated_member_use
+                            .withOpacity(0.75),
+                        height: 1.5),
+                  )
+                : null,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
           ),
         ),

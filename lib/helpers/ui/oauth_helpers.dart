@@ -29,14 +29,17 @@ Future<String?> googleOAuth(BuildContext context) async {
         builder: (BuildContext context) {
           return AlertDialog(
             backgroundColor: context.theme.colorScheme.properSurface,
-            title: Text("Important Notice", style: context.theme.textTheme.titleLarge),
+            title: Text("Important Notice",
+                style: context.theme.textTheme.titleLarge),
             content: Text(
               'Please make sure to allow BlueBubbles to see, edit, configure, and delete your Google Cloud data after signing in. BlueBubbles will only use this ability to find your server URL.',
               style: context.theme.textTheme.bodyLarge,
             ),
             actions: <Widget>[
               TextButton(
-                child: Text("OK", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
+                child: Text("OK",
+                    style: context.theme.textTheme.bodyLarge!
+                        .copyWith(color: context.theme.colorScheme.primary)),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -48,7 +51,8 @@ Future<String?> googleOAuth(BuildContext context) async {
     }
 
     // initialize gsi
-    final gsi = GoogleSignIn(clientId: fdb.getClientId(), scopes: defaultScopes);
+    final gsi =
+        GoogleSignIn(clientId: fdb.getClientId(), scopes: defaultScopes);
     try {
       // sign out then sign in
       await gsi.signOut();
@@ -59,22 +63,20 @@ Future<String?> googleOAuth(BuildContext context) async {
         final auth = await account.authentication;
         token = auth.accessToken;
         // make sure scopes were granted on web
-        if (kIsWeb && !(await gsi.canAccessScopes(defaultScopes, accessToken: token))) {
+        if (kIsWeb &&
+            !(await gsi.canAccessScopes(defaultScopes, accessToken: token))) {
           final result = await gsi.requestScopes(defaultScopes);
           if (!result) {
             throw Exception("Scopes not granted!");
           }
-        }
-        // error if token is not present
-        if (token == null) {
-          throw Exception("No access token!");
         }
       } else {
         // error if account is not present
         throw Exception("No account!");
       }
     } catch (e, stack) {
-      Logger.error("Failed to sign in with Google (Android/Web)", error: e, trace: stack);
+      Logger.error("Failed to sign in with Google (Android/Web)",
+          error: e, trace: stack);
       return null;
     }
     // desktop implementation
@@ -92,14 +94,12 @@ Future<String?> googleOAuth(BuildContext context) async {
         width: width != null ? (width * 0.9).ceil() : null,
         height: height != null ? (height * 0.9).ceil() : null,
       );
-      Future.delayed(const Duration(milliseconds: 500), () async => await windowManager.show());
+      Future.delayed(const Duration(milliseconds: 500),
+          () async => await windowManager.show());
       token = result?.accessToken;
-      // error if token is not present
-      if (token == null) {
-        throw Exception("No access token!");
-      }
     } catch (e, stack) {
-      Logger.error("Failed to sign in with Google (Desktop)", error: e, trace: stack);
+      Logger.error("Failed to sign in with Google (Desktop)",
+          error: e, trace: stack);
       return null;
     }
   }
@@ -118,7 +118,8 @@ Future<List<Map>> fetchFirebaseProjects(String token) async {
       for (Map e in projects) {
         if (e['resources']['realtimeDatabaseInstance'] != null) {
           try {
-            final serverUrlResponse = await http.getServerUrlRTDB(e['resources']['realtimeDatabaseInstance'], token);
+            final serverUrlResponse = await http.getServerUrlRTDB(
+                e['resources']['realtimeDatabaseInstance'], token);
             e['serverUrl'] = serverUrlResponse.data['serverUrl'];
             usableProjects.add(e);
           } catch (ex) {
@@ -126,8 +127,10 @@ Future<List<Map>> fetchFirebaseProjects(String token) async {
           }
         } else {
           try {
-            final serverUrlResponse = await http.getServerUrlCF(e['projectId'], token);
-            e['serverUrl'] = serverUrlResponse.data['fields']['serverUrl']['stringValue'];
+            final serverUrlResponse =
+                await http.getServerUrlCF(e['projectId'], token);
+            e['serverUrl'] =
+                serverUrlResponse.data['fields']['serverUrl']['stringValue'];
             usableProjects.add(e);
           } catch (ex) {
             errors.add("Firestore Database Error: $ex");
@@ -149,7 +152,8 @@ Future<List<Map>> fetchFirebaseProjects(String token) async {
   }
 }
 
-Future<void> requestPassword(BuildContext context, String serverUrl, Future<void> Function(String url, String password) connect) async {
+Future<void> requestPassword(BuildContext context, String serverUrl,
+    Future<void> Function(String url, String password) connect) async {
   final TextEditingController passController = TextEditingController();
   final RxBool enabled = false.obs;
   await showDialog(
@@ -159,7 +163,9 @@ Future<void> requestPassword(BuildContext context, String serverUrl, Future<void
         () => AlertDialog(
           actions: [
             TextButton(
-              child: Text("Cancel", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
+              child: Text("Cancel",
+                  style: context.theme.textTheme.bodyLarge!
+                      .copyWith(color: context.theme.colorScheme.primary)),
               onPressed: () => Get.back(),
             ),
             AnimatedContainer(
@@ -170,9 +176,12 @@ Future<void> requestPassword(BuildContext context, String serverUrl, Future<void
               child: AbsorbPointer(
                 absorbing: !enabled.value,
                 child: TextButton(
-                  child: Text("OK",
+                  child: Text(
+                    "OK",
                     style: context.theme.textTheme.bodyLarge!.copyWith(
-                      color: enabled.value ? context.theme.colorScheme.primary : context.theme.disabledColor,
+                      color: enabled.value
+                          ? context.theme.colorScheme.primary
+                          : context.theme.disabledColor,
                     ),
                   ),
                   onPressed: () async {
@@ -206,7 +215,8 @@ Future<void> requestPassword(BuildContext context, String serverUrl, Future<void
               Get.back();
             },
           ),
-          title: Text("Enter Server Password", style: context.theme.textTheme.titleLarge),
+          title: Text("Enter Server Password",
+              style: context.theme.textTheme.titleLarge),
           backgroundColor: context.theme.colorScheme.properSurface,
         ),
       );

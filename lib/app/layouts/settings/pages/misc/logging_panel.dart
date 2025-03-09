@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:bluebubbles/app/wrappers/scrollbar_wrapper.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/services/services.dart';
@@ -35,7 +34,7 @@ class _LoggingPanel extends State<LoggingPanel> {
         } else {
           _logs.addAll(value);
         }
-        
+
         _scrollToBottom();
       });
     });
@@ -45,7 +44,8 @@ class _LoggingPanel extends State<LoggingPanel> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (scrollController.hasClients) {
         // Keep scrolling until the scroll position is at the bottom
-        if (scrollController.position.pixels != scrollController.position.maxScrollExtent) {
+        if (scrollController.position.pixels !=
+            scrollController.position.maxScrollExtent) {
           scrollController.animateTo(
             scrollController.position.maxScrollExtent,
             duration: const Duration(milliseconds: 500),
@@ -71,20 +71,20 @@ class _LoggingPanel extends State<LoggingPanel> {
     final Rx<Color> _backgroundColor =
         (kIsDesktop && ss.settings.windowEffect.value == WindowEffect.disabled
                 ? Colors.transparent
-                : context.theme.colorScheme.background)
+                : context.theme.colorScheme.surface)
             .obs;
 
     if (kIsDesktop) {
       ss.settings.windowEffect.listen((WindowEffect effect) =>
           _backgroundColor.value = effect != WindowEffect.disabled
               ? Colors.transparent
-              : context.theme.colorScheme.background);
+              : context.theme.colorScheme.surface);
     }
     return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
           systemNavigationBarColor: ss.settings.immersiveMode.value
               ? Colors.transparent
-              : context.theme.colorScheme.background, // navigation bar color
+              : context.theme.colorScheme.surface, // navigation bar color
           systemNavigationBarIconBrightness:
               context.theme.colorScheme.brightness.opposite,
           statusBarColor: Colors.transparent, // status bar color
@@ -100,7 +100,7 @@ class _LoggingPanel extends State<LoggingPanel> {
                 child: BackdropFilter(
                   child: AppBar(
                     systemOverlayStyle: ThemeData.estimateBrightnessForColor(
-                                context.theme.colorScheme.background) ==
+                                context.theme.colorScheme.surface) ==
                             Brightness.dark
                         ? SystemUiOverlayStyle.light
                         : SystemUiOverlayStyle.dark,
@@ -123,8 +123,12 @@ class _LoggingPanel extends State<LoggingPanel> {
                           PopupMenuItem(
                             child: Obx(
                               () => ListTile(
-                                leading: errorsOnly.value ? const Icon(Icons.file_copy_outlined) : const Icon(Icons.error_outline),
-                                title: Text(errorsOnly.value ? "Show All Logs" : "Show Only Errors"),
+                                leading: errorsOnly.value
+                                    ? const Icon(Icons.file_copy_outlined)
+                                    : const Icon(Icons.error_outline),
+                                title: Text(errorsOnly.value
+                                    ? "Show All Logs"
+                                    : "Show Only Errors"),
                                 onTap: () {
                                   errorsOnly.toggle();
                                   if (errorsOnly.value) {
@@ -159,48 +163,49 @@ class _LoggingPanel extends State<LoggingPanel> {
               showScrollbar: true,
               controller: scrollController,
               child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0, vertical: 5.0),
                   child: (_logs.isEmpty)
-                    ? const Center(
-                        child: Text(
-                          "No logs to display",
-                          style: TextStyle(fontSize: 16.0),
-                        ),
-                      )
-                    : ListView.separated(
-                        itemCount: _logs.length,
-                        shrinkWrap: true,
-                        controller: scrollController,
-                        separatorBuilder: (context, index) => Divider(
-                            thickness: 0.25,
-                            color: context.theme.colorScheme.onSurface),
-                        itemBuilder: (context, index) {
-                          String log = _logs[index].trim();
+                      ? const Center(
+                          child: Text(
+                            "No logs to display",
+                            style: TextStyle(fontSize: 16.0),
+                          ),
+                        )
+                      : ListView.separated(
+                          itemCount: _logs.length,
+                          shrinkWrap: true,
+                          controller: scrollController,
+                          separatorBuilder: (context, index) => Divider(
+                              thickness: 0.25,
+                              color: context.theme.colorScheme.onSurface),
+                          itemBuilder: (context, index) {
+                            String log = _logs[index].trim();
 
-                          // Remove date
-                          log = log.split(' ').sublist(1).join(' ');
+                            // Remove date
+                            log = log.split(' ').sublist(1).join(' ');
 
-                          // Print colorful
-                          Color textColor = context.theme.colorScheme.primary;
-                          if (log.startsWith('[ERROR]')) {
-                            textColor = Colors.red;
-                          } else if (log.startsWith('[WARNING]')) {
-                            textColor = Colors.orange;
-                          } else if (log.startsWith('[TRACE]')) {
-                            textColor = context.theme.colorScheme.primary;
-                          } else if (log.startsWith('[FATAL]')) {
-                            textColor = Colors.red;
-                          } else if (log.startsWith('[DEBUG]')) {
-                            textColor = context.theme.colorScheme.secondary;
-                          }
+                            // Print colorful
+                            Color textColor = context.theme.colorScheme.primary;
+                            if (log.startsWith('[ERROR]')) {
+                              textColor = Colors.red;
+                            } else if (log.startsWith('[WARNING]')) {
+                              textColor = Colors.orange;
+                            } else if (log.startsWith('[TRACE]')) {
+                              textColor = context.theme.colorScheme.primary;
+                            } else if (log.startsWith('[FATAL]')) {
+                              textColor = Colors.red;
+                            } else if (log.startsWith('[DEBUG]')) {
+                              textColor = context.theme.colorScheme.secondary;
+                            }
 
-                          return Text(
-                            log,
-                            style: TextStyle(fontSize: 12.0, color: textColor),
-                          );
-                        },
-                      )
-                    ),
+                            return Text(
+                              log,
+                              style:
+                                  TextStyle(fontSize: 12.0, color: textColor),
+                            );
+                          },
+                        )),
             ),
           ),
         ));

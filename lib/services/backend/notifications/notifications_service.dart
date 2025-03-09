@@ -1,7 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:bluebubbles/app/layouts/conversation_view/pages/conversation_view.dart';
 import 'package:bluebubbles/app/layouts/settings/pages/scheduling/scheduled_messages_panel.dart';
 import 'package:bluebubbles/app/layouts/settings/pages/server/server_management_panel.dart';
@@ -15,7 +16,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Notification;
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart' hide Message;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    hide Message;
 import 'package:get/get.dart';
 import 'package:local_notifier/local_notifier.dart';
 import 'package:path/path.dart';
@@ -25,19 +27,25 @@ import 'package:universal_html/html.dart' hide File, Platform, Navigator;
 import 'package:universal_io/io.dart';
 import 'package:window_manager/window_manager.dart';
 
-NotificationsService notif = Get.isRegistered<NotificationsService>() ? Get.find<NotificationsService>() : Get.put(NotificationsService());
+NotificationsService notif = Get.isRegistered<NotificationsService>()
+    ? Get.find<NotificationsService>()
+    : Get.put(NotificationsService());
 
 class NotificationsService extends GetxService {
   static const String NEW_MESSAGE_CHANNEL = "com.bluebubbles.new_messages";
   static const String ERROR_CHANNEL = "com.bluebubbles.errors";
   static const String REMINDER_CHANNEL = "com.bluebubbles.reminders";
   static const String FACETIME_CHANNEL = "com.bluebubbles.incoming_facetimes";
-  static const String FOREGROUND_SERVICE_CHANNEL = "com.bluebubbles.foreground_service";
+  static const String FOREGROUND_SERVICE_CHANNEL =
+      "com.bluebubbles.foreground_service";
 
-  static const String NEW_MESSAGE_TAG = "com.bluebubbles.messaging.NEW_MESSAGE_NOTIFICATION";
-  static const String NEW_FACETIME_TAG = "com.bluebubbles.messaging.NEW_FACETIME_NOTIFICATION";
+  static const String NEW_MESSAGE_TAG =
+      "com.bluebubbles.messaging.NEW_MESSAGE_NOTIFICATION";
+  static const String NEW_FACETIME_TAG =
+      "com.bluebubbles.messaging.NEW_FACETIME_NOTIFICATION";
 
-  final FlutterLocalNotificationsPlugin flnp = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flnp =
+      FlutterLocalNotificationsPlugin();
   StreamSubscription? countSub;
   int currentCount = 0;
 
@@ -59,15 +67,20 @@ class NotificationsService extends GetxService {
 
   Future<void> init() async {
     if (!kIsWeb && !kIsDesktop) {
-      const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_stat_icon');
-      const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
-      await flnp.initialize(initializationSettings, onDidReceiveNotificationResponse: (NotificationResponse? response) {
+      const AndroidInitializationSettings initializationSettingsAndroid =
+          AndroidInitializationSettings('ic_stat_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(android: initializationSettingsAndroid);
+      await flnp.initialize(initializationSettings,
+          onDidReceiveNotificationResponse: (NotificationResponse? response) {
         if (response?.payload != null) {
           intents.openChat(response!.payload);
         }
       });
       final details = await flnp.getNotificationAppLaunchDetails();
-      if (details != null && details.didNotificationLaunchApp && details.notificationResponse?.payload != null) {
+      if (details != null &&
+          details.didNotificationLaunchApp &&
+          details.notificationResponse?.payload != null) {
         intents.openChat(details.notificationResponse!.payload!);
       }
       // create notif channels
@@ -100,12 +113,20 @@ class NotificationsService extends GetxService {
 
     // watch for new messages and handle the notification
     if (!kIsWeb) {
-      final countQuery = (Database.messages.query()..order(Message_.id, flags: Order.descending)).watch(triggerImmediately: true);
+      final countQuery = (Database.messages.query()
+            ..order(Message_.id, flags: Order.descending))
+          .watch(triggerImmediately: true);
       countSub = countQuery.listen((event) {
         if (!ss.settings.finishedSetup.value) return;
         final newCount = event.count();
-        final activeChatFetching = cm.activeChat != null ? ms(cm.activeChat!.chat.guid).isFetching : false;
-        if (ls.isAlive && (!sync.isIncrementalSyncing.value && !kIsDesktop) && !activeChatFetching && newCount > currentCount && currentCount != 0) {
+        final activeChatFetching = cm.activeChat != null
+            ? ms(cm.activeChat!.chat.guid).isFetching
+            : false;
+        if (ls.isAlive &&
+            (!sync.isIncrementalSyncing.value && !kIsDesktop) &&
+            !activeChatFetching &&
+            newCount > currentCount &&
+            currentCount != 0) {
           event.limit = newCount - currentCount;
           final messages = event.find();
           event.limit = 0;
@@ -115,10 +136,12 @@ class NotificationsService extends GetxService {
             message.attachments = List<Attachment>.from(message.dbAttachments);
           }
           if (kIsDesktop && messages.length > 1) {
-            MessageHelper.handleSummaryNotification(messages, findExisting: false);
+            MessageHelper.handleSummaryNotification(messages,
+                findExisting: false);
           } else {
             for (Message message in messages) {
-              MessageHelper.handleNotification(message, message.chat.target!, findExisting: false);
+              MessageHelper.handleNotification(message, message.chat.target!,
+                  findExisting: false);
             }
           }
         }
@@ -126,9 +149,12 @@ class NotificationsService extends GetxService {
       });
     } else {
       countSub = WebListeners.newMessage.listen((tuple) {
-        final activeChatFetching = cm.activeChat != null ? ms(cm.activeChat!.chat.guid).isFetching : false;
+        final activeChatFetching = cm.activeChat != null
+            ? ms(cm.activeChat!.chat.guid).isFetching
+            : false;
         if (ls.isAlive && !activeChatFetching && tuple.item2 != null) {
-          MessageHelper.handleNotification(tuple.item1, tuple.item2!, findExisting: false);
+          MessageHelper.handleNotification(tuple.item1, tuple.item2!,
+              findExisting: false);
         }
       });
     }
@@ -140,7 +166,8 @@ class NotificationsService extends GetxService {
     super.onClose();
   }
 
-  Future<void> createNotificationChannel(String channelID, String channelName, String channelDescription) async {
+  Future<void> createNotificationChannel(
+      String channelID, String channelName, String channelDescription) async {
     await mcs.invokeMethod("create-notification-channel", {
       "channel_name": channelName,
       "channel_description": channelDescription,
@@ -148,11 +175,15 @@ class NotificationsService extends GetxService {
     });
   }
 
-  Future<void> createReminder(Chat? chat, Message? message, DateTime time, {String? chatTitle, String? messageText}) async {
+  Future<void> createReminder(Chat? chat, Message? message, DateTime time,
+      {String? chatTitle, String? messageText}) async {
     await flnp.zonedSchedule(
       Random().nextInt(9998) + 50000,
       chatTitle ?? 'Reminder: ${chat!.getTitle()}',
-      messageText ?? (hideContent ? "iMessage" : MessageHelper.getNotificationText(message!)),
+      messageText ??
+          (hideContent
+              ? "iMessage"
+              : MessageHelper.getNotificationText(message!)),
       TZDateTime.from(time, local),
       NotificationDetails(
         android: AndroidNotificationDetails(
@@ -166,7 +197,8 @@ class NotificationsService extends GetxService {
       ),
       payload: "${time.millisecondsSinceEpoch}",
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 
@@ -176,15 +208,22 @@ class NotificationsService extends GetxService {
     final guid = chat.guid;
     final contactName = message.handle?.displayName ?? "Unknown";
     final title = isGroup ? chat.getTitle() : contactName;
-    final text = hideContent ? "iMessage" : MessageHelper.getNotificationText(message);
+    final text =
+        hideContent ? "iMessage" : MessageHelper.getNotificationText(message);
     final isReaction = !isNullOrEmpty(message.associatedMessageGuid);
-    final personIcon = (await rootBundle.load("assets/images/person64.png")).buffer.asUint8List();
+    final personIcon = (await rootBundle.load("assets/images/person64.png"))
+        .buffer
+        .asUint8List();
 
     Uint8List chatIcon = await avatarAsBytes(chat: chat, quality: 256);
     Uint8List contactIcon = message.isFromMe!
         ? personIcon
         : await avatarAsBytes(
-            participantsOverride: !chat.isGroup ? null : chat.participants.where((e) => e.address == message.handle!.address).toList(),
+            participantsOverride: !chat.isGroup
+                ? null
+                : chat.participants
+                    .where((e) => e.address == message.handle!.address)
+                    .toList(),
             chat: chat,
             quality: 256);
     if (chatIcon.isEmpty) {
@@ -195,12 +234,16 @@ class NotificationsService extends GetxService {
     }
 
     if (kIsWeb && Notification.permission == "granted") {
-      final notif = Notification(title, body: text, icon: "data:image/png;base64,${base64Encode(chatIcon)}", tag: message.guid);
+      final notif = Notification(title,
+          body: text,
+          icon: "data:image/png;base64,${base64Encode(chatIcon)}",
+          tag: message.guid);
       notif.onClick.listen((event) async {
         await intents.openChat(guid);
       });
     } else if (kIsDesktop) {
-      _lock.synchronized(() async => await showDesktopNotif(message, text, chat, guid, title, contactName, isGroup, isReaction));
+      _lock.synchronized(() async => await showDesktopNotif(
+          message, text, chat, guid, title, contactName, isGroup, isReaction));
     } else {
       await mcs.invokeMethod("create-incoming-message-notification", {
         "channel_id": NEW_MESSAGE_CHANNEL,
@@ -219,26 +262,36 @@ class NotificationsService extends GetxService {
     }
   }
 
-  Future<void> createIncomingFaceTimeNotification(String? callUuid, String caller, Uint8List? chatIcon, bool isAudio) async {
+  Future<void> createIncomingFaceTimeNotification(String? callUuid,
+      String caller, Uint8List? chatIcon, bool isAudio) async {
     // Set some notification defaults
     String title = caller;
-    String text = "${callUuid == null ? "Incoming" : "Answer"} FaceTime ${isAudio ? 'Audio' : 'Video'} Call";
-    chatIcon ??= (await rootBundle.load("assets/images/person64.png")).buffer.asUint8List();
+    String text =
+        "${callUuid == null ? "Incoming" : "Answer"} FaceTime ${isAudio ? 'Audio' : 'Video'} Call";
+    chatIcon ??= (await rootBundle.load("assets/images/person64.png"))
+        .buffer
+        .asUint8List();
 
     if (kIsWeb && Notification.permission == "granted") {
-      final notif = Notification(title, body: text, icon: "data:image/png;base64,${base64Encode(chatIcon)}", tag: callUuid);
+      final notif = Notification(title,
+          body: text,
+          icon: "data:image/png;base64,${base64Encode(chatIcon)}",
+          tag: callUuid);
       if (callUuid != null) {
         notif.onClick.listen((event) async {
           await intents.answerFaceTime(callUuid);
         });
       }
     } else if (kIsDesktop) {
-      _lock.synchronized(() async => await showPersistentDesktopFaceTimeNotif(callUuid, caller, chatIcon, isAudio));
+      _lock.synchronized(() async => await showPersistentDesktopFaceTimeNotif(
+          callUuid, caller, chatIcon, isAudio));
     } else {
       final numeric = callUuid?.numericOnly();
       await mcs.invokeMethod("create-incoming-facetime-notification", {
         "channel_id": FACETIME_CHANNEL,
-        "notification_id": numeric != null ? int.parse(numeric.substring(0, min(8, numeric.length))) : Random().nextInt(9998) + 1,
+        "notification_id": numeric != null
+            ? int.parse(numeric.substring(0, min(8, numeric.length)))
+            : Random().nextInt(9998) + 1,
         "title": title,
         "body": text,
         "caller_avatar": chatIcon,
@@ -253,19 +306,19 @@ class NotificationsService extends GetxService {
       await clearDesktopFaceTimeNotif(callUuid);
     } else if (!kIsWeb) {
       final numeric = callUuid.numericOnly();
-      mcs.invokeMethod(
-        "delete-notification",
-        {
-          "notification_id": int.parse(numeric.substring(0, min(8, numeric.length))),
-          "tag": NEW_FACETIME_TAG
-        }
-      );
+      mcs.invokeMethod("delete-notification", {
+        "notification_id":
+            int.parse(numeric.substring(0, min(8, numeric.length))),
+        "tag": NEW_FACETIME_TAG
+      });
     }
   }
 
-  Future<void> showPersistentDesktopFaceTimeNotif(String? callUuid, String caller, Uint8List? avatar, bool isAudio) async {
+  Future<void> showPersistentDesktopFaceTimeNotif(
+      String? callUuid, String caller, Uint8List? avatar, bool isAudio) async {
     List<String> actions = ["Answer", "Ignore"];
-    List<LocalNotificationAction> nActions = actions.map((String a) => LocalNotificationAction(text: a)).toList();
+    List<LocalNotificationAction> nActions =
+        actions.map((String a) => LocalNotificationAction(text: a)).toList();
     LocalNotification? toast;
     String? path;
 
@@ -304,7 +357,8 @@ class NotificationsService extends GetxService {
     }
 
     toast.onClose = (reason) async {
-      if (reason == LocalNotificationCloseReason.timedOut && faceTimeOverlays.containsKey(callUuid)) {
+      if (reason == LocalNotificationCloseReason.timedOut &&
+          faceTimeOverlays.containsKey(callUuid)) {
         await toast?.show();
       }
     };
@@ -323,7 +377,15 @@ class NotificationsService extends GetxService {
     facetimeNotifications.remove(callerUuid);
   }
 
-  Future<void> showDesktopNotif(Message message, String text, Chat chat, String guid, String title, String contactName, bool isGroup, bool isReaction) async {
+  Future<void> showDesktopNotif(
+      Message message,
+      String text,
+      Chat chat,
+      String guid,
+      String title,
+      String contactName,
+      bool isGroup,
+      bool isReaction) async {
     List<int> selectedIndices = ss.settings.selectedActionIndices;
     List<String> _actions = ss.settings.actionList;
     final papi = ss.settings.enablePrivateAPI.value;
@@ -340,7 +402,8 @@ class NotificationsService extends GetxService {
 
     bool showMarkRead = actions.contains("Mark Read");
 
-    List<LocalNotificationAction> nActions = actions.map((String a) => LocalNotificationAction(text: a)).toList();
+    List<LocalNotificationAction> nActions =
+        actions.map((String a) => LocalNotificationAction(text: a)).toList();
 
     LocalNotification? toast;
 
@@ -351,7 +414,8 @@ class NotificationsService extends GetxService {
     Iterable<String> _chats = notifications.keys.toList();
 
     if (_chats.length > maxChatCount) {
-      return await showSummaryNotifDesktop(notificationCounts.values.sum, _chats, showMarkRead);
+      return await showSummaryNotifDesktop(
+          notificationCounts.values.sum, _chats, showMarkRead);
     }
 
     Uint8List avatar = await avatarAsBytes(chat: chat, quality: 256);
@@ -368,15 +432,26 @@ class NotificationsService extends GetxService {
     String? sender;
     RegExp re = RegExp("\n");
     if (isGroup && !message.isGroupEvent && !isReaction) {
-      Contact? contact = message.handle != null ? cs.getContact(message.handle!.address) : null;
+      Contact? contact = message.handle != null
+          ? cs.getContact(message.handle!.address)
+          : null;
       sender = contact?.displayName.split(" ")[0];
     }
-    int newLines = (((sender == null ? 0 : "$sender: ".length) + text.length) / charsPerLineEst).ceil() + re.allMatches(text).length;
+    int newLines = (((sender == null ? 0 : "$sender: ".length) + text.length) /
+                charsPerLineEst)
+            .ceil() +
+        re.allMatches(text).length;
     String body = "";
     int count = 0;
     for (LocalNotification _toast in notifications[guid]!) {
-      if (newLines + ((_toast.body ?? "").length ~/ charsPerLineEst).ceil() + re.allMatches("${_toast.body}\n").length <= maxLines) {
-        if (isGroup && count == 0 && notifications[guid]!.isNotEmpty && _toast.title.length > "$title: ".length) {
+      if (newLines +
+              ((_toast.body ?? "").length ~/ charsPerLineEst).ceil() +
+              re.allMatches("${_toast.body}\n").length <=
+          maxLines) {
+        if (isGroup &&
+            count == 0 &&
+            notifications[guid]!.isNotEmpty &&
+            _toast.title.length > "$title: ".length) {
           String name = _toast.title.substring("$title: ".length).split(" ")[0];
           body += "$name: ";
         }
@@ -405,13 +480,18 @@ class NotificationsService extends GetxService {
       if (toasted) return;
       toast = LocalNotification(
         imagePath: path,
-        title: isGroup && count == 1 && !isReaction && !message.isGroupEvent ? "$title: $contactName" : title,
+        title: isGroup && count == 1 && !isReaction && !message.isGroupEvent
+            ? "$title: $contactName"
+            : title,
         subtitle: "$count",
         body: sender != null && count == 1 ? body.split("$sender: ")[1] : body,
         duration: LocalNotificationDuration.long,
         actions: notifications[guid]!.isNotEmpty
             ? showMarkRead
-                ? [LocalNotificationAction(text: "Mark ${notificationCounts[guid]!} Messages Read")]
+                ? [
+                    LocalNotificationAction(
+                        text: "Mark ${notificationCounts[guid]!} Messages Read")
+                  ]
                 : []
             : nActions,
       );
@@ -427,7 +507,8 @@ class NotificationsService extends GetxService {
           return;
         }
 
-        if (ChatManager().activeChat?.chat.guid != guid && Get.context != null) {
+        if (ChatManager().activeChat?.chat.guid != guid &&
+            Get.context != null) {
           ns.pushAndRemoveUntil(
             Get.context!,
             ConversationView(chat: chat),
@@ -501,7 +582,8 @@ class NotificationsService extends GetxService {
         title: title,
         body: "${notificationCounts[guid]!} messages",
         duration: LocalNotificationDuration.short,
-        actions: showMarkRead ? [LocalNotificationAction(text: "Mark Read")] : [],
+        actions:
+            showMarkRead ? [LocalNotificationAction(text: "Mark Read")] : [],
       );
       notifications[guid]!.add(toast);
 
@@ -516,7 +598,8 @@ class NotificationsService extends GetxService {
           return;
         }
 
-        if (ChatManager().activeChat?.chat.guid != guid && Get.context != null) {
+        if (ChatManager().activeChat?.chat.guid != guid &&
+            Get.context != null) {
           ns.pushAndRemoveUntil(
             Get.context!,
             ConversationView(chat: chat),
@@ -566,7 +649,8 @@ class NotificationsService extends GetxService {
     await toast.show();
   }
 
-  Future<void> showSummaryNotifDesktop(int count, Iterable<String> _chats, bool showMarkRead) async {
+  Future<void> showSummaryNotifDesktop(
+      int count, Iterable<String> _chats, bool showMarkRead) async {
     for (String chat in _chats) {
       for (LocalNotification _toast in (notifications[chat] ?? [])) {
         await _toast.close();
@@ -586,7 +670,8 @@ class NotificationsService extends GetxService {
       title: title,
       body: body,
       duration: LocalNotificationDuration.short,
-      actions: showMarkRead ? [LocalNotificationAction(text: "Mark All Read")] : [],
+      actions:
+          showMarkRead ? [LocalNotificationAction(text: "Mark All Read")] : [],
     );
 
     allToast!.onClick = () async {
@@ -639,7 +724,9 @@ class NotificationsService extends GetxService {
       return;
     } else {
       final notifs = await flnp.getActiveNotifications();
-      if (notifs.firstWhereOrNull((element) => element.id == -2) != null) return;
+      if (notifs.firstWhereOrNull((element) => element.id == -2) != null)
+        // ignore: curly_braces_in_flow_control_structures
+        return;
       await flnp.show(
         -2,
         title,
@@ -648,7 +735,8 @@ class NotificationsService extends GetxService {
           android: AndroidNotificationDetails(
             ERROR_CHANNEL,
             'Errors',
-            channelDescription: 'Displays message send failures, connection failures, and more',
+            channelDescription:
+                'Displays message send failures, connection failures, and more',
             priority: Priority.max,
             importance: Importance.max,
             color: HexColor("4990de"),
@@ -663,7 +751,9 @@ class NotificationsService extends GetxService {
   Future<void> createAliasesRemovedNotification(List<String> aliases) async {
     const title = "iMessage alias deregistered!";
     const notifId = -3;
-    final text = aliases.length == 1 ? "${aliases[0]} has been deregistered!" : "The following aliases have been deregistered:\n${aliases.join("\n")}";
+    final text = aliases.length == 1
+        ? "${aliases[0]} has been deregistered!"
+        : "The following aliases have been deregistered:\n${aliases.join("\n")}";
 
     if (kIsDesktop) {
       if (aliasesToast?.body == text) {
@@ -685,37 +775,38 @@ class NotificationsService extends GetxService {
 
       await aliasesToast!.show();
     } else {
-        final notifs = await flnp.getActiveNotifications();
+      final notifs = await flnp.getActiveNotifications();
 
-        //Already have this notification
-        if (notifs.firstWhereOrNull((n) => n.id == notifId && n.body == text) != null) {
-          return;
-        }
+      //Already have this notification
+      if (notifs.firstWhereOrNull((n) => n.id == notifId && n.body == text) !=
+          null) {
+        return;
+      }
 
-        await flnp.show(
-          notifId,
-          title,
-          text,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              ERROR_CHANNEL,
-              'Errors',
-              channelDescription: 'Displays message send failures, connection failures, and more',
+      await flnp.show(
+        notifId,
+        title,
+        text,
+        NotificationDetails(
+          android: AndroidNotificationDetails(ERROR_CHANNEL, 'Errors',
+              channelDescription:
+                  'Displays message send failures, connection failures, and more',
               priority: Priority.max,
               importance: Importance.max,
               color: HexColor("4990de"),
               ongoing: false,
               onlyAlertOnce: false,
-              styleInformation: const BigTextStyleInformation('')
-            ),
-          ),
-        );
+              styleInformation: const BigTextStyleInformation('')),
+        ),
+      );
     }
   }
 
   Future<void> createFailedToSend(Chat chat, {bool scheduled = false}) async {
     final title = 'Failed to send${scheduled ? " scheduled" : ""} message';
-    final subtitle = scheduled ? 'Tap to open scheduled messages list' : 'Tap to see more details or retry';
+    final subtitle = scheduled
+        ? 'Tap to open scheduled messages list'
+        : 'Tap to see more details or retry';
     if (kIsDesktop) {
       failedToast = LocalNotification(
         title: title,
@@ -752,14 +843,15 @@ class NotificationsService extends GetxService {
       return;
     }
     await flnp.show(
-      (chat.id!  + 75000) * (scheduled ? -1 : 1),
+      (chat.id! + 75000) * (scheduled ? -1 : 1),
       title,
       subtitle,
       NotificationDetails(
         android: AndroidNotificationDetails(
           ERROR_CHANNEL,
           'Errors',
-          channelDescription: 'Displays message send failures, connection failures, and more',
+          channelDescription:
+              'Displays message send failures, connection failures, and more',
           priority: Priority.max,
           importance: Importance.max,
           color: HexColor("4990de"),

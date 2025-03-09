@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bluebubbles/database/models.dart';
 import 'package:tuple/tuple.dart';
 
@@ -9,13 +8,17 @@ class WebListeners {
   static final Set<String> _messageGuids = {};
   static final Set<String> _chatGuids = {};
 
-  static final StreamController<Tuple3<Message, String?, Chat?>> _messageUpdate = StreamController.broadcast();
-  static final StreamController<Tuple2<Message, Chat?>> _newMessage = StreamController.broadcast();
+  static final StreamController<Tuple3<Message, String?, Chat?>>
+      _messageUpdate = StreamController.broadcast();
+  static final StreamController<Tuple2<Message, Chat?>> _newMessage =
+      StreamController.broadcast();
 
-  static final StreamController<Chat> _chatUpdate = StreamController.broadcast();
+  static final StreamController<Chat> _chatUpdate =
+      StreamController.broadcast();
   static final StreamController<Chat> _newChat = StreamController.broadcast();
 
-  static Stream<Tuple3<Message, String?, Chat?>> get messageUpdate => _messageUpdate.stream;
+  static Stream<Tuple3<Message, String?, Chat?>> get messageUpdate =>
+      _messageUpdate.stream;
   static Stream<Tuple2<Message, Chat?>> get newMessage => _newMessage.stream;
 
   static Stream<Chat> get chatUpdate => _chatUpdate.stream;
