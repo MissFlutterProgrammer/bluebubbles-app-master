@@ -137,13 +137,17 @@ class _ManualEntryDialogState extends OptimizedState<ManualEntryDialog> {
                   autofillHints: [AutofillHints.username, AutofillHints.url],
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: context.theme.colorScheme.outline),
-                        borderRadius: BorderRadius.circular(20)),
+                      borderSide: BorderSide(
+                        color: context.theme.colorScheme.outline,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: context.theme.colorScheme.primary),
-                        borderRadius: BorderRadius.circular(20)),
+                      borderSide: BorderSide(
+                        color: context.theme.colorScheme.primary,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     labelText: "URL",
                   ),
                 ),
@@ -174,13 +178,17 @@ class _ManualEntryDialogState extends OptimizedState<ManualEntryDialog> {
                   },
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: context.theme.colorScheme.outline),
-                        borderRadius: BorderRadius.circular(20)),
+                      borderSide: BorderSide(
+                        color: context.theme.colorScheme.outline,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: context.theme.colorScheme.primary),
-                        borderRadius: BorderRadius.circular(20)),
+                      borderSide: BorderSide(
+                        color: context.theme.colorScheme.primary,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     labelText: "Password",
                   ),
                   obscureText: true,
@@ -191,17 +199,26 @@ class _ManualEntryDialogState extends OptimizedState<ManualEntryDialog> {
         ),
         actions: [
           TextButton(
-            child: Text("Cancel",
-                style: context.theme.textTheme.bodyLarge!
-                    .copyWith(color: context.theme.colorScheme.primary)),
+            child: Text(
+              "Cancel",
+              style: context.theme.textTheme.bodyLarge!.copyWith(
+                color: context.theme.colorScheme.primary,
+              ),
+            ),
             onPressed: widget.onClose,
           ),
           TextButton(
-            child: Text("OK",
-                style: context.theme.textTheme.bodyLarge!
-                    .copyWith(color: context.theme.colorScheme.primary)),
+            child: Text(
+              "OK",
+              style: context.theme.textTheme.bodyLarge!.copyWith(
+                color: context.theme.colorScheme.primary,
+              ),
+            ),
             onPressed: () {
-              connect(urlController.text, passwordController.text);
+              connect(
+                urlController.text,
+                passwordController.text,
+              );
               connecting = true;
               if (mounted) setState(() {});
             },

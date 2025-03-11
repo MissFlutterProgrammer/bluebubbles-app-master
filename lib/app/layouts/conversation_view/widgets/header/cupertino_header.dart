@@ -67,10 +67,11 @@ class CupertinoHeader extends StatelessWidget implements PreferredSizeWidget {
                 color: Colors.transparent,
                 child: Padding(
                   padding: EdgeInsets.only(
-                      left: 20.0,
-                      right: 20,
-                      top: (MediaQuery.of(context).viewPadding.top - 2)
-                          .clamp(0, double.infinity)),
+                    left: 20.0,
+                    right: 20,
+                    top: (MediaQuery.of(context).viewPadding.top - 2)
+                        .clamp(0, double.infinity),
+                  ),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -118,7 +119,7 @@ class CupertinoHeader extends StatelessWidget implements PreferredSizeWidget {
                                 Navigator.of(context).pop();
                               },
                               child: Padding(
-                                padding: const EdgeInsets.all(3.0),
+                                padding: const EdgeInsets.all(3),
                                 child: _UnreadIcon(controller: controller),
                               ),
                             ),
@@ -153,7 +154,7 @@ class CupertinoHeader extends StatelessWidget implements PreferredSizeWidget {
                             },
                             borderRadius: BorderRadius.circular(10),
                             child: Padding(
-                              padding: const EdgeInsets.all(3.0),
+                              padding: const EdgeInsets.all(3),
                               child: _ChatIconAndTitle(
                                 parentController: controller,
                               ),
@@ -242,7 +243,7 @@ class _UnreadIconState extends OptimizedState<_UnreadIcon> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 3.0, right: 3),
+          padding: const EdgeInsets.only(top: 3, right: 3),
           child: Obx(() {
             final icon = widget.controller.inSelectMode.value
                 ? CupertinoIcons.xmark

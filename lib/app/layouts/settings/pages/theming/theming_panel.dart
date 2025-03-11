@@ -86,7 +86,8 @@ class _ThemingPanelState
                     ),
                     if (!kIsWeb)
                       const SettingsDivider(
-                          padding: EdgeInsets.only(left: 16.0)),
+                        padding: EdgeInsets.only(left: 16),
+                      ),
                     if (!kIsWeb)
                       SettingsTile(
                         title: "Advanced Theming",
@@ -102,13 +103,18 @@ class _ThemingPanelState
                           );
                         },
                       ),
-                    const SettingsDivider(padding: EdgeInsets.only(left: 16.0)),
+                    const SettingsDivider(
+                      padding: EdgeInsets.only(left: 16),
+                    ),
                     Container(
                       padding: const EdgeInsets.only(left: 15, top: 10),
-                      child: Text("Avatar Scale Factor",
-                          style: context.theme.textTheme.bodyLarge),
+                      child: Text(
+                        "Avatar Scale Factor",
+                        style: context.theme.textTheme.bodyLarge,
+                      ),
                     ),
-                    Obx(() => SettingsSlider(
+                    Obx(
+                      () => SettingsSlider(
                         startingVal: ss.settings.avatarScale.value.toDouble(),
                         update: (double val) {
                           ss.settings.avatarScale.value = val;
@@ -121,13 +127,16 @@ class _ThemingPanelState
                         backgroundColor: tileColor,
                         min: 0.8,
                         max: 1.2,
-                        divisions: 4)),
+                        divisions: 4,
+                      ),
+                    ),
                   ],
                 ),
                 SettingsHeader(
-                    iosSubtitle: iosSubtitle,
-                    materialSubtitle: materialSubtitle,
-                    text: "Skin${kIsDesktop ? "" : " and Layout"}"),
+                  iosSubtitle: iosSubtitle,
+                  materialSubtitle: materialSubtitle,
+                  text: "Skin${kIsDesktop ? "" : " and Layout"}",
+                ),
                 SettingsSection(
                   backgroundColor: tileColor,
                   children: [
@@ -149,50 +158,55 @@ class _ThemingPanelState
                         )),
                     if (!kIsDesktop)
                       const SettingsDivider(
-                          padding: EdgeInsets.only(left: 16.0)),
+                        padding: EdgeInsets.only(left: 16),
+                      ),
                     if (!kIsDesktop)
-                      Obx(() => SettingsSwitch(
-                            onChanged: (bool val) {
-                              ss.settings.tabletMode.value = val;
-                              saveSettings();
-                              // update the conversation view UI
-                              eventDispatcher.emit('split-refresh', null);
-                            },
-                            initialVal: ss.settings.tabletMode.value,
-                            title: "Tablet Mode",
-                            backgroundColor: tileColor,
-                            subtitle:
-                                "Enables tablet mode (split view) depending on screen width",
-                            isThreeLine: true,
-                          )),
+                      Obx(
+                        () => SettingsSwitch(
+                          onChanged: (bool val) {
+                            ss.settings.tabletMode.value = val;
+                            saveSettings();
+                            // update the conversation view UI
+                            eventDispatcher.emit('split-refresh', null);
+                          },
+                          initialVal: ss.settings.tabletMode.value,
+                          title: "Tablet Mode",
+                          backgroundColor: tileColor,
+                          subtitle:
+                              "Enables tablet mode (split view) depending on screen width",
+                          isThreeLine: true,
+                        ),
+                      ),
                     if (!kIsWeb && !kIsDesktop)
-                      const SettingsDivider(
-                          padding: EdgeInsets.only(left: 16.0)),
+                      const SettingsDivider(padding: EdgeInsets.only(left: 16)),
                     if (!kIsWeb && !kIsDesktop)
-                      Obx(() => SettingsSwitch(
-                            onChanged: (bool val) {
-                              ss.settings.immersiveMode.value = val;
-                              saveSettings();
-                              if (val) {
-                                SystemChrome.setEnabledSystemUIMode(
-                                    SystemUiMode.edgeToEdge);
-                              } else {
-                                SystemChrome.setEnabledSystemUIMode(
-                                    SystemUiMode.manual,
-                                    overlays: [
-                                      SystemUiOverlay.bottom,
-                                      SystemUiOverlay.top
-                                    ]);
-                              }
-                              eventDispatcher.emit('theme-update', null);
-                            },
-                            initialVal: ss.settings.immersiveMode.value,
-                            title: "Immersive Mode",
-                            backgroundColor: tileColor,
-                            subtitle:
-                                "Makes the bottom navigation bar transparent. This option is best used with gesture navigation.",
-                            isThreeLine: true,
-                          )),
+                      Obx(
+                        () => SettingsSwitch(
+                          onChanged: (bool val) {
+                            ss.settings.immersiveMode.value = val;
+                            saveSettings();
+                            if (val) {
+                              SystemChrome.setEnabledSystemUIMode(
+                                  SystemUiMode.edgeToEdge);
+                            } else {
+                              SystemChrome.setEnabledSystemUIMode(
+                                SystemUiMode.manual,
+                                overlays: [
+                                  SystemUiOverlay.bottom,
+                                  SystemUiOverlay.top
+                                ],
+                              );
+                            }
+                            eventDispatcher.emit('theme-update', null);
+                          },
+                          initialVal: ss.settings.immersiveMode.value,
+                          title: "Immersive Mode",
+                          backgroundColor: tileColor,
+                          subtitle:
+                              "Makes the bottom navigation bar transparent. This option is best used with gesture navigation.",
+                          isThreeLine: true,
+                        ),
+                      ),
                     if (!kIsWeb && !kIsDesktop)
                       const SettingsSubtitle(
                         subtitle:
@@ -207,140 +221,144 @@ class _ThemingPanelState
                     text: "Window Effect",
                   ),
                 if (kIsDesktop && Platform.isWindows)
-                  SettingsSection(backgroundColor: tileColor, children: [
-                    Obx(
-                      () => SettingsOptions<WindowEffect>(
-                        initial: ss.settings.windowEffect.value,
-                        options: WindowEffects.effects,
-                        textProcessing: (WindowEffect effect) =>
-                            effect.toString().substring("WindowEffect.".length),
-                        onChanged: (WindowEffect? effect) async {
-                          bool defaultOpacityLight = ss.settings
-                                  .windowEffectCustomOpacityLight.value ==
-                              WindowEffects.defaultOpacity(dark: false);
-                          bool defaultOpacityDark =
-                              ss.settings.windowEffectCustomOpacityDark.value ==
-                                  WindowEffects.defaultOpacity(dark: true);
-                          effect ??= WindowEffect.disabled;
-                          ss.settings.windowEffect.value = effect;
-                          if (defaultOpacityLight) {
-                            ss.settings.windowEffectCustomOpacityLight.value =
+                  SettingsSection(
+                    backgroundColor: tileColor,
+                    children: [
+                      Obx(
+                        () => SettingsOptions<WindowEffect>(
+                          initial: ss.settings.windowEffect.value,
+                          options: WindowEffects.effects,
+                          textProcessing: (WindowEffect effect) => effect
+                              .toString()
+                              .substring("WindowEffect.".length),
+                          onChanged: (WindowEffect? effect) async {
+                            bool defaultOpacityLight = ss.settings
+                                    .windowEffectCustomOpacityLight.value ==
                                 WindowEffects.defaultOpacity(dark: false);
-                          }
-                          if (defaultOpacityDark) {
-                            ss.settings.windowEffectCustomOpacityDark.value =
+                            bool defaultOpacityDark = ss.settings
+                                    .windowEffectCustomOpacityDark.value ==
                                 WindowEffects.defaultOpacity(dark: true);
-                          }
-                          await ss.prefs
-                              .setString('window-effect', effect.toString());
-                          await WindowEffects.setEffect(
-                              color: context.theme.colorScheme.surface);
-                          saveSettings();
-                        },
-                        title: "Window Effect",
-                        subtitle:
-                            "${WindowEffects.descriptions[ss.settings.windowEffect.value]}\n\nOperating System Version: ${Platform.operatingSystemVersion}\nBuild number: ${parsedWindowsVersion()}${parsedWindowsVersion() < 22000 && ss.settings.windowEffect.value == WindowEffect.acrylic ? "\n\n⚠️ This effect causes window movement lag on Windows 10" : ""}",
-                        secondaryColor: headerColor,
-                        capitalize: true,
+                            effect ??= WindowEffect.disabled;
+                            ss.settings.windowEffect.value = effect;
+                            if (defaultOpacityLight) {
+                              ss.settings.windowEffectCustomOpacityLight.value =
+                                  WindowEffects.defaultOpacity(dark: false);
+                            }
+                            if (defaultOpacityDark) {
+                              ss.settings.windowEffectCustomOpacityDark.value =
+                                  WindowEffects.defaultOpacity(dark: true);
+                            }
+                            await ss.prefs
+                                .setString('window-effect', effect.toString());
+                            await WindowEffects.setEffect(
+                                color: context.theme.colorScheme.surface);
+                            saveSettings();
+                          },
+                          title: "Window Effect",
+                          subtitle:
+                              "${WindowEffects.descriptions[ss.settings.windowEffect.value]}\n\nOperating System Version: ${Platform.operatingSystemVersion}\nBuild number: ${parsedWindowsVersion()}${parsedWindowsVersion() < 22000 && ss.settings.windowEffect.value == WindowEffect.acrylic ? "\n\n⚠️ This effect causes window movement lag on Windows 10" : ""}",
+                          secondaryColor: headerColor,
+                          capitalize: true,
+                        ),
                       ),
-                    ),
-                    if (ss.settings.skin.value == Skins.iOS)
-                      Obx(() => SettingsSubtitle(
+                      if (ss.settings.skin.value == Skins.iOS)
+                        Obx(
+                          () => SettingsSubtitle(
                             unlimitedSpace: true,
                             subtitle:
                                 "${WindowEffects.descriptions[ss.settings.windowEffect.value]}\n\nOperating System Version: ${Platform.operatingSystemVersion}\nBuild number: ${parsedWindowsVersion()}${parsedWindowsVersion() < 22000 && ss.settings.windowEffect.value == WindowEffect.acrylic ? "\n\n⚠️ This effect causes window movement lag on Windows 10" : ""}",
-                          )),
-                    Obx(() {
-                      if (WindowEffects.dependsOnColor() &&
-                          !WindowEffects.isDark(
-                              color: context.theme.colorScheme.surface)) {
-                        return SettingsTile(
-                          title: "Background Opacity (Light)",
-                          trailing: ss.settings.windowEffectCustomOpacityLight
-                                      .value !=
-                                  WindowEffects.defaultOpacity(dark: false)
-                              ? ElevatedButton(
-                                  onPressed: () {
-                                    ss.settings.windowEffectCustomOpacityLight
-                                            .value =
-                                        WindowEffects.defaultOpacity(
-                                            dark: false);
-                                    saveSettings();
-                                  },
-                                  child: const Text("Reset to Default"),
-                                )
-                              : null,
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    }),
-                    Obx(() {
-                      if (WindowEffects.dependsOnColor() &&
-                          !WindowEffects.isDark(
-                              color: context.theme.colorScheme.surface)) {
-                        return SettingsSlider(
-                          startingVal:
-                              ss.settings.windowEffectCustomOpacityLight.value,
-                          max: 1,
-                          min: 0,
-                          divisions: 100,
-                          formatValue: (value) => value.toStringAsFixed(2),
-                          update: (value) => ss.settings
-                              .windowEffectCustomOpacityLight.value = value,
-                          onChangeEnd: (value) {
-                            saveSettings();
-                          },
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    }),
-                    Obx(() {
-                      if (WindowEffects.dependsOnColor() &&
-                          WindowEffects.isDark(
-                              color: context.theme.colorScheme.surface)) {
-                        return SettingsTile(
-                          title: "Background Opacity (Dark)",
-                          trailing:
-                              ss.settings.windowEffectCustomOpacityDark.value !=
-                                      WindowEffects.defaultOpacity(dark: true)
-                                  ? ElevatedButton(
-                                      onPressed: () {
-                                        ss
-                                                .settings
-                                                .windowEffectCustomOpacityDark
-                                                .value =
-                                            WindowEffects.defaultOpacity(
-                                                dark: true);
-                                        saveSettings();
-                                      },
-                                      child: const Text("Reset to Default"),
-                                    )
-                                  : null,
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    }),
-                    Obx(() {
-                      if (WindowEffects.dependsOnColor() &&
-                          WindowEffects.isDark(
-                              color: context.theme.colorScheme.surface)) {
-                        return SettingsSlider(
-                          startingVal:
-                              ss.settings.windowEffectCustomOpacityDark.value,
-                          max: 1,
-                          min: 0,
-                          divisions: 100,
-                          formatValue: (value) => value.toStringAsFixed(2),
-                          update: (value) => ss.settings
-                              .windowEffectCustomOpacityDark.value = value,
-                          onChangeEnd: (value) {
-                            saveSettings();
-                          },
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    }),
-                  ]),
+                          ),
+                        ),
+                      Obx(() {
+                        if (WindowEffects.dependsOnColor() &&
+                            !WindowEffects.isDark(
+                                color: context.theme.colorScheme.surface)) {
+                          return SettingsTile(
+                            title: "Background Opacity (Light)",
+                            trailing: ss.settings.windowEffectCustomOpacityLight
+                                        .value !=
+                                    WindowEffects.defaultOpacity(dark: false)
+                                ? ElevatedButton(
+                                    onPressed: () {
+                                      ss.settings.windowEffectCustomOpacityLight
+                                              .value =
+                                          WindowEffects.defaultOpacity(
+                                              dark: false);
+                                      saveSettings();
+                                    },
+                                    child: const Text("Reset to Default"),
+                                  )
+                                : null,
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                      Obx(() {
+                        if (WindowEffects.dependsOnColor() &&
+                            !WindowEffects.isDark(
+                                color: context.theme.colorScheme.surface)) {
+                          return SettingsSlider(
+                            startingVal: ss
+                                .settings.windowEffectCustomOpacityLight.value,
+                            max: 1,
+                            min: 0,
+                            divisions: 100,
+                            formatValue: (value) => value.toStringAsFixed(2),
+                            update: (value) => ss.settings
+                                .windowEffectCustomOpacityLight.value = value,
+                            onChangeEnd: (value) {
+                              saveSettings();
+                            },
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                      Obx(() {
+                        if (WindowEffects.dependsOnColor() &&
+                            WindowEffects.isDark(
+                                color: context.theme.colorScheme.surface)) {
+                          return SettingsTile(
+                            title: "Background Opacity (Dark)",
+                            trailing: ss.settings.windowEffectCustomOpacityDark
+                                        .value !=
+                                    WindowEffects.defaultOpacity(dark: true)
+                                ? ElevatedButton(
+                                    onPressed: () {
+                                      ss.settings.windowEffectCustomOpacityDark
+                                              .value =
+                                          WindowEffects.defaultOpacity(
+                                              dark: true);
+                                      saveSettings();
+                                    },
+                                    child: const Text("Reset to Default"),
+                                  )
+                                : null,
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                      Obx(() {
+                        if (WindowEffects.dependsOnColor() &&
+                            WindowEffects.isDark(
+                                color: context.theme.colorScheme.surface)) {
+                          return SettingsSlider(
+                            startingVal:
+                                ss.settings.windowEffectCustomOpacityDark.value,
+                            max: 1,
+                            min: 0,
+                            divisions: 100,
+                            formatValue: (value) => value.toStringAsFixed(2),
+                            update: (value) => ss.settings
+                                .windowEffectCustomOpacityDark.value = value,
+                            onChangeEnd: (value) {
+                              saveSettings();
+                            },
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                    ],
+                  ),
                 SettingsHeader(
                     iosSubtitle: iosSubtitle,
                     materialSubtitle: materialSubtitle,
@@ -349,21 +367,22 @@ class _ThemingPanelState
                   backgroundColor: tileColor,
                   children: [
                     if (kIsDesktop && Platform.isWindows)
-                      Obx(() => SettingsSwitch(
-                            initialVal: ss.settings.useWindowsAccent.value,
-                            backgroundColor: tileColor,
-                            title: "Use Windows Accent Color",
-                            subtitle:
-                                "Apply the Windows accent color to your theme",
-                            onChanged: (value) async {
-                              ss.settings.useWindowsAccent.value = value;
-                              saveSettings();
-                              await ts.refreshWindowsAccent(context);
-                            },
-                          )),
+                      Obx(
+                        () => SettingsSwitch(
+                          initialVal: ss.settings.useWindowsAccent.value,
+                          backgroundColor: tileColor,
+                          title: "Use Windows Accent Color",
+                          subtitle:
+                              "Apply the Windows accent color to your theme",
+                          onChanged: (value) async {
+                            ss.settings.useWindowsAccent.value = value;
+                            saveSettings();
+                            await ts.refreshWindowsAccent(context);
+                          },
+                        ),
+                      ),
                     if (kIsDesktop && Platform.isWindows)
-                      const SettingsDivider(
-                          padding: EdgeInsets.only(left: 16.0)),
+                      const SettingsDivider(padding: EdgeInsets.only(left: 16)),
                     if (!kIsWeb && !kIsDesktop && ts.monetPalette != null)
                       Obx(() {
                         if (iOS) {
@@ -415,8 +434,7 @@ class _ThemingPanelState
                         ),
                       ),
                     if (!kIsWeb && !kIsDesktop && ts.monetPalette != null)
-                      const SettingsDivider(
-                          padding: EdgeInsets.only(left: 16.0)),
+                      const SettingsDivider(padding: EdgeInsets.only(left: 16)),
                     if (!kIsWeb && !kIsDesktop)
                       Obx(
                         () => SettingsSwitch(
@@ -481,32 +499,38 @@ class _ThemingPanelState
                       ),
                     if (!kIsWeb && !kIsDesktop)
                       const SettingsDivider(
-                          padding: EdgeInsets.only(left: 16.0)),
-                    Obx(() => SettingsSwitch(
-                          onChanged: (bool val) {
-                            ss.settings.colorfulAvatars.value = val;
-                            saveSettings();
-                          },
-                          initialVal: ss.settings.colorfulAvatars.value,
-                          title: "Colorful Avatars",
-                          backgroundColor: tileColor,
-                          subtitle: "Gives letter avatars a splash of color",
-                        )),
-                    const SettingsDivider(padding: EdgeInsets.only(left: 16.0)),
-                    Obx(() => SettingsSwitch(
-                          onChanged: (bool val) {
-                            ss.settings.colorfulBubbles.value = val;
-                            saveSettings();
-                          },
-                          initialVal: ss.settings.colorfulBubbles.value,
-                          title: "Colorful Bubbles",
-                          backgroundColor: tileColor,
-                          subtitle:
-                              "Gives received message bubbles a splash of color",
-                        )),
+                        padding: EdgeInsets.only(left: 16),
+                      ),
+                    Obx(
+                      () => SettingsSwitch(
+                        onChanged: (bool val) {
+                          ss.settings.colorfulAvatars.value = val;
+                          saveSettings();
+                        },
+                        initialVal: ss.settings.colorfulAvatars.value,
+                        title: "Colorful Avatars",
+                        backgroundColor: tileColor,
+                        subtitle: "Gives letter avatars a splash of color",
+                      ),
+                    ),
+                    const SettingsDivider(padding: EdgeInsets.only(left: 16)),
+                    Obx(
+                      () => SettingsSwitch(
+                        onChanged: (bool val) {
+                          ss.settings.colorfulBubbles.value = val;
+                          saveSettings();
+                        },
+                        initialVal: ss.settings.colorfulBubbles.value,
+                        title: "Colorful Bubbles",
+                        backgroundColor: tileColor,
+                        subtitle:
+                            "Gives received message bubbles a splash of color",
+                      ),
+                    ),
                     if (!kIsWeb)
                       const SettingsDivider(
-                          padding: EdgeInsets.only(left: 16.0)),
+                        padding: EdgeInsets.only(left: 16),
+                      ),
                     if (!kIsWeb)
                       SettingsTile(
                         title: "Custom Avatar Colors",
@@ -521,7 +545,8 @@ class _ThemingPanelState
                       ),
                     if (!kIsWeb)
                       const SettingsDivider(
-                          padding: EdgeInsets.only(left: 16.0)),
+                        padding: EdgeInsets.only(left: 16),
+                      ),
                     if (!kIsWeb)
                       SettingsTile(
                         title: "Custom Avatars",
@@ -553,21 +578,23 @@ class _ThemingPanelState
                       return SettingsSection(
                         backgroundColor: tileColor,
                         children: [
-                          Obx(() => SettingsOptions<int>(
-                                initial: controller.currentMode.value,
-                                onChanged: (val) async {
-                                  if (val == null) return;
-                                  controller.currentMode.value = val;
-                                  ss.settings.refreshRate.value =
-                                      controller.currentMode.value;
-                                  ss.saveSettings(null, true);
-                                },
-                                options: controller.refreshRates,
-                                textProcessing: (val) =>
-                                    val == 0 ? "Auto" : "$val Hz",
-                                title: "Display",
-                                secondaryColor: headerColor,
-                              )),
+                          Obx(
+                            () => SettingsOptions<int>(
+                              initial: controller.currentMode.value,
+                              onChanged: (val) async {
+                                if (val == null) return;
+                                controller.currentMode.value = val;
+                                ss.settings.refreshRate.value =
+                                    controller.currentMode.value;
+                                ss.saveSettings(null, true);
+                              },
+                              options: controller.refreshRates,
+                              textProcessing: (val) =>
+                                  val == 0 ? "Auto" : "$val Hz",
+                              title: "Display",
+                              secondaryColor: headerColor,
+                            ),
+                          ),
                         ],
                       );
                     } else {
@@ -615,8 +642,10 @@ class _ThemingPanelState
                                 fs.fontExistsOnDisk.value = true;
                                 return showSnackbar("Notice", "Font loaded");
                               } catch (_) {
-                                return showSnackbar("Error",
-                                    "Failed to load font file. Please make sure it is a valid ttf and under 50mb.");
+                                return showSnackbar(
+                                  "Error",
+                                  "Failed to load font file. Please make sure it is a valid ttf and under 50mb.",
+                                );
                               }
                             }
 
@@ -625,60 +654,64 @@ class _ThemingPanelState
                               builder: (context) => AlertDialog(
                                 backgroundColor:
                                     context.theme.colorScheme.properSurface,
-                                title: Text("Downloading font file...",
-                                    style: context.theme.textTheme.titleLarge),
+                                title: Text(
+                                  "Downloading font file...",
+                                  style: context.theme.textTheme.titleLarge,
+                                ),
                                 content: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Obx(
-                                        () => Text(
-                                            '${controller.progress.value != null && controller.totalSize.value != null ? (controller.progress.value! * controller.totalSize.value! / 1000).getFriendlySize(withSuffix: false) : ""} / ${((controller.totalSize.value ?? 0).toDouble() / 1000).getFriendlySize()} (${((controller.progress.value ?? 0) * 100).floor()}%)',
-                                            style: context
-                                                .theme.textTheme.bodyLarge),
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Obx(
+                                      () => Text(
+                                        '${controller.progress.value != null && controller.totalSize.value != null ? (controller.progress.value! * controller.totalSize.value! / 1000).getFriendlySize(withSuffix: false) : ""} / ${((controller.totalSize.value ?? 0).toDouble() / 1000).getFriendlySize()} (${((controller.progress.value ?? 0) * 100).floor()}%)',
+                                        style:
+                                            context.theme.textTheme.bodyLarge,
                                       ),
-                                      const SizedBox(height: 10.0),
-                                      Obx(
-                                        () => ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          child: LinearProgressIndicator(
-                                            backgroundColor: context
-                                                .theme.colorScheme.outline,
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                                    context.theme.colorScheme
-                                                        .primary),
-                                            value: controller.progress.value,
-                                            minHeight: 5,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Obx(
+                                      () => ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: LinearProgressIndicator(
+                                          backgroundColor:
+                                              context.theme.colorScheme.outline,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                            context.theme.colorScheme.primary,
                                           ),
+                                          value: controller.progress.value,
+                                          minHeight: 5,
                                         ),
                                       ),
-                                      const SizedBox(
-                                        height: 15.0,
+                                    ),
+                                    const SizedBox(height: 15),
+                                    Obx(
+                                      () => Text(
+                                        controller.progress.value == 1
+                                            ? "Download Complete!"
+                                            : "You can close this dialog. The font will continue to download in the background.",
+                                        textAlign: TextAlign.center,
+                                        style:
+                                            context.theme.textTheme.bodyLarge,
                                       ),
-                                      Obx(() => Text(
-                                            controller.progress.value == 1
-                                                ? "Download Complete!"
-                                                : "You can close this dialog. The font will continue to download in the background.",
-                                            textAlign: TextAlign.center,
-                                            style: context
-                                                .theme.textTheme.bodyLarge,
-                                          )),
-                                    ]),
+                                    ),
+                                  ],
+                                ),
                                 actions: [
                                   Obx(
                                     () => controller.downloadingFont.value
                                         ? Container(height: 0, width: 0)
                                         : TextButton(
-                                            child: Text("Close",
-                                                style: context
-                                                    .theme.textTheme.bodyLarge!
-                                                    .copyWith(
-                                                        color: context
-                                                            .theme
-                                                            .colorScheme
-                                                            .primary)),
+                                            child: Text(
+                                              "Close",
+                                              style: context
+                                                  .theme.textTheme.bodyLarge!
+                                                  .copyWith(
+                                                color: context
+                                                    .theme.colorScheme.primary,
+                                              ),
+                                            ),
                                             onPressed: () async {
                                               Get.closeAllSnackbars();
                                               Get.back();
@@ -711,7 +744,8 @@ class _ThemingPanelState
                               showSnackbar("Error",
                                   "Failed to fetch font! Error: ${err.toString()}");
                               return Response(
-                                  requestOptions: RequestOptions(path: ''));
+                                requestOptions: RequestOptions(path: ''),
+                              );
                             });
                             Get.back();
                             controller.downloadingFont.value = false;
@@ -794,24 +828,25 @@ class _ThemingPanelState
 
   void showMonetDialog(BuildContext context) {
     showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text("Monet Theming Info",
-                  style: context.theme.textTheme.titleLarge),
-              backgroundColor: context.theme.colorScheme.properSurface,
-              content: Text(
-                "Harmonize - Overwrites primary color and blends remainder of colors with the current theme colors\r\n"
-                "Full - Overwrites primary, background, and accent colors, along with other minor colors.\r\n",
-                style: context.theme.textTheme.bodyLarge,
-              ),
-              actions: [
-                TextButton(
-                  child: Text("OK",
-                      style: context.theme.textTheme.bodyLarge!
-                          .copyWith(color: context.theme.colorScheme.primary)),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ));
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Monet Theming Info",
+            style: context.theme.textTheme.titleLarge),
+        backgroundColor: context.theme.colorScheme.properSurface,
+        content: Text(
+          "Harmonize - Overwrites primary color and blends remainder of colors with the current theme colors\r\n"
+          "Full - Overwrites primary, background, and accent colors, along with other minor colors.\r\n",
+          style: context.theme.textTheme.bodyLarge,
+        ),
+        actions: [
+          TextButton(
+            child: Text("OK",
+                style: context.theme.textTheme.bodyLarge!
+                    .copyWith(color: context.theme.colorScheme.primary)),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
+    );
   }
 }

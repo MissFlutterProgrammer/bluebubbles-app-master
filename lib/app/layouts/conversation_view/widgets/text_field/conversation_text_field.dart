@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, no_wildcard_variable_uses
+// ignore_for_file: deprecated_member_use, no_wildcard_variable_uses, non_constant_identifier_names
 
 import 'dart:async';
 import 'dart:math';
@@ -184,7 +184,7 @@ class ConversationTextFieldState
     }
   }
 
-  void textListener(bool subject) {
+  void textListener(bool subject, dynamic MentionTextEditingController) {
     if (!subject && controller.textController.text.trim().isNotEmpty) {
       chat.textFieldText = controller.textController.text;
     }
@@ -395,7 +395,7 @@ class ConversationTextFieldState
                   e.address
                       .toLowerCase()
                       .startsWith(mentionName.toLowerCase()) ||
-                  e.displayName
+                  e?.displayName
                       .toLowerCase()
                       .startsWith(mentionName.toLowerCase()))
               .toList();
@@ -1575,11 +1575,16 @@ class TextFieldComponentState extends State<TextFieldComponent> {
               parts.filter((p) => p.text?.isNotEmpty ?? false).lastOrNull;
           if (part != null) {
             final FocusNode? node = kIsDesktop || kIsWeb ? FocusNode() : null;
-            controller!.editing.add(Tuple3(
+            controller!.editing.add(
+              Tuple3(
                 message,
                 part,
                 SpellCheckTextEditingController(
-                    text: part.text!, focusNode: node)));
+                  text: part.text!,
+                  focusNode: node,
+                ),
+              ),
+            );
             node?.requestFocus();
             return KeyEventResult.handled;
           }

@@ -275,10 +275,14 @@ class PageButtons extends StatelessWidget {
                     alignment: Alignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 30.0),
-                        child: Text("Next",
-                            style: context.theme.textTheme.bodyLarge!.apply(
-                                fontSizeFactor: 1.1, color: Colors.white)),
+                        padding: const EdgeInsets.only(right: 30),
+                        child: Text(
+                          "Next",
+                          style: context.theme.textTheme.bodyLarge!.apply(
+                            fontSizeFactor: 1.1,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                       Positioned(
                         left: 40,
@@ -290,8 +294,11 @@ class PageButtons extends StatelessWidget {
                           builder: (context, anim, _) {
                             return Padding(
                               padding: EdgeInsets.only(left: anim),
-                              child: const Icon(Icons.arrow_forward,
-                                  color: Colors.white, size: 20),
+                              child: const Icon(
+                                Icons.arrow_forward,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                             );
                           },
                         ),

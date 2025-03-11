@@ -175,13 +175,19 @@ class _PageNumberState
       text: TextSpan(
         children: [
           TextSpan(
-              text: "${controller.currentPage}",
-              style: context.theme.textTheme.bodyLarge!
-                  .copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+            text: "${controller.currentPage}",
+            style: context.theme.textTheme.bodyLarge!.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           TextSpan(
-              text: " of ${kIsWeb ? "4" : kIsDesktop ? "5" : "7"}",
-              style: context.theme.textTheme.bodyLarge!.copyWith(
-                  color: Colors.white38, fontWeight: FontWeight.bold)),
+            text: " of ${kIsWeb ? "4" : kIsDesktop ? "5" : "7"}",
+            style: context.theme.textTheme.bodyLarge!.copyWith(
+              color: Colors.white38,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );

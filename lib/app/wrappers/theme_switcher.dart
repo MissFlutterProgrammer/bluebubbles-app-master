@@ -26,9 +26,10 @@ class ThemeSwitcher extends StatefulWidget {
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               return CustomCupertinoPageTransition(
-                  primaryRouteAnimation: animation,
-                  child: child,
-                  linearTransition: false);
+                primaryRouteAnimation: animation,
+                child: child,
+                linearTransition: false,
+              );
             });
       case Skins.Material:
         return MaterialPageRoute<T>(builder: builder);

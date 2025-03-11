@@ -125,7 +125,7 @@ class _AttachmentPickerFileState extends OptimizedState<AttachmentPickerFile>
                         )
                       : null,
                   child: Padding(
-                    padding: const EdgeInsets.all(5.0),
+                    padding: const EdgeInsets.all(5),
                     child: Icon(
                       containsThis
                           ? (iOS ? CupertinoIcons.check_mark : Icons.check)

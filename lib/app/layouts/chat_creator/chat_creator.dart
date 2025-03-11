@@ -414,7 +414,7 @@ class ChatCreatorState extends OptimizedState<ChatCreator> {
             children: [
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                 child: Row(
                   children: [
                     Text(
@@ -478,7 +478,7 @@ class ChatCreatorState extends OptimizedState<ChatCreator> {
                                                 padding:
                                                     const EdgeInsets.symmetric(
                                                   horizontal: 7.5,
-                                                  vertical: 7.0,
+                                                  vertical: 7,
                                                 ),
                                                 child: Row(
                                                   mainAxisAlignment:
@@ -511,12 +511,12 @@ class ChatCreatorState extends OptimizedState<ChatCreator> {
                                                                     .properOnSurface,
                                                       ),
                                                     ),
-                                                    const SizedBox(width: 5.0),
+                                                    const SizedBox(width: 5),
                                                     Icon(
                                                       iOS
                                                           ? CupertinoIcons.xmark
                                                           : Icons.close,
-                                                      size: 15.0,
+                                                      size: 15,
                                                     ),
                                                   ],
                                                 ),
@@ -599,8 +599,8 @@ class ChatCreatorState extends OptimizedState<ChatCreator> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0)
-                    .add(const EdgeInsets.only(bottom: 5.0)),
+                padding: const EdgeInsets.symmetric(horizontal: 15)
+                    .add(const EdgeInsets.only(bottom: 5)),
                 child: ToggleButtons(
                   constraints:
                       BoxConstraints(minWidth: (ns.width(context) - 35) / 2),
@@ -614,7 +614,7 @@ class ChatCreatorState extends OptimizedState<ChatCreator> {
                     const Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(8),
                           child: Text("iMessage"),
                         ),
                         Icon(
@@ -626,7 +626,7 @@ class ChatCreatorState extends OptimizedState<ChatCreator> {
                     const Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(8),
                           child: Text("SMS Forwarding"),
                         ),
                         Icon(
@@ -712,8 +712,7 @@ class ChatCreatorState extends OptimizedState<ChatCreator> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
+                                              padding: const EdgeInsets.all(8),
                                               child: Text(
                                                 "Loading existing chats...",
                                                 style: context
@@ -885,8 +884,7 @@ class ChatCreatorState extends OptimizedState<ChatCreator> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 5.0, top: 10.0, bottom: 5.0),
+                padding: const EdgeInsets.only(left: 5, top: 10.0, bottom: 5),
                 child: Theme(
                   data: context.theme.copyWith(
                     // in case some components still use legacy theming

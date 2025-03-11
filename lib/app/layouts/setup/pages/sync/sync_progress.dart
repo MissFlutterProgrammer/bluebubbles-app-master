@@ -158,7 +158,7 @@ class _SyncProgressState extends OptimizedState<SyncProgress> {
                           shape:
                               WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                           backgroundColor: WidgetStateProperty.all(
@@ -228,7 +228,7 @@ class _SyncProgressState extends OptimizedState<SyncProgress> {
                           shape:
                               WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                           backgroundColor:
@@ -236,9 +236,11 @@ class _SyncProgressState extends OptimizedState<SyncProgress> {
                           shadowColor:
                               WidgetStateProperty.all(Colors.transparent),
                           maximumSize: WidgetStateProperty.all(
-                              Size(context.width * 2 / 3, 36)),
+                            Size(context.width * 2 / 3, 36),
+                          ),
                           minimumSize: WidgetStateProperty.all(
-                              Size(context.width * 2 / 3, 36)),
+                            Size(context.width * 2 / 3, 36),
+                          ),
                         ),
                         onPressed: () {
                           Get.offAll(
@@ -264,15 +266,18 @@ class _SyncProgressState extends OptimizedState<SyncProgress> {
                                 curve: Curves.easeOut,
                                 builder: (context, _, anim) {
                                   return const Padding(
-                                    padding: EdgeInsets.only(left: 0.0),
-                                    child: Icon(Icons.check,
-                                        color: Colors.white, size: 25),
+                                    padding: EdgeInsets.only(left: 0),
+                                    child: Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                      size: 25,
+                                    ),
                                   );
                                 },
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    right: 0.0, left: 5.0),
+                                padding:
+                                    const EdgeInsets.only(right: 0, left: 5),
                                 child: Text(
                                   "Finish",
                                   style:

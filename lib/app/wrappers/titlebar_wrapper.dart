@@ -82,10 +82,11 @@ class WindowButtons extends StatelessWidget {
         iconMouseDown: context.theme.colorScheme.onPrimaryContainer);
 
     WindowButtonColors closeButtonColors = WindowButtonColors(
-        mouseOver: context.theme.colorScheme.errorContainer,
-        mouseDown: context.theme.colorScheme.onError,
-        iconNormal: context.theme.colorScheme.primary,
-        iconMouseOver: context.theme.colorScheme.onErrorContainer);
+      mouseOver: context.theme.colorScheme.errorContainer,
+      mouseDown: context.theme.colorScheme.onError,
+      iconNormal: context.theme.colorScheme.primary,
+      iconMouseOver: context.theme.colorScheme.onErrorContainer,
+    );
     return Row(
       children: [
         MinimizeWindowButton(

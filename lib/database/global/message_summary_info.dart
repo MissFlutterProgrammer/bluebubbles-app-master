@@ -99,7 +99,10 @@ class Content {
         values: json["values"] == null
             ? []
             : List<AttributedBody>.from(
-                json["values"].map((x) => AttributedBody.fromMap(x))),
+                json["values"].map(
+                  (x) => AttributedBody.fromMap(x),
+                ),
+              ),
       );
 
   Map<String, dynamic> toJson() => {

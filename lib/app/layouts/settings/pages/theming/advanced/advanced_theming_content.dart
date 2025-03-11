@@ -109,7 +109,8 @@ class _AdvancedThemingContentState
                       ? Divider(
                           color: context.theme.colorScheme.outline,
                           thickness: 2,
-                          height: 2)
+                          height: 2,
+                        )
                       : Row(
                           children: [
                             Column(
@@ -128,7 +129,8 @@ class _AdvancedThemingContentState
                                           color:
                                               struct.data.colorScheme.primary,
                                           borderRadius: const BorderRadius.all(
-                                              Radius.circular(4)),
+                                            Radius.circular(4),
+                                          ),
                                         ),
                                       ),
                                     ),

@@ -11,20 +11,21 @@ class SettingsDivider extends StatelessWidget {
   const SettingsDivider({
     this.thickness = 1,
     this.color,
-    this.padding = const EdgeInsets.only(left: 66.0),
+    this.padding = const EdgeInsets.only(left: 66),
   });
 
   @override
   Widget build(BuildContext context) {
     if (ss.settings.skin.value == Skins.iOS) {
       return Padding(
-          padding: padding,
-          child: Divider(
-            // ignore: deprecated_member_use
-            color: color ?? context.theme.colorScheme.outline.withOpacity(0.5),
-            thickness: 0.5,
-            height: 0.5,
-          ));
+        padding: padding,
+        child: Divider(
+          // ignore: deprecated_member_use
+          color: color ?? context.theme.colorScheme.outline.withOpacity(0.5),
+          thickness: 0.5,
+          height: 0.5,
+        ),
+      );
     } else {
       return const SizedBox.shrink();
     }

@@ -5,15 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart' show Level;
 
-final levelWhitelist = [
-  Level.all,
-  Level.info,
-  Level.warning,
-  Level.error
-];
+final levelWhitelist = [Level.all, Level.info, Level.warning, Level.error];
 
 class LogLevelSelector extends StatefulWidget {
-  const LogLevelSelector({ super.key });
+  const LogLevelSelector({super.key});
 
   @override
   LogLevelSelectorState createState() => LogLevelSelectorState();
@@ -34,7 +29,9 @@ class LogLevelSelectorState extends State<LogLevelSelector> {
           ss.settings.logLevel.value = val;
           ss.settings.saveOne("logLevel");
         },
-        options: Level.values.where((testLevel) => levelWhitelist.contains(testLevel)).toList(),
+        options: Level.values
+            .where((testLevel) => levelWhitelist.contains(testLevel))
+            .toList(),
         textProcessing: (val) => val.name,
         capitalize: true,
         title: "Log Level",

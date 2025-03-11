@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:bluebubbles/app/layouts/settings/dialogs/custom_headers_dialog.dart';
 import 'package:bluebubbles/app/layouts/setup/dialogs/failed_to_scan_dialog.dart';
 import 'package:bluebubbles/app/layouts/setup/pages/page_template.dart';
@@ -65,8 +64,12 @@ class _ServerCredentialsState extends OptimizedState<ServerCredentials> {
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text("Signed in as",
-                    style: TextStyle(color: context.theme.colorScheme.primary)),
+                Text(
+                  "Signed in as",
+                  style: TextStyle(
+                    color: context.theme.colorScheme.primary,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Container(
                   decoration: BoxDecoration(
@@ -508,8 +511,8 @@ class _ServerCredentialsState extends OptimizedState<ServerCredentials> {
                                 decoration: InputDecoration(
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                        color:
-                                            context.theme.colorScheme.outline),
+                                      color: context.theme.colorScheme.outline,
+                                    ),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   focusedBorder: OutlineInputBorder(
@@ -550,14 +553,14 @@ class _ServerCredentialsState extends OptimizedState<ServerCredentials> {
                                 decoration: InputDecoration(
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                        color:
-                                            context.theme.colorScheme.outline),
+                                      color: context.theme.colorScheme.outline,
+                                    ),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                        color:
-                                            context.theme.colorScheme.primary),
+                                      color: context.theme.colorScheme.primary,
+                                    ),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   labelText: "Password",
@@ -843,7 +846,8 @@ class _ServerCredentialsState extends OptimizedState<ServerCredentials> {
             content: LinearProgressIndicator(
               backgroundColor: context.theme.colorScheme.outline,
               valueColor: AlwaysStoppedAnimation<Color>(
-                  context.theme.colorScheme.primary),
+                context.theme.colorScheme.primary,
+              ),
             ),
           ),
         );
@@ -953,13 +957,15 @@ class _ErrorTextState
             width: context.width * 2 / 3,
             child: Align(
               alignment: Alignment.center,
-              child: Text(controller.error,
-                  style: context.theme.textTheme.bodyLarge!
-                      .apply(
-                        fontSizeDelta: 1.5,
-                        color: context.theme.colorScheme.error,
-                      )
-                      .copyWith(height: 2)),
+              child: Text(
+                controller.error,
+                style: context.theme.textTheme.bodyLarge!
+                    .apply(
+                      fontSizeDelta: 1.5,
+                      color: context.theme.colorScheme.error,
+                    )
+                    .copyWith(height: 2),
+              ),
             ),
           ),
         if (controller.error.isNotEmpty) const SizedBox(height: 20),

@@ -41,11 +41,14 @@ class SettingsOptions<T extends Object> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (ss.settings.skin.value == Skins.iOS && useCupertino) {
-      final texts = options.map((e) => Text(
+      final texts = options.map(
+        (e) => Text(
           capitalize ? textProcessing!(e).capitalize! : textProcessing!(e),
           style: context.theme.textTheme.bodyLarge!.copyWith(
-              color:
-                  e == initial ? context.theme.colorScheme.onPrimary : null)));
+            color: e == initial ? context.theme.colorScheme.onPrimary : null,
+          ),
+        ),
+      );
       final map = Map<T, Widget>.fromIterables(
           options, cupertinoCustomWidgets ?? texts);
       return Container(
@@ -80,29 +83,30 @@ class SettingsOptions<T extends Object> extends StatelessWidget {
           children: [
             ConstrainedBox(
               constraints: BoxConstraints(
-                  maxWidth: ns.width(context) * 3 / 5,
-                  minWidth: ns.width(context) / 5),
+                maxWidth: ns.width(context) * 3 / 5,
+                minWidth: ns.width(context) / 5,
+              ),
               child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: context.theme.textTheme.bodyLarge,
-                    ),
-                    (subtitle != null)
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 3.0),
-                            child: Text(
-                              subtitle ?? "",
-                              style: context.theme.textTheme.bodySmall!
-                                  .copyWith(
-                                      color: context
-                                          .theme.colorScheme.properOnSurface),
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: context.theme.textTheme.bodyLarge,
+                  ),
+                  (subtitle != null)
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 3.0),
+                          child: Text(
+                            subtitle ?? "",
+                            style: context.theme.textTheme.bodySmall!.copyWith(
+                              color: context.theme.colorScheme.properOnSurface,
                             ),
-                          )
-                        : const SizedBox.shrink(),
-                  ]),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ],
+              ),
             ),
             const SizedBox(width: 15),
             if (clampWidth) const Spacer(),
@@ -147,7 +151,8 @@ class SettingsOptions<T extends Object> extends StatelessWidget {
                 if (clampWidth) {
                   return ConstrainedBox(
                     constraints: BoxConstraints(
-                        maxWidth: ns.width(context) * 2 / 5 - 47),
+                      maxWidth: ns.width(context) * 2 / 5 - 47,
+                    ),
                     child: widget,
                   );
                 } else {

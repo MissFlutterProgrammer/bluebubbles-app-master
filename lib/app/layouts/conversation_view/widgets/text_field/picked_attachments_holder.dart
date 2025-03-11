@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:bluebubbles/app/components/avatars/contact_avatar_widget.dart';
-import 'package:bluebubbles/app/components/custom_text_editing_controllers.dart';
 import 'package:bluebubbles/app/layouts/conversation_view/dialogs/custom_mention_dialog.dart';
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/text_field/picked_attachment.dart';
 import 'package:bluebubbles/app/wrappers/theme_switcher.dart';
@@ -253,9 +252,10 @@ class _PickedAttachmentsHolderState
                         physics: ThemeSwitcher.getScrollPhysics(),
                         shrinkWrap: true,
                         findChildIndexCallback: (key) => findChildIndexByKey(
-                            widget.controller!.mentionMatches,
-                            key,
-                            (item) => item.address),
+                          widget.controller!.mentionMatches,
+                          key,
+                          (item) => item.address,
+                        ),
                         itemBuilder: (BuildContext context, int index) =>
                             Material(
                           key: ValueKey(

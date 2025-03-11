@@ -131,30 +131,38 @@ class SettingsScaffold extends StatelessWidget {
                                   fit: StackFit.expand,
                                   children: [
                                     FadeTransition(
-                                      opacity: Tween(begin: 0.0, end: 1.0)
-                                          .animate(CurvedAnimation(
-                                        parent: animation,
-                                        curve: const Interval(0.3, 1.0,
-                                            curve: Curves.easeIn),
-                                      )),
+                                      opacity:
+                                          Tween(begin: 0.0, end: 1.0).animate(
+                                        CurvedAnimation(
+                                          parent: animation,
+                                          curve: const Interval(
+                                            0.3,
+                                            1.0,
+                                            curve: Curves.easeIn,
+                                          ),
+                                        ),
+                                      ),
                                       child: Center(
-                                          child: Text(title,
-                                              style: context
-                                                  .theme.textTheme.displaySmall!
-                                                  .copyWith(
-                                                      color: context
-                                                          .theme
-                                                          .colorScheme
-                                                          .onSurface),
-                                              textAlign: TextAlign.center)),
+                                        child: Text(
+                                          title,
+                                          style: context
+                                              .theme.textTheme.displaySmall!
+                                              .copyWith(
+                                                  color: context.theme
+                                                      .colorScheme.onSurface),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
                                     ),
                                     FadeTransition(
-                                      opacity: Tween(begin: 1.0, end: 0.0)
-                                          .animate(CurvedAnimation(
-                                        parent: animation,
-                                        curve: const Interval(0.0, 0.7,
-                                            curve: Curves.easeOut),
-                                      )),
+                                      opacity:
+                                          Tween(begin: 1.0, end: 0.0).animate(
+                                        CurvedAnimation(
+                                          parent: animation,
+                                          curve: const Interval(0.0, 0.7,
+                                              curve: Curves.easeOut),
+                                        ),
+                                      ),
                                       child: Align(
                                         alignment: Alignment.bottomLeft,
                                         child: Container(
@@ -207,22 +215,23 @@ class SettingsScaffold extends StatelessWidget {
                             initialHeader != null)
                           SliverToBoxAdapter(
                             child: Container(
-                                height: 50,
-                                alignment: Alignment.bottomLeft,
-                                color: ss.settings.skin.value == Skins.iOS
-                                    ? headerColor
-                                    : tileColor,
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      bottom: 8,
-                                      left: ss.settings.skin.value == Skins.iOS
-                                          ? 30
-                                          : 15),
-                                  child: Text(initialHeader!.psCapitalize,
-                                      style: ss.settings.skin.value == Skins.iOS
-                                          ? iosSubtitle
-                                          : materialSubtitle),
-                                )),
+                              height: 50,
+                              alignment: Alignment.bottomLeft,
+                              color: ss.settings.skin.value == Skins.iOS
+                                  ? headerColor
+                                  : tileColor,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: 8,
+                                    left: ss.settings.skin.value == Skins.iOS
+                                        ? 30
+                                        : 15),
+                                child: Text(initialHeader!.psCapitalize,
+                                    style: ss.settings.skin.value == Skins.iOS
+                                        ? iosSubtitle
+                                        : materialSubtitle),
+                              ),
+                            ),
                           ),
                         if (ss.settings.skin.value != Skins.Samsung)
                           ...bodySlivers,
@@ -230,10 +239,11 @@ class SettingsScaffold extends StatelessWidget {
                           SliverToBoxAdapter(
                             child: ConstrainedBox(
                               constraints: BoxConstraints(
-                                  minHeight: context.height -
-                                      50 -
-                                      context.mediaQueryPadding.top -
-                                      context.mediaQueryViewPadding.top),
+                                minHeight: context.height -
+                                    50 -
+                                    context.mediaQueryPadding.top -
+                                    context.mediaQueryViewPadding.top,
+                              ),
                               child: CustomScrollView(
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
@@ -242,9 +252,7 @@ class SettingsScaffold extends StatelessWidget {
                             ),
                           ),
                         SliverToBoxAdapter(
-                          child: Container(
-                            height: 30,
-                          ),
+                          child: Container(height: 30),
                         ),
                       ],
                     ),

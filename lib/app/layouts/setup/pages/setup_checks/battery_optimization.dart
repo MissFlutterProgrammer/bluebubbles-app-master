@@ -11,7 +11,8 @@ class BatteryOptimizationCheck extends StatelessWidget {
   Widget build(BuildContext context) {
     return SetupPageTemplate(
       title: "Battery Optimization",
-      subtitle: "We recommend disabling battery optimization for BlueBubbles to ensure you receive all your notifications.",
+      subtitle:
+          "We recommend disabling battery optimization for BlueBubbles to ensure you receive all your notifications.",
       belowSubtitle: FutureBuilder<bool?>(
         future: DisableBatteryOptimization.isAllBatteryOptimizationDisabled,
         initialData: false,
@@ -22,16 +23,23 @@ class BatteryOptimizationCheck extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text("Battery Optimization: ${disabled ? "Disabled" : "Enabled"}",
-                  style: context.theme.textTheme.bodyLarge!.apply(
-                    fontSizeDelta: 1.5,
-                    color: disabled ? Colors.green : context.theme.colorScheme.error,
-                  ).copyWith(height: 2)),
+                child: Text(
+                  "Battery Optimization: ${disabled ? "Disabled" : "Enabled"}",
+                  style: context.theme.textTheme.bodyLarge!
+                      .apply(
+                        fontSizeDelta: 1.5,
+                        color: disabled
+                            ? Colors.green
+                            : context.theme.colorScheme.error,
+                      )
+                      .copyWith(height: 2),
+                ),
               ),
             );
           } else {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Container(
@@ -39,7 +47,10 @@ class BatteryOptimizationCheck extends StatelessWidget {
                     borderRadius: BorderRadius.circular(25),
                     gradient: LinearGradient(
                       begin: AlignmentDirectional.topStart,
-                      colors: [HexColor('2772C3'), HexColor('5CA7F8').darkenPercent(5)],
+                      colors: [
+                        HexColor('2772C3'),
+                        HexColor('5CA7F8').darkenPercent(5)
+                      ],
                     ),
                   ),
                   height: 40,
@@ -50,15 +61,18 @@ class BatteryOptimizationCheck extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-                      backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                      backgroundColor:
+                          WidgetStateProperty.all(Colors.transparent),
                       shadowColor: WidgetStateProperty.all(Colors.transparent),
                       maximumSize: WidgetStateProperty.all(const Size(200, 36)),
                       minimumSize: WidgetStateProperty.all(const Size(30, 30)),
                     ),
                     onPressed: () async {
-                      final optimizationsDisabled = await disableBatteryOptimizations();
+                      final optimizationsDisabled =
+                          await disableBatteryOptimizations();
                       if (!optimizationsDisabled) {
-                        showSnackbar("Error", "Battery optimizations were not disabled. Please try again.");
+                        showSnackbar("Error",
+                            "Battery optimizations were not disabled. Please try again.");
                       }
                     },
                     child: Shimmer.fromColors(
@@ -67,9 +81,19 @@ class BatteryOptimizationCheck extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text("Go to settings", style: context.theme.textTheme.bodyLarge!.apply(fontSizeFactor: 1.1, color: Colors.white)),
+                          Text(
+                            "Go to settings",
+                            style: context.theme.textTheme.bodyLarge!.apply(
+                              fontSizeFactor: 1.1,
+                              color: Colors.white,
+                            ),
+                          ),
                           const SizedBox(width: 10),
-                          const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                          const Icon(
+                            Icons.arrow_forward,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                         ],
                       ),
                     ),

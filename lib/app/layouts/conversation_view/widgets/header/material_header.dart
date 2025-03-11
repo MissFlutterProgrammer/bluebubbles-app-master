@@ -149,7 +149,7 @@ class MaterialHeader extends StatelessWidget implements PreferredSizeWidget {
                   shape: ss.settings.skin.value != Skins.Material
                       ? const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(
-                            Radius.circular(20.0),
+                            Radius.circular(20),
                           ),
                         )
                       : null,

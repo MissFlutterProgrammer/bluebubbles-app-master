@@ -26,7 +26,10 @@ class FailedToScanDialog extends StatelessWidget {
       backgroundColor: context.theme.colorScheme.properSurface,
       content: SingleChildScrollView(
         physics: ThemeSwitcher.getScrollPhysics(),
-        child: Text(error, style: context.theme.textTheme.bodyLarge),
+        child: Text(
+          error,
+          style: context.theme.textTheme.bodyLarge,
+        ),
       ),
       actions: [
         TextButton(

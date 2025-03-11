@@ -175,7 +175,7 @@ class AttachmentsService extends GetxService {
         allowedExtensions: file.extension != null ? [file.extension!] : null,
       );
 
-      if (await File(savePath).exists()) {
+      if (await File(savePath!).exists()) {
         await showDialog(
           barrierDismissible: false,
           context: Get.context!,
@@ -219,11 +219,14 @@ class AttachmentsService extends GetxService {
                               Get.theme.colorScheme.surfaceContainerHighest,
                         ),
                         onPressed: () {
-                          launchUrl(Uri.file(savePath!));
+                          launchUrl(Uri.file(savePath));
                         },
-                        child: Text("OPEN FILE",
-                            style: TextStyle(
-                                color: Get.theme.colorScheme.onSurfaceVariant)),
+                        child: Text(
+                          "OPEN FILE",
+                          style: TextStyle(
+                            color: Get.theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
                       ),
                     );
                   },
@@ -272,17 +275,22 @@ class AttachmentsService extends GetxService {
           if (!isDocument) {
             try {
               if (file.path == null && file.bytes != null) {
-                await SaverGallery.saveImage(file.bytes!,
-                    quality: 100,
-                    fileName: file.name,
-                    androidRelativePath: ss.settings.autoSavePicsLocation.value,
-                    androidExistNotSave: false);
+                await SaverGallery.saveImage(
+                  file.bytes!,
+                  quality: 100,
+                  fileName: file.name,
+                  androidRelativePath: ss.settings.autoSavePicsLocation.value,
+                  // androidExistNotSave: false,
+                  skipIfExists: true,
+                );
               } else {
                 await SaverGallery.saveFile(
-                    file: file.path!,
-                    name: file.name,
-                    androidRelativePath: ss.settings.autoSavePicsLocation.value,
-                    androidExistNotSave: false);
+                  filePath: file.path!,
+                  fileName: file.name,
+                  androidRelativePath: ss.settings.autoSavePicsLocation.value,
+                  // androidExistNotSave: false,
+                  skipIfExists: true,
+                );
               }
               return showSnackbar('Success', 'Saved attachment to gallery!');
             } catch (_) {}

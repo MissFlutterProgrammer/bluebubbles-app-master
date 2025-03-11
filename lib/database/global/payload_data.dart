@@ -37,7 +37,10 @@ class PayloadData {
           type: PayloadType.app,
           appData: data
               .map(
-                  (e) => iMessageAppData.fromJson(Map<String, dynamic>.from(e)))
+                (e) => iMessageAppData.fromJson(
+                  Map<String, dynamic>.from(e),
+                ),
+              )
               .toList(),
         );
       } else {
@@ -90,18 +93,28 @@ class UrlPreviewData {
             ? (json["specialization"]?["artwork"] != null
                 ? MediaMetadata(
                     size: const Size.square(1),
-                    url: json["specialization"]?["artwork"]?["NS.relative"])
+                    url: json["specialization"]?["artwork"]?["NS.relative"],
+                  )
                 : null)
             : MediaMetadata.fromJson(
-                Map<String, dynamic>.from(json["imageMetadata"])),
+                Map<String, dynamic>.from(
+                  json["imageMetadata"],
+                ),
+              ),
         videoMetadata: json["videoMetadata"] == null
             ? null
             : MediaMetadata.fromJson(
-                Map<String, dynamic>.from(json["videoMetadata"])),
+                Map<String, dynamic>.from(
+                  json["videoMetadata"],
+                ),
+              ),
         iconMetadata: json["iconMetadata"] == null
             ? null
             : MediaMetadata.fromJson(
-                Map<String, dynamic>.from(json["iconMetadata"])),
+                Map<String, dynamic>.from(
+                  json["iconMetadata"],
+                ),
+              ),
         itemType: json["itemType"],
         originalUrl: json["originalURL"]?["NS.relative"],
         url: json["URL"]?["NS.relative"],

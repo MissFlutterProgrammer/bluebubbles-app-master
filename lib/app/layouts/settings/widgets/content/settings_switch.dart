@@ -45,7 +45,10 @@ class SettingsSwitch extends StatelessWidget {
               ? null
               : Padding(
                   padding: EdgeInsets.only(
-                      bottom: isThreeLine ? 10 : 0.0, right: 5, left: 5),
+                    bottom: isThreeLine ? 10 : 0.0,
+                    right: 5,
+                    left: 5,
+                  ),
                   child: leading,
                 ),
           trailing: Switch(
@@ -57,12 +60,13 @@ class SettingsSwitch extends StatelessWidget {
               ? Text(
                   subtitle!,
                   style: context.theme.textTheme.bodySmall!.copyWith(
-                      color: context.theme.colorScheme.properOnSurface
-                          .withOpacity(0.75),
-                      height: 1.5),
+                    color: context.theme.colorScheme.properOnSurface
+                        .withOpacity(0.75),
+                    height: 1.5,
+                  ),
                 )
               : null,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
     );

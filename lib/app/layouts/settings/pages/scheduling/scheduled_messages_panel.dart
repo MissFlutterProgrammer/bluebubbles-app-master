@@ -70,45 +70,45 @@ class _ScheduledMessagesPanelState
     final recurring =
         scheduled.where((e) => e.schedule.type == "recurring").toList();
     return SettingsScaffold(
-        title: "Scheduled Messages",
-        initialHeader:
-            fetching == false && scheduled.isNotEmpty ? "Info" : null,
-        iosSubtitle: iosSubtitle,
-        materialSubtitle: materialSubtitle,
-        tileColor: tileColor,
-        headerColor: headerColor,
-        fab: FloatingActionButton(
-          backgroundColor: context.theme.colorScheme.primary,
-          child: Icon(iOS ? CupertinoIcons.add : Icons.add,
-              color: context.theme.colorScheme.onPrimary, size: 25),
-          onPressed: () async {
-            final result = await ns.pushSettings(
-              context,
-              CreateScheduledMessage(),
-            );
-            if (result is ScheduledMessage) {
-              scheduled.add(result);
-              setState(() {});
-            }
+      title: "Scheduled Messages",
+      initialHeader: fetching == false && scheduled.isNotEmpty ? "Info" : null,
+      iosSubtitle: iosSubtitle,
+      materialSubtitle: materialSubtitle,
+      tileColor: tileColor,
+      headerColor: headerColor,
+      fab: FloatingActionButton(
+        backgroundColor: context.theme.colorScheme.primary,
+        child: Icon(iOS ? CupertinoIcons.add : Icons.add,
+            color: context.theme.colorScheme.onPrimary, size: 25),
+        onPressed: () async {
+          final result = await ns.pushSettings(
+            context,
+            CreateScheduledMessage(),
+          );
+          if (result is ScheduledMessage) {
+            scheduled.add(result);
+            setState(() {});
+          }
+        },
+      ),
+      actions: [
+        IconButton(
+          icon: Icon(
+              iOS ? CupertinoIcons.arrow_counterclockwise : Icons.refresh,
+              color: context.theme.colorScheme.onSurface),
+          onPressed: () {
+            setState(() {
+              fetching = true;
+              scheduled.clear();
+            });
+            getExistingMessages();
           },
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-                iOS ? CupertinoIcons.arrow_counterclockwise : Icons.refresh,
-                color: context.theme.colorScheme.onSurface),
-            onPressed: () {
-              setState(() {
-                fetching = true;
-                scheduled.clear();
-              });
-              getExistingMessages();
-            },
-          ),
-        ],
-        bodySlivers: [
-          SliverList(
-            delegate: SliverChildListDelegate([
+      ],
+      bodySlivers: [
+        SliverList(
+          delegate: SliverChildListDelegate(
+            [
               if (fetching == null ||
                   fetching == true ||
                   (fetching == false && scheduled.isEmpty))
@@ -139,7 +139,7 @@ class _ScheduledMessagesPanelState
                   backgroundColor: tileColor,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.only(top: 10.0),
+                      padding: EdgeInsets.only(top: 10),
                       child: SettingsSubtitle(
                         subtitle:
                             "Tap to edit an existing scheduled message.\nOne-Time: Messages that will only be sent once at the displayed date.\nRecurring: Messages that will be sent on a recurring schedule.\nCompleted: One-time messages that have already been sent.",
@@ -174,7 +174,8 @@ class _ScheduledMessagesPanelState
                             mouseCursor: SystemMouseCursors.click,
                             title: Text(item.payload.message),
                             subtitle: Text(
-                                "Sending to ${chat == null ? item.payload.chatGuid : chat.getTitle()} on ${buildFullDate(item.scheduledFor)}"),
+                              "Sending to ${chat == null ? item.payload.chatGuid : chat.getTitle()} on ${buildFullDate(item.scheduledFor)}",
+                            ),
                             trailing: IconButton(
                               icon: Icon(iOS
                                   ? CupertinoIcons.trash
@@ -229,9 +230,11 @@ class _ScheduledMessagesPanelState
                                 "Sending to ${chat == null ? item.payload.chatGuid : chat.getTitle()} every ${item.schedule.interval} ${frequencyToText[item.schedule.intervalType]}(s) starting starting on ${buildFullDate(item.scheduledFor)}"),
                             isThreeLine: true,
                             trailing: IconButton(
-                              icon: Icon(iOS
-                                  ? CupertinoIcons.trash
-                                  : Icons.delete_outlined),
+                              icon: Icon(
+                                iOS
+                                    ? CupertinoIcons.trash
+                                    : Icons.delete_outlined,
+                              ),
                               onPressed: () => deleteMessage(item),
                             ),
                             onTap: () async {
@@ -281,14 +284,17 @@ class _ScheduledMessagesPanelState
                                     "Something went wrong sending this message."
                                 : "Sent to ${chat == null ? item.payload.chatGuid : chat.getTitle()}${item.sentAt != null ? " on ${buildFullDate(item.sentAt!)}" : ""}",
                             style: context.theme.textTheme.bodyMedium!.copyWith(
-                                color: item.status == "error"
-                                    ? context.theme.colorScheme.error
-                                    : null),
+                              color: item.status == "error"
+                                  ? context.theme.colorScheme.error
+                                  : null,
+                            ),
                           ),
                           trailing: IconButton(
-                            icon: Icon(iOS
-                                ? CupertinoIcons.trash
-                                : Icons.delete_outlined),
+                            icon: Icon(
+                              iOS
+                                  ? CupertinoIcons.trash
+                                  : Icons.delete_outlined,
+                            ),
                             onPressed: () => deleteMessage(item),
                           ),
                         );
@@ -297,8 +303,10 @@ class _ScheduledMessagesPanelState
                     ),
                   ],
                 ),
-            ]),
+            ],
           ),
-        ]);
+        ),
+      ],
+    );
   }
 }

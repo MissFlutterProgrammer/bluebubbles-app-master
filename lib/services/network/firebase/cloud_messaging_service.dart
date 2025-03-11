@@ -28,8 +28,9 @@ class CloudMessagingService extends GetxService {
   Future<void> registerDevice() async {
     // Make sure setup is complete, and that we aren't currently registering with FCM
     // Users can also choose to disable FCM in settings
-    if (!ss.settings.finishedSetup.value || ss.settings.keepAppAlive.value)
+    if (!ss.settings.finishedSetup.value || ss.settings.keepAppAlive.value) {
       return;
+    }
 
     if (completer != null && !completer!.isCompleted) {
       return completer!.future;
@@ -88,8 +89,9 @@ class CloudMessagingService extends GetxService {
       result = await mcs.invokeMethod('firebase-auth', ss.fcmData.toMap());
     } on PlatformException catch (ex, stack) {
       // Don't try to re-auth if device is de-Googled
-      if (ex.toString().contains("Google Play Services is not available"))
+      if (ex.toString().contains("Google Play Services is not available")) {
         return;
+      }
       Logger.error('Failed to perform initial FCM authentication!',
           error: ex, trace: stack, tag: 'FCM-Auth');
 

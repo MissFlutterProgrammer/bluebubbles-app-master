@@ -69,15 +69,21 @@ class _ProfilePanelState extends OptimizedState<ProfilePanel>
           return AlertDialog(
             actions: [
               TextButton(
-                child: Text("Cancel",
-                    style: context.theme.textTheme.bodyLarge!
-                        .copyWith(color: context.theme.colorScheme.primary)),
+                child: Text(
+                  "Cancel",
+                  style: context.theme.textTheme.bodyLarge!.copyWith(
+                    color: context.theme.colorScheme.primary,
+                  ),
+                ),
                 onPressed: () => Get.back(),
               ),
               TextButton(
-                child: Text("OK",
-                    style: context.theme.textTheme.bodyLarge!
-                        .copyWith(color: context.theme.colorScheme.primary)),
+                child: Text(
+                  "OK",
+                  style: context.theme.textTheme.bodyLarge!.copyWith(
+                    color: context.theme.colorScheme.primary,
+                  ),
+                ),
                 onPressed: () async {
                   done.call();
                 },
@@ -161,9 +167,10 @@ class _ProfilePanelState extends OptimizedState<ProfilePanel>
                                     height: 30,
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                          color:
-                                              context.theme.colorScheme.surface,
-                                          width: 1),
+                                        color:
+                                            context.theme.colorScheme.surface,
+                                        width: 1,
+                                      ),
                                       shape: BoxShape.circle,
                                       color: context
                                           .theme.colorScheme.tertiaryContainer,
@@ -184,7 +191,7 @@ class _ProfilePanelState extends OptimizedState<ProfilePanel>
                 ),
               if (iOS)
                 Padding(
-                  padding: const EdgeInsets.only(top: 12.0),
+                  padding: const EdgeInsets.only(top: 12),
                   child: Center(
                     child: RichText(
                       maxLines: 1,
@@ -211,7 +218,7 @@ class _ProfilePanelState extends OptimizedState<ProfilePanel>
                 ),
               if (iOS)
                 Padding(
-                  padding: const EdgeInsets.only(top: 2.0),
+                  padding: const EdgeInsets.only(top: 2),
                   child: Center(
                     child: RichText(
                       maxLines: 1,
@@ -221,14 +228,16 @@ class _ProfilePanelState extends OptimizedState<ProfilePanel>
                         style: context.theme.textTheme.bodyMedium!
                             .apply(color: context.theme.colorScheme.outline),
                         children: MessageHelper.buildEmojiText(
-                            ss.settings.redactedMode.value &&
-                                    ss.settings.hideContactInfo.value
-                                ? "User iCloud"
-                                : ss.settings.iCloudAccount.isEmpty
-                                    ? "Unknown iCloud account"
-                                    : ss.settings.iCloudAccount.value,
-                            context.theme.textTheme.bodyMedium!.apply(
-                                color: context.theme.colorScheme.outline)),
+                          ss.settings.redactedMode.value &&
+                                  ss.settings.hideContactInfo.value
+                              ? "User iCloud"
+                              : ss.settings.iCloudAccount.isEmpty
+                                  ? "Unknown iCloud account"
+                                  : ss.settings.iCloudAccount.value,
+                          context.theme.textTheme.bodyMedium!.apply(
+                            color: context.theme.colorScheme.outline,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -249,14 +258,17 @@ class _ProfilePanelState extends OptimizedState<ProfilePanel>
                 ),
               if (!iOS)
                 Padding(
-                  padding: const EdgeInsets.only(left: 15.0, bottom: 5.0),
-                  child: Text("YOUR NAME AND PHOTO",
-                      style: context.theme.textTheme.bodyMedium!
-                          .copyWith(color: context.theme.colorScheme.outline)),
+                  padding: const EdgeInsets.only(left: 15, bottom: 5),
+                  child: Text(
+                    "YOUR NAME AND PHOTO",
+                    style: context.theme.textTheme.bodyMedium!.copyWith(
+                      color: context.theme.colorScheme.outline,
+                    ),
+                  ),
                 ),
               if (!iOS)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 5.0),
+                  padding: const EdgeInsets.only(bottom: 5),
                   child: Material(
                     color: Colors.transparent,
                     child: ListTile(
@@ -303,7 +315,7 @@ class _ProfilePanelState extends OptimizedState<ProfilePanel>
                 ),
               if (!iOS)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 5.0),
+                  padding: const EdgeInsets.only(bottom: 5),
                   child: Material(
                     color: Colors.transparent,
                     child: ListTile(
@@ -326,7 +338,7 @@ class _ProfilePanelState extends OptimizedState<ProfilePanel>
                 Obx(
                   () => ss.settings.userAvatarPath.value != null
                       ? Padding(
-                          padding: const EdgeInsets.only(bottom: 5.0),
+                          padding: const EdgeInsets.only(bottom: 5),
                           child: Material(
                             color: Colors.transparent,
                             child: ListTile(
@@ -370,91 +382,101 @@ class _ProfilePanelState extends OptimizedState<ProfilePanel>
                             duration: const Duration(milliseconds: 300),
                             opacity: opacity.value,
                             child: SelectableText.rich(
-                              TextSpan(children: [
-                                TextSpan(
-                                  text: redact
-                                      ? "Account Name - Apple ID"
-                                      : "${accountInfo['account_name']} - ${accountInfo['apple_id']}",
-                                ),
-                                const TextSpan(text: "\n"),
-                                const TextSpan(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: redact
+                                        ? "Account Name - Apple ID"
+                                        : "${accountInfo['account_name']} - ${accountInfo['apple_id']}",
+                                  ),
+                                  const TextSpan(text: "\n"),
+                                  const TextSpan(
                                     text: "iMessage Status: ",
-                                    style: TextStyle(height: 3.0)),
-                                TextSpan(
-                                  text: accountInfo['login_status_message']
-                                      ?.toUpperCase(),
-                                  style: TextStyle(
-                                    color: getIndicatorColor(
-                                      accountInfo['login_status_message'] ==
-                                              "Connected"
-                                          ? SocketState.connected
-                                          : SocketState.disconnected,
+                                    style: TextStyle(height: 3),
+                                  ),
+                                  TextSpan(
+                                    text: accountInfo['login_status_message']
+                                        ?.toUpperCase(),
+                                    style: TextStyle(
+                                      color: getIndicatorColor(
+                                        accountInfo['login_status_message'] ==
+                                                "Connected"
+                                            ? SocketState.connected
+                                            : SocketState.disconnected,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const TextSpan(text: "\n"),
-                                const TextSpan(text: "SMS Forwarding Status: "),
-                                TextSpan(
-                                  text: accountInfo['sms_forwarding_enabled'] ==
-                                          true
-                                      ? "ENABLED"
-                                      : "DISABLED",
-                                  style: TextStyle(
-                                    color: getIndicatorColor(
-                                      accountInfo['sms_forwarding_enabled'] ==
-                                              true
-                                          ? SocketState.connected
-                                          : SocketState.disconnected,
+                                  const TextSpan(text: "\n"),
+                                  const TextSpan(
+                                      text: "SMS Forwarding Status: "),
+                                  TextSpan(
+                                    text:
+                                        accountInfo['sms_forwarding_enabled'] ==
+                                                true
+                                            ? "ENABLED"
+                                            : "DISABLED",
+                                    style: TextStyle(
+                                      color: getIndicatorColor(
+                                        accountInfo['sms_forwarding_enabled'] ==
+                                                true
+                                            ? SocketState.connected
+                                            : SocketState.disconnected,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const TextSpan(text: "  |  "),
-                                TextSpan(
-                                  text: accountInfo['sms_forwarding_capable'] ==
-                                          true
-                                      ? "CAPABLE"
-                                      : "INCAPABLE",
-                                  style: TextStyle(
-                                    color: getIndicatorColor(
-                                      accountInfo['sms_forwarding_capable'] ==
-                                              true
-                                          ? SocketState.connected
-                                          : SocketState.disconnected,
+                                  const TextSpan(text: "  |  "),
+                                  TextSpan(
+                                    text:
+                                        accountInfo['sms_forwarding_capable'] ==
+                                                true
+                                            ? "CAPABLE"
+                                            : "INCAPABLE",
+                                    style: TextStyle(
+                                      color: getIndicatorColor(
+                                        accountInfo['sms_forwarding_capable'] ==
+                                                true
+                                            ? SocketState.connected
+                                            : SocketState.disconnected,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const TextSpan(text: "\n"),
-                                const TextSpan(
+                                  const TextSpan(text: "\n"),
+                                  const TextSpan(
                                     text: "VETTED ALIASES\n",
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        height: 3.0)),
-                                ...((accountInfo['vetted_aliases']
-                                            as List<dynamic>? ??
-                                        []))
-                                    .map((e) => [
-                                          TextSpan(
-                                              text: "⬤  ",
-                                              style: TextStyle(
-                                                  color: getIndicatorColor(
-                                                      e['Status'] == 3
-                                                          ? SocketState
-                                                              .connected
-                                                          : SocketState
-                                                              .disconnected))),
-                                          TextSpan(
-                                              text: redact
-                                                  ? "Alias\n"
-                                                  : "${e['Alias']}\n")
-                                        ])
-                                    .toList()
-                                    .flattened,
-                                const TextSpan(text: "\n"),
-                                const TextSpan(
+                                      fontWeight: FontWeight.w700,
+                                      height: 3,
+                                    ),
+                                  ),
+                                  ...((accountInfo['vetted_aliases']
+                                              as List<dynamic>? ??
+                                          []))
+                                      .map((e) => [
+                                            TextSpan(
+                                                text: "⬤  ",
+                                                style: TextStyle(
+                                                    color: getIndicatorColor(e[
+                                                                'Status'] ==
+                                                            3
+                                                        ? SocketState.connected
+                                                        : SocketState
+                                                            .disconnected))),
+                                            TextSpan(
+                                                text: redact
+                                                    ? "Alias\n"
+                                                    : "${e['Alias']}\n")
+                                          ])
+                                      .toList()
+                                      .flattened,
+                                  const TextSpan(text: "\n"),
+                                  const TextSpan(
                                     text: "Tap to update values...",
-                                    style:
-                                        TextStyle(fontStyle: FontStyle.italic)),
-                              ]),
+                                    style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                ],
+                              ),
                               onTap: () {
                                 opacity.value = 0.0;
                                 getDetails();
@@ -467,10 +489,11 @@ class _ProfilePanelState extends OptimizedState<ProfilePanel>
                         Container(
                           color: tileColor,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 15.0),
+                            padding: const EdgeInsets.only(left: 15),
                             child: SettingsDivider(
-                                color: context
-                                    .theme.colorScheme.surfaceContainerHighest),
+                              color: context
+                                  .theme.colorScheme.surfaceContainerHighest,
+                            ),
                           ),
                         ),
                       if (accountInfo['active_alias'] != null)
@@ -521,8 +544,9 @@ class _ProfilePanelState extends OptimizedState<ProfilePanel>
                       subtitle: "Your sharable iMessage contact card",
                     ),
                     const SettingsSubtitle(
-                        subtitle:
-                            "Visit iMessage settings on your Mac to update.")
+                      subtitle:
+                          "Visit iMessage settings on your Mac to update.",
+                    )
                   ],
                 ),
             ],

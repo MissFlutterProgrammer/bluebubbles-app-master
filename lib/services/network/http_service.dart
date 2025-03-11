@@ -1465,8 +1465,9 @@ class ApiInterceptor extends Interceptor {
   -> Response Data: ${err.response?.data ?? 'No Data'}""",
         tag: "HTTP Service");
 
-    if (err.response != null && err.response!.data is Map)
+    if (err.response != null && err.response!.data is Map) {
       return handler.resolve(err.response!);
+    }
     if (err.response != null) {
       return handler.resolve(Response(
           data: {

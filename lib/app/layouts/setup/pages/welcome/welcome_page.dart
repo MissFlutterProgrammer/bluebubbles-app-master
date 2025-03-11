@@ -122,7 +122,7 @@ class _WelcomePageState extends OptimizedState<WelcomePage>
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 15.0, horizontal: 10.0),
+                            vertical: 15, horizontal: 10),
                         child: Column(
                           children: [
                             Row(
@@ -186,60 +186,61 @@ class _WelcomePageState extends OptimizedState<WelcomePage>
                             ),
                             const SizedBox(height: 10),
                             Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        ClipPath(
-                                          clipper: TailClipper(
-                                            isFromMe: true,
-                                            showTail: true,
-                                            connectLower: false,
-                                            connectUpper: false,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    ClipPath(
+                                      clipper: TailClipper(
+                                        isFromMe: true,
+                                        showTail: true,
+                                        connectLower: false,
+                                        connectUpper: false,
+                                      ),
+                                      child: Container(
+                                        constraints: const BoxConstraints(
+                                          maxWidth: 100,
+                                          minHeight: 40,
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 10,
+                                          horizontal: 15,
+                                        ).add(
+                                          const EdgeInsets.only(right: 10),
+                                        ),
+                                        color:
+                                            context.theme.colorScheme.primary,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        confettiController.play();
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                                horizontal: 15)
+                                            .add(
+                                          const EdgeInsets.only(top: 3),
+                                        ),
+                                        child: Text.rich(
+                                          const TextSpan(
+                                            text: "↺ sent with confetti",
                                           ),
-                                          child: Container(
-                                            constraints: const BoxConstraints(
-                                              maxWidth: 100,
-                                              minHeight: 40,
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 10,
-                                              horizontal: 15,
-                                            ).add(
-                                              const EdgeInsets.only(right: 10),
-                                            ),
+                                          style: context
+                                              .theme.textTheme.labelSmall!
+                                              .copyWith(
                                             color: context
                                                 .theme.colorScheme.primary,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            confettiController.play();
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                    horizontal: 15)
-                                                .add(
-                                              const EdgeInsets.only(top: 3),
-                                            ),
-                                            child: Text.rich(
-                                              const TextSpan(
-                                                text: "↺ sent with confetti",
-                                              ),
-                                              style: context
-                                                  .theme.textTheme.labelSmall!
-                                                  .copyWith(
-                                                      color: context.theme
-                                                          .colorScheme.primary,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                            ),
-                                          ),
-                                        )
-                                      ]),
-                                ]),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),

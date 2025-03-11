@@ -83,7 +83,7 @@ class SettingsTile extends StatelessWidget {
                         height: 1.5),
                   )
                 : null,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           ),
         ),
       ),

@@ -52,7 +52,8 @@ class _ConnectingDialogState extends OptimizedState<ConnectingDialog> {
           content: LinearProgressIndicator(
             backgroundColor: context.theme.colorScheme.outline,
             valueColor: AlwaysStoppedAnimation<Color>(
-                context.theme.colorScheme.primary),
+              context.theme.colorScheme.primary,
+            ),
           ),
         ),
       );

@@ -29,13 +29,14 @@ class FailedToConnectDialog extends StatelessWidget {
         ),
         actions: [
           TextButton(
-              child: Text(
-                "OK",
-                style: context.theme.textTheme.bodyLarge!.copyWith(
-                  color: context.theme.colorScheme.primary,
-                ),
+            child: Text(
+              "OK",
+              style: context.theme.textTheme.bodyLarge!.copyWith(
+                color: context.theme.colorScheme.primary,
               ),
-              onPressed: onDismiss),
+            ),
+            onPressed: onDismiss,
+          ),
         ],
       ),
     );
