@@ -17,8 +17,7 @@ class MessageRemindersPanel extends StatefulWidget {
   State<MessageRemindersPanel> createState() => _MessageRemindersPanelState();
 }
 
-class _MessageRemindersPanelState
-    extends OptimizedState<MessageRemindersPanel> {
+class _MessageRemindersPanelState extends OptimizedState<MessageRemindersPanel> {
   List<PendingNotificationRequest> scheduled = [];
   bool? fetching = true;
 
@@ -64,14 +63,11 @@ class _MessageRemindersPanelState
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            fetching == false
-                                ? "You have no message reminders."
-                                : "Getting message reminders...",
+                            fetching == false ? "You have no message reminders." : "Getting message reminders...",
                             style: context.theme.textTheme.labelLarge,
                           ),
                         ),
-                        if (fetching == true)
-                          buildProgressIndicator(context, size: 15),
+                        if (fetching == true) buildProgressIndicator(context, size: 15),
                       ],
                     ),
                   ),
@@ -84,25 +80,20 @@ class _MessageRemindersPanelState
                     child: ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      findChildIndexCallback: (key) => findChildIndexByKey(
-                          scheduled, key, (item) => item.id.toString()),
+                      findChildIndexCallback: (key) => findChildIndexByKey(scheduled, key, (item) => item.id.toString()),
                       itemBuilder: (context, index) {
                         final item = scheduled[index];
                         return ListTile(
                           key: ValueKey(item.id.toString()),
                           mouseCursor: SystemMouseCursors.click,
-                          title: Text(item.body!,
-                              maxLines: 2, overflow: TextOverflow.ellipsis),
+                          title: Text(item.body!, maxLines: 2, overflow: TextOverflow.ellipsis),
                           subtitle: int.tryParse(item.payload!) == null
                               ? Text(item.title!.replaceAll("Reminder: ", ""))
                               : Text(
                                   "${item.title!.replaceAll("Reminder: ", "")}\n${buildFullDate(DateTime.fromMillisecondsSinceEpoch(int.parse(item.payload!)))}"),
-                          isThreeLine: int.tryParse(item.payload!) == null
-                              ? false
-                              : true,
+                          isThreeLine: int.tryParse(item.payload!) == null ? false : true,
                           onTap: () async {
-                            final finalDate = await showTimeframePicker(
-                                "Select Reminder Time", context,
+                            final finalDate = await showTimeframePicker("Select Reminder Time", context,
                                 presetsAhead: true,
                                 additionalTimeframes: {
                                   "3 Hours": 3,
@@ -110,25 +101,19 @@ class _MessageRemindersPanelState
                                 },
                                 useTodayYesterday: true);
                             if (finalDate != null) {
-                              if (!finalDate
-                                  .isAfter(DateTime.now().toLocal())) {
-                                showSnackbar(
-                                    "Error", "Select a date in the future");
+                              if (!finalDate.isAfter(DateTime.now().toLocal())) {
+                                showSnackbar("Error", "Select a date in the future");
                                 return;
                               }
                               deleteMessage(item);
                               await notif.createReminder(null, null, finalDate,
-                                  chatTitle: item.title,
-                                  messageText: item.body);
-                              showSnackbar("Notice",
-                                  "Scheduled reminder for ${buildDate(finalDate)}");
+                                  chatTitle: item.title, messageText: item.body);
+                              showSnackbar("Notice", "Scheduled reminder for ${buildDate(finalDate)}");
                               getExistingMessages();
                             }
                           },
                           trailing: IconButton(
-                            icon: Icon(iOS
-                                ? CupertinoIcons.trash
-                                : Icons.delete_outlined),
+                            icon: Icon(iOS ? CupertinoIcons.trash : Icons.delete_outlined),
                             onPressed: () => deleteMessage(item),
                           ),
                         );

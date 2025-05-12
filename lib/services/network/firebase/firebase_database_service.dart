@@ -1,5 +1,3 @@
-// ignore_for_file: implementation_imports
-
 import 'package:bluebubbles/helpers/backend/settings_helpers.dart';
 import 'package:bluebubbles/utils/logger/logger.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
@@ -12,9 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:bluebubbles/database/models.dart';
 
-FirebaseDatabaseService fdb = Get.isRegistered<FirebaseDatabaseService>()
-    ? Get.find<FirebaseDatabaseService>()
-    : Get.put(FirebaseDatabaseService());
+FirebaseDatabaseService fdb = Get.isRegistered<FirebaseDatabaseService>() ? Get.find<FirebaseDatabaseService>() : Get.put(FirebaseDatabaseService());
 
 class FirebaseDatabaseService extends GetxService {
   @override
@@ -32,16 +28,9 @@ class FirebaseDatabaseService extends GetxService {
   }
 
   String? getClientId() {
-    if (kIsWeb &&
-        (kDebugMode || Uri.base.toString().contains("tneotia.github.io"))) {
-      return '500464701389-5u2eogcqls1eljhu3hq825oed6iue1f0.apps.googleusercontent.com';
-    }
-    if (kIsWeb) {
-      return '500464701389-8trcdkcj7ni5l4dn6n7l795rhb1asnh3.apps.googleusercontent.com';
-    }
-    if (kIsDesktop) {
-      return '500464701389-18rfq995s6dqo3e5d3n2e7i3ljr0uc9i.apps.googleusercontent.com';
-    }
+    if (kIsWeb && (kDebugMode || Uri.base.toString().contains("tneotia.github.io"))) return '500464701389-5u2eogcqls1eljhu3hq825oed6iue1f0.apps.googleusercontent.com';
+    if (kIsWeb) return '500464701389-8trcdkcj7ni5l4dn6n7l795rhb1asnh3.apps.googleusercontent.com';
+    if (kIsDesktop) return '500464701389-18rfq995s6dqo3e5d3n2e7i3ljr0uc9i.apps.googleusercontent.com';
     return null;
   }
 
@@ -97,8 +86,7 @@ class FirebaseDatabaseService extends GetxService {
 
         if (!isNullOrEmpty(ss.fcmData.firebaseURL)) {
           final FirebaseDatabase db = FirebaseDatabase(app: app);
-          final DatabaseReference ref =
-              db.reference().child('config').child('serverUrl');
+          final DatabaseReference ref = db.reference().child('config').child('serverUrl');
 
           final Event event = await ref.onValue.first;
           url = sanitizeServerAddress(address: event.snapshot.value);
@@ -113,12 +101,10 @@ class FirebaseDatabaseService extends GetxService {
         // First, try to auth with FCM with the current data
         Logger.info('Authenticating with FCM', tag: 'FCM-Auth');
         await mcs.invokeMethod('firebase-auth', ss.fcmData.toMap());
-        url = sanitizeServerAddress(
-            address: await mcs.invokeMethod("get-server-url"));
+        url = sanitizeServerAddress(address: await mcs.invokeMethod("get-server-url"));
       }
 
-      await saveNewServerUrl(url ?? ss.settings.serverAddress.value,
-          force: true);
+      await saveNewServerUrl(url ?? ss.settings.serverAddress.value, force: true);
       return url;
     } catch (e, s) {
       Logger.error("Failed to fetch URL!", error: e, trace: s);

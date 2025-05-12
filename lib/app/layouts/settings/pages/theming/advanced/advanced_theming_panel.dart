@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:bluebubbles/helpers/ui/theme_helpers.dart';
 import 'package:bluebubbles/helpers/ui/ui_helpers.dart';
 import 'package:bluebubbles/app/layouts/settings/dialogs/old_themes_dialog.dart';
@@ -18,8 +19,7 @@ class AdvancedThemingPanel extends StatefulWidget {
   State<AdvancedThemingPanel> createState() => _AdvancedThemingPanelState();
 }
 
-class _AdvancedThemingPanelState extends OptimizedState<AdvancedThemingPanel>
-    with SingleTickerProviderStateMixin {
+class _AdvancedThemingPanelState extends OptimizedState<AdvancedThemingPanel> with SingleTickerProviderStateMixin {
   int index = ts.inDarkMode(Get.context!) ? 1 : 0;
   final StreamController streamController = StreamController.broadcast();
   late final TabController controller;
@@ -49,11 +49,8 @@ class _AdvancedThemingPanelState extends OptimizedState<AdvancedThemingPanel>
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        systemNavigationBarColor: ss.settings.immersiveMode.value
-            ? Colors.transparent
-            : context.theme.colorScheme.surface, // navigation bar color
-        systemNavigationBarIconBrightness:
-            context.theme.colorScheme.brightness.opposite,
+        systemNavigationBarColor: ss.settings.immersiveMode.value ? Colors.transparent : context.theme.colorScheme.background, // navigation bar color
+        systemNavigationBarIconBrightness: context.theme.colorScheme.brightness.opposite,
         statusBarColor: Colors.transparent, // status bar color
         statusBarIconBrightness: context.theme.colorScheme.brightness.opposite,
       ),
@@ -62,37 +59,35 @@ class _AdvancedThemingPanelState extends OptimizedState<AdvancedThemingPanel>
         appBar: PreferredSize(
           preferredSize: Size(ns.width(context), 50),
           child: AppBar(
-              systemOverlayStyle:
-                  context.theme.colorScheme.brightness == Brightness.dark
-                      ? SystemUiOverlayStyle.light
-                      : SystemUiOverlayStyle.dark,
-              toolbarHeight: 50,
-              elevation: 0,
-              scrolledUnderElevation: 3,
-              surfaceTintColor: context.theme.colorScheme.primary,
-              leading: buildBackButton(context),
-              backgroundColor: headerColor,
-              centerTitle: iOS,
-              title: Text(
-                "Advanced Theming",
-                style: context.theme.textTheme.titleLarge,
-              ),
-              actions: [
-                if (oldThemes.isNotEmpty)
-                  TextButton(
-                    child: Text("View Old",
-                        style: context.theme.textTheme.bodyLarge!.copyWith(
-                            color: context.theme.colorScheme.primary)),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) => OldThemesDialog(
-                                oldThemes,
-                                clearOld,
-                              ));
-                    },
-                  ),
-              ]),
+            systemOverlayStyle: context.theme.colorScheme.brightness == Brightness.dark
+                ? SystemUiOverlayStyle.light
+                : SystemUiOverlayStyle.dark,
+            toolbarHeight: 50,
+            elevation: 0,
+            scrolledUnderElevation: 3,
+            surfaceTintColor: context.theme.colorScheme.primary,
+            leading: buildBackButton(context),
+            backgroundColor: headerColor,
+            centerTitle: iOS,
+            title: Text(
+              "Advanced Theming",
+              style: context.theme.textTheme.titleLarge,
+            ),
+            actions: [
+              if (oldThemes.isNotEmpty)
+                TextButton(
+                  child: Text("View Old", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) => OldThemesDialog(
+                          oldThemes, clearOld,
+                        )
+                    );
+                  },
+                ),
+            ]
+          ),
         ),
         body: TabBarView(
           controller: controller,
@@ -109,17 +104,16 @@ class _AdvancedThemingPanelState extends OptimizedState<AdvancedThemingPanel>
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
-            backgroundColor: context.theme.colorScheme.primary,
-            onPressed: () {
-              streamController.sink.add(null);
-            },
-            label: Text("Create New",
-                style: context.theme.textTheme.labelLarge!
-                    .copyWith(color: context.theme.colorScheme.onPrimary)),
-            icon: Icon(
-              iOS ? CupertinoIcons.pencil : Icons.edit,
-              color: context.theme.colorScheme.onPrimary,
-            )),
+          backgroundColor: context.theme.colorScheme.primary,
+          onPressed: () {
+            streamController.sink.add(null);
+          },
+          label: Text("Create New", style: context.theme.textTheme.labelLarge!.copyWith(color: context.theme.colorScheme.onPrimary)),
+          icon: Icon(
+            iOS ? CupertinoIcons.pencil : Icons.edit,
+            color: context.theme.colorScheme.onPrimary,
+          )
+        ),
         bottomNavigationBar: NavigationBar(
           selectedIndex: index,
           backgroundColor: headerColor,

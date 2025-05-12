@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/database/database.dart';
 import 'package:bluebubbles/database/models.dart';
@@ -16,15 +17,13 @@ class ChatLifecycleManager {
 
   ChatLifecycleManager(this.chat) {
     if (!kIsWeb) {
-      final chatQuery =
-          Database.chats.query(Chat_.guid.equals(chat.guid)).watch();
-      sub = chatQuery.listen((Query<Chat> query) async {
+      final chatQuery = Database.chats.query(Chat_.guid.equals(chat.guid)).watch();
+      sub = chatQuery.listen((Query<Chat> query) async{
         final _chat = await runAsync(() {
           return Database.chats.get(chat.id!);
         });
         if (_chat != null) {
-          bool shouldSort =
-              chat.latestMessage.dateCreated != _chat.latestMessage.dateCreated;
+          bool shouldSort = chat.latestMessage.dateCreated != _chat.latestMessage.dateCreated;
           chats.updateChat(_chat, shouldSort: shouldSort);
           chat = _chat.merge(chat);
         }
@@ -54,9 +53,7 @@ class ChatLifecycleManager {
         final message = tuple.item1;
         final _chat = tuple.item2;
         if (_chat?.guid == chat.guid &&
-            (chat.latestMessage.dateCreated!.millisecondsSinceEpoch == 0 ||
-                message.dateCreated!
-                    .isAfter(chat.latestMessage.dateCreated!))) {
+            (chat.latestMessage.dateCreated!.millisecondsSinceEpoch == 0 || message.dateCreated!.isAfter(chat.latestMessage.dateCreated!))) {
           chats.updateChat(_chat!, shouldSort: true);
           chat = _chat.merge(chat);
           chat.latestMessage = message;

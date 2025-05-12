@@ -20,29 +20,23 @@ class MessagePart {
   }
 
   String? subject;
-  late final String fakeSubject =
-      faker.lorem.words(subject?.split(" ").length ?? 0).join(" ");
+  late final String fakeSubject = faker.lorem.words(subject?.split(" ").length ?? 0).join(" ");
   String? get displaySubject {
     if (subject == null) return null;
-    if (ss.settings.redactedMode.value &&
-        ss.settings.hideMessageContent.value) {
+    if (ss.settings.redactedMode.value && ss.settings.hideMessageContent.value) {
       return fakeSubject;
     }
     return subject;
   }
-
   String? text;
-  late final String fakeText =
-      faker.lorem.words(text?.split(" ").length ?? 0).join(" ");
+  late final String fakeText = faker.lorem.words(text?.split(" ").length ?? 0).join(" ");
   String? get displayText {
     if (text == null) return null;
-    if (ss.settings.redactedMode.value &&
-        ss.settings.hideMessageContent.value) {
+    if (ss.settings.redactedMode.value && ss.settings.hideMessageContent.value) {
       return fakeText;
     }
     return text;
   }
-
   List<Attachment> attachments;
   List<Mention> mentions;
   bool isUnsent;
@@ -50,12 +44,8 @@ class MessagePart {
   int part;
 
   bool get isEdited => edits.isNotEmpty;
-  String? get url => text
-      ?.replaceAll("\n", " ")
-      .split(" ")
-      .firstWhereOrNull((String e) => e.hasUrl);
-  String get fullText => sanitizeString(
-      [subject, text].where((e) => !isNullOrEmpty(e)).join("\n"));
+  String? get url => text?.replaceAll("\n", " ").split(" ").firstWhereOrNull((String e) => e.hasUrl);
+  String get fullText => sanitizeString([subject, text].where((e) => !isNullOrEmpty(e)).join("\n"));
 }
 
 class Mention {

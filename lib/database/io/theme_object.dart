@@ -1,4 +1,5 @@
 import 'dart:core';
+
 import 'package:bluebubbles/database/database.dart';
 import 'package:bluebubbles/database/models.dart';
 import 'package:bluebubbles/services/services.dart';
@@ -44,33 +45,16 @@ class ThemeObject {
       name == "Music Theme (Dark)";
 
   List<ThemeEntry> toEntries() => [
-        ThemeEntry.fromStyle(
-            ThemeColors.Headline1, data!.textTheme.displayLarge!),
-        ThemeEntry.fromStyle(
-            ThemeColors.Headline2, data!.textTheme.displayMedium!),
+        ThemeEntry.fromStyle(ThemeColors.Headline1, data!.textTheme.displayLarge!),
+        ThemeEntry.fromStyle(ThemeColors.Headline2, data!.textTheme.displayMedium!),
         ThemeEntry.fromStyle(ThemeColors.Bodytext1, data!.textTheme.bodyLarge!),
-        ThemeEntry.fromStyle(
-            ThemeColors.Bodytext2, data!.textTheme.bodyMedium!),
-        ThemeEntry.fromStyle(
-            ThemeColors.Subtitle1, data!.textTheme.titleMedium!),
-        ThemeEntry.fromStyle(
-            ThemeColors.Subtitle2, data!.textTheme.titleSmall!),
-        ThemeEntry(
-            name: ThemeColors.AccentColor,
-            color: data!.colorScheme.secondary,
-            isFont: false),
-        ThemeEntry(
-            name: ThemeColors.DividerColor,
-            color: data!.dividerColor,
-            isFont: false),
-        ThemeEntry(
-            name: ThemeColors.BackgroundColor,
-            color: data!.colorScheme.background,
-            isFont: false),
-        ThemeEntry(
-            name: ThemeColors.PrimaryColor,
-            color: data!.primaryColor,
-            isFont: false),
+        ThemeEntry.fromStyle(ThemeColors.Bodytext2, data!.textTheme.bodyMedium!),
+        ThemeEntry.fromStyle(ThemeColors.Subtitle1, data!.textTheme.titleMedium!),
+        ThemeEntry.fromStyle(ThemeColors.Subtitle2, data!.textTheme.titleSmall!),
+        ThemeEntry(name: ThemeColors.AccentColor, color: data!.colorScheme.secondary, isFont: false),
+        ThemeEntry(name: ThemeColors.DividerColor, color: data!.dividerColor, isFont: false),
+        ThemeEntry(name: ThemeColors.BackgroundColor, color: data!.colorScheme.background, isFont: false),
+        ThemeEntry(name: ThemeColors.PrimaryColor, color: data!.primaryColor, isFont: false),
       ];
 
   static List<ThemeObject> getThemes() {
@@ -78,9 +62,7 @@ class ThemeObject {
     final list = <ThemeObject>[];
     if (results.isNotEmpty) {
       final existing = list.map((e) => e.name);
-      list.addAll(results
-          .where((element) => !existing.contains(element.name))
-          .map((e) => e..fetchData()));
+      list.addAll(results.where((element) => !existing.contains(element.name)).map((e) => e..fetchData()));
     }
     return list;
   }
@@ -162,10 +144,7 @@ class ThemeObject {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ThemeObject &&
-          runtimeType == other.runtimeType &&
-          name == other.name;
+      identical(this, other) || other is ThemeObject && runtimeType == other.runtimeType && name == other.name;
 
   @override
   int get hashCode => name.hashCode;

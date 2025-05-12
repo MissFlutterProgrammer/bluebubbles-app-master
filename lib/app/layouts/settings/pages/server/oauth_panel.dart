@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:bluebubbles/app/layouts/settings/widgets/settings_widgets.dart';
 import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
 import 'package:bluebubbles/helpers/backend/settings_helpers.dart';
@@ -55,17 +53,14 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
     }
     // the getx regex only allows extensions up to 6 characters in length
     // this is a workaround for that
-    if (!isValid &&
-        url.split(".").last.isAlphabetOnly &&
-        url.split(".").last.length > 6) {
-      final newUrl =
-          url.split(".").sublist(0, url.split(".").length - 1).join(".");
+    if (!isValid && url.split(".").last.isAlphabetOnly && url.split(".").last.length > 6) {
+      final newUrl = url.split(".").sublist(0, url.split(".").length - 1).join(".");
       isValid = ("$newUrl.com").isURL;
     }
 
     // If the URL is invalid, show an error
     String? addr = sanitizeServerAddress(address: url);
-    if (!isValid) {
+    if (!isValid || addr == null) {
       error = "Server address is invalid!";
       setState(() {});
       return;
@@ -74,7 +69,7 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
     String oldPassword = ss.settings.guidAuthKey.value;
     String oldAddr = ss.settings.serverAddress.value;
 
-    ss.settings.serverAddress.value = addr!;
+    ss.settings.serverAddress.value = addr;
     ss.settings.guidAuthKey.value = password;
 
     dio.Response? serverResponse;
@@ -92,8 +87,7 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
       return setState(() {});
     }
     if (serverResponse?.statusCode != 200) {
-      error =
-          "Failed to connect to $addr! Please ensure your Server's URL is accessible from your device.";
+      error = "Failed to connect to $addr! Please ensure your Server's URL is accessible from your device.";
       ss.settings.serverAddress.value = oldAddr;
       ss.settings.guidAuthKey.value = oldPassword;
       await ss.settings.saveMany(["serverAddress", "guidAuthKey"]);
@@ -103,10 +97,7 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
     error = "";
     setState(() {});
 
-    await saveNewServerUrl(addr,
-        restartSocket: false,
-        force: true,
-        saveAdditionalSettings: ["guidAuthKey"]);
+    await saveNewServerUrl(addr, restartSocket: false, force: true, saveAdditionalSettings: ["guidAuthKey"]);
 
     try {
       socket.restartSocket();
@@ -158,18 +149,14 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("Signed in as",
-                      style:
-                          TextStyle(color: context.theme.colorScheme.primary)),
+                  Text("Signed in as", style: TextStyle(color: context.theme.colorScheme.primary)),
                   const SizedBox(height: 8),
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: context.theme.colorScheme.primaryContainer
-                          .withOpacity(0.3),
+                      color: context.theme.colorScheme.primaryContainer.withOpacity(0.3),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16, horizontal: 24),
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -177,14 +164,11 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(20),
                             clipBehavior: Clip.antiAlias,
-                            child: Image.network(googlePicture!,
-                                width: 40, fit: BoxFit.contain),
+                            child: Image.network(googlePicture!, width: 40, fit: BoxFit.contain),
                           ),
                         const SizedBox(width: 10),
                         Text(googleName ?? "Unknown",
-                            style: context.theme.textTheme.bodyLarge!.apply(
-                                fontSizeFactor: 1.1,
-                                color: context.theme.colorScheme.onBackground)),
+                            style: context.theme.textTheme.bodyLarge!.apply(fontSizeFactor: 1.1, color: context.theme.colorScheme.onBackground)),
                       ],
                     ),
                   ),
@@ -195,8 +179,7 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                      color: context.theme.colorScheme.primaryContainer),
+                  border: Border.all(color: context.theme.colorScheme.primaryContainer),
                 ),
                 child: usableProjects.isNotEmpty
                     ? SingleChildScrollView(
@@ -207,30 +190,23 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
-                                child: Text(fetchingFirebase
-                                    ? "Loading Firebase projects"
-                                    : "Select the Firebase project to use"),
+                                child: Text(fetchingFirebase ? "Loading Firebase projects" : "Select the Firebase project to use"),
                               ),
                               if (!fetchingFirebase)
                                 ConstrainedBox(
                                   constraints: BoxConstraints(
-                                    maxHeight:
-                                        context.mediaQuery.size.height * 0.4,
+                                    maxHeight: context.mediaQuery.size.height * 0.4,
                                   ),
                                   child: ListView.builder(
                                     shrinkWrap: true,
                                     itemCount: usableProjects.length,
-                                    findChildIndexCallback: (key) =>
-                                        findChildIndexByKey(usableProjects, key,
-                                            (item) => item['projectId']),
+                                    findChildIndexCallback: (key) => findChildIndexByKey(usableProjects, key, (item) => item['projectId']),
                                     itemBuilder: (context, index) {
                                       return Obx(() {
                                         if (!triedConnecting[index].value) {
                                           Future(() async {
                                             try {
-                                              await http.dio.get(
-                                                  usableProjects[index]
-                                                      ['serverUrl']);
+                                              await http.dio.get(usableProjects[index]['serverUrl']);
                                               reachable[index].value = true;
                                             } catch (e) {
                                               reachable[index].value = false;
@@ -239,50 +215,30 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
                                           });
                                         }
                                         return ClipRRect(
-                                          key: ValueKey(usableProjects[index]
-                                              ['projectId']),
+                                          key: ValueKey(usableProjects[index]['projectId']),
                                           clipBehavior: Clip.antiAlias,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                                          borderRadius: BorderRadius.circular(20),
                                           child: ListTile(
-                                            tileColor: context.theme.colorScheme
-                                                .primaryContainer
-                                                .withOpacity(0.3),
-                                            enabled:
-                                                triedConnecting[index].value &&
-                                                    reachable[index].value,
-                                            title:
-                                                Text.rich(TextSpan(children: [
+                                            tileColor: context.theme.colorScheme.primaryContainer.withOpacity(0.3),
+                                            enabled: triedConnecting[index].value && reachable[index].value,
+                                            title: Text.rich(TextSpan(children: [
+                                              TextSpan(text: usableProjects[index]['displayName']),
                                               TextSpan(
-                                                  text: usableProjects[index]
-                                                      ['displayName']),
-                                              TextSpan(
-                                                text:
-                                                    " ${triedConnecting[index].value ? "${reachable[index].value ? "R" : "Unr"}eachable" : "Checking"}",
+                                                text: " ${triedConnecting[index].value ? "${reachable[index].value ? "R" : "Unr"}eachable" : "Checking"}",
                                                 style: TextStyle(
-                                                    fontWeight:
-                                                        reachable[index].value
-                                                            ? FontWeight.bold
-                                                            : FontWeight.normal,
-                                                    color:
-                                                        triedConnecting[index]
-                                                                .value
-                                                            ? reachable[index]
-                                                                    .value
-                                                                ? Colors.green
-                                                                : Colors.red
-                                                            : Colors.yellow),
+                                                    fontWeight: reachable[index].value ? FontWeight.bold : FontWeight.normal,
+                                                    color: triedConnecting[index].value
+                                                        ? reachable[index].value
+                                                            ? Colors.green
+                                                            : Colors.red
+                                                        : Colors.yellow),
                                               ),
                                             ])),
                                             subtitle: Text(
                                               "${usableProjects[index]['projectId']}\n${usableProjects[index]['serverUrl']}",
                                             ),
                                             onTap: () async {
-                                              await requestPassword(
-                                                  context,
-                                                  usableProjects[index]
-                                                      ['serverUrl'],
-                                                  connect);
+                                              await requestPassword(context, usableProjects[index]['serverUrl'], connect);
                                               if (error == "") {
                                                 Navigator.of(context).pop();
                                               }
@@ -294,15 +250,12 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
                                     },
                                   ),
                                 ),
-                              if (fetchingFirebase)
-                                const CircularProgressIndicator(),
+                              if (fetchingFirebase) const CircularProgressIndicator(),
                               const SizedBox(height: 10),
                               if (!fetchingFirebase)
                                 ElevatedButton(
                                   onPressed: () {
-                                    for (int i = 0;
-                                        i < triedConnecting.length;
-                                        i++) {
+                                    for (int i = 0; i < triedConnecting.length; i++) {
                                       triedConnecting[i].value = false;
                                     }
                                   },
@@ -339,10 +292,8 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                     ),
-                    backgroundColor: WidgetStateProperty.all(
-                        context.theme.colorScheme.background),
-                    shadowColor: WidgetStateProperty.all(
-                        context.theme.colorScheme.background),
+                    backgroundColor: WidgetStateProperty.all(context.theme.colorScheme.background),
+                    shadowColor: WidgetStateProperty.all(context.theme.colorScheme.background),
                     maximumSize: WidgetStateProperty.all(buttonSize),
                     minimumSize: WidgetStateProperty.all(buttonSize),
                   ),
@@ -357,9 +308,7 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text("Choose a different account",
-                          style: context.theme.textTheme.bodyLarge!.apply(
-                              fontSizeFactor: 1.1,
-                              color: context.theme.colorScheme.primary)),
+                          style: context.theme.textTheme.bodyLarge!.apply(fontSizeFactor: 1.1, color: context.theme.colorScheme.primary)),
                     ],
                   ),
                 ),
@@ -380,8 +329,7 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                     ),
-                    backgroundColor:
-                        WidgetStateProperty.all(Colors.transparent),
+                    backgroundColor: WidgetStateProperty.all(Colors.transparent),
                     shadowColor: WidgetStateProperty.all(Colors.transparent),
                     maximumSize: WidgetStateProperty.all(buttonSize),
                     minimumSize: WidgetStateProperty.all(buttonSize),
@@ -395,14 +343,11 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
                         googlePicture = response.data['picture'];
                         fetchingFirebase = true;
                       });
-                      fetchFirebaseProjects(token!)
-                          .then((List<Map> value) async {
+                      fetchFirebaseProjects(token!).then((List<Map> value) async {
                         setState(() {
                           usableProjects = value;
-                          triedConnecting = List.generate(
-                              usableProjects.length, (i) => false.obs);
-                          reachable = List.generate(
-                              usableProjects.length, (i) => false.obs);
+                          triedConnecting = List.generate(usableProjects.length, (i) => false.obs);
+                          reachable = List.generate(usableProjects.length, (i) => false.obs);
                           fetchingFirebase = false;
                         });
                       });
@@ -411,21 +356,17 @@ class _OauthPanelState extends OptimizedState<OauthPanel> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset("assets/images/google-sign-in.png",
-                          width: 30, fit: BoxFit.contain),
+                      Image.asset("assets/images/google-sign-in.png", width: 30, fit: BoxFit.contain),
                       const SizedBox(width: 10),
                       Padding(
                         padding: const EdgeInsets.only(right: 0.0, left: 5.0),
-                        child: Text("Sign in with Google",
-                            style: context.theme.textTheme.bodyLarge!.apply(
-                                fontSizeFactor: 1.1, color: Colors.white)),
+                        child: Text("Sign in with Google", style: context.theme.textTheme.bodyLarge!.apply(fontSizeFactor: 1.1, color: Colors.white)),
                       ),
                     ],
                   ),
                 ),
               ),
-            if (googleName == null && showSignInButton)
-              const SizedBox(height: 10),
+            if (googleName == null && showSignInButton) const SizedBox(height: 10),
           ],
         ),
       ),

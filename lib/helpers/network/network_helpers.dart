@@ -14,9 +14,7 @@ String? sanitizeServerAddress({String? address}) {
 
   Uri? uri = Uri.tryParse(sanitized);
   if (uri?.scheme.isEmpty ?? false) {
-    if (sanitized.contains("ngrok.io") ||
-        sanitized.contains("trycloudflare.com") ||
-        sanitized.contains("zrok.io")) {
+    if (sanitized.contains("ngrok.io") || sanitized.contains("trycloudflare.com") || sanitized.contains("zrok.io")) {
       uri = Uri.tryParse("https://$sanitized");
     } else {
       uri = Uri.tryParse("http://$sanitized");
@@ -61,10 +59,7 @@ Future<String> getDeviceName() async {
       deviceName = items.join("_").toLowerCase().replaceAll(' ', '_');
     }
   } catch (ex, stack) {
-    Logger.error(
-        "Failed to get device name! Defaulting to 'bluebubbles-client'",
-        error: ex,
-        trace: stack);
+    Logger.error("Failed to get device name! Defaulting to 'bluebubbles-client'", error: ex, trace: stack);
   }
 
   return deviceName;

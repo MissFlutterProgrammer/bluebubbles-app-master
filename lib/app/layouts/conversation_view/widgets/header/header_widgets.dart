@@ -1,7 +1,6 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:math';
 import 'dart:typed_data';
+
 import 'package:bluebubbles/app/layouts/chat_creator/chat_creator.dart';
 import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
@@ -29,43 +28,27 @@ class ManualMarkState extends OptimizedState<ManualMark> {
 
   @override
   Widget build(BuildContext context) {
-    final manualMark = ss.settings.enablePrivateAPI.value &&
-        ss.settings.privateManualMarkAsRead.value &&
-        !(chat.autoSendReadReceipts ?? false);
+    final manualMark = ss.settings.enablePrivateAPI.value && ss.settings.privateManualMarkAsRead.value && !(chat.autoSendReadReceipts ?? false);
     return Obx(() {
-      if (!manualMark && !widget.controller.inSelectMode.value) {
-        return const SizedBox.shrink();
-      }
+      if (!manualMark && !widget.controller.inSelectMode.value) return const SizedBox.shrink();
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
             icon: Icon(
-              widget.controller.inSelectMode.value
-                  ? (iOS ? CupertinoIcons.trash : Icons.delete_outlined)
-                  : marking
-                      ? (iOS ? CupertinoIcons.arrow_2_circlepath : Icons.sync)
-                      : marked
-                          ? (iOS
-                              ? CupertinoIcons.app
-                              : Icons.mark_chat_read_outlined)
-                          : (iOS
-                              ? CupertinoIcons.app_badge
-                              : Icons.mark_chat_unread_outlined),
-              color: !iOS
-                  ? context.theme.colorScheme.onSurface
-                  : (!marked && !marking ||
-                          widget.controller.inSelectMode.value)
-                      ? context.theme.colorScheme.primary
-                      : context.theme.colorScheme.outline,
+              widget.controller.inSelectMode.value ? (iOS ? CupertinoIcons.trash : Icons.delete_outlined)
+                  : marking ? (iOS ? CupertinoIcons.arrow_2_circlepath : Icons.sync)
+                  : marked ? (iOS ? CupertinoIcons.app : Icons.mark_chat_read_outlined)
+                  : (iOS ? CupertinoIcons.app_badge : Icons.mark_chat_unread_outlined),
+              color: !iOS ? context.theme.colorScheme.onBackground
+                  : (!marked && !marking || widget.controller.inSelectMode.value)
+                  ? context.theme.colorScheme.primary
+                  : context.theme.colorScheme.outline,
             ),
-            tooltip: widget.controller.inSelectMode.value
-                ? "Delete"
-                : marking
-                    ? null
-                    : marked
-                        ? "Mark Unread"
-                        : "Mark Read",
+            tooltip: widget.controller.inSelectMode.value ? "Delete"
+              : marking ? null
+              : marked ? "Mark Unread"
+              : "Mark Read",
             onPressed: () async {
               if (widget.controller.inSelectMode.value) {
                 for (Message m in widget.controller.selected) {
@@ -95,21 +78,16 @@ class ManualMarkState extends OptimizedState<ManualMark> {
             IconButton(
               icon: Icon(
                 iOS ? CupertinoIcons.arrow_right : Icons.forward_outlined,
-                color: !iOS
-                    ? context.theme.colorScheme.onSurface
-                    : context.theme.colorScheme.primary,
+                color: !iOS ? context.theme.colorScheme.onBackground : context.theme.colorScheme.primary,
               ),
               onPressed: () async {
                 List<PlatformFile> attachments = [];
                 String text = "";
-                widget.controller.selected
-                    .sort((a, b) => Message.sort(a, b, descending: false));
+                widget.controller.selected.sort((a, b) => Message.sort(a, b, descending: false));
                 for (Message m in widget.controller.selected) {
                   final _attachments = m.attachments
-                      .where((e) => as.getContent(e!, autoDownload: false)
-                          is PlatformFile)
-                      .map((e) => as.getContent(e!, autoDownload: false)
-                          as PlatformFile);
+                      .where((e) => as.getContent(e!, autoDownload: false) is PlatformFile)
+                      .map((e) => as.getContent(e!, autoDownload: false) as PlatformFile);
                   for (PlatformFile a in _attachments) {
                     Uint8List? bytes = a.bytes;
                     bytes ??= await File(a.path!).readAsBytes();
@@ -155,28 +133,21 @@ class ConnectionIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
-      child: Obx(
-        () => AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          height: 0,
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: getIndicatorColor(socket.state.value).withOpacity(0.4),
-                spreadRadius: socket.state.value != SocketState.connected &&
-                        (ls.isAlive || kIsDesktop)
-                    ? max(MediaQuery.of(context).viewPadding.top, 40)
-                        .clamp(0, noniOS ? 30 : double.infinity)
-                        .toDouble()
-                    : 0,
-                blurRadius: max(MediaQuery.of(context).viewPadding.top, 40)
-                    .clamp(0, noniOS ? 30 : double.infinity)
-                    .toDouble(),
-              ),
-            ],
-          ),
+      child: Obx(() => AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        height: 0,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: getIndicatorColor(socket.state.value).withOpacity(0.4),
+              spreadRadius: socket.state.value != SocketState.connected && (ls.isAlive || kIsDesktop)
+                  ? max(MediaQuery.of(context).viewPadding.top, 40).clamp(0, noniOS ? 30 : double.infinity).toDouble()
+                  : 0,
+              blurRadius: max(MediaQuery.of(context).viewPadding.top, 40).clamp(0, noniOS ? 30 : double.infinity).toDouble(),
+            ),
+          ],
         ),
-      ),
+      )),
     );
   }
 }

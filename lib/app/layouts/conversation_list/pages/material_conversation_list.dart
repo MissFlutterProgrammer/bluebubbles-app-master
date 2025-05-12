@@ -18,18 +18,15 @@ class MaterialConversationList extends StatefulWidget {
   final ConversationListController parentController;
 
   @override
-  State<MaterialConversationList> createState() =>
-      _MaterialConversationListState();
+  State<MaterialConversationList> createState() => _MaterialConversationListState();
 }
 
-class _MaterialConversationListState
-    extends OptimizedState<MaterialConversationList> {
+class _MaterialConversationListState extends OptimizedState<MaterialConversationList> {
   bool get showArchived => widget.parentController.showArchivedChats;
   bool get showUnknown => widget.parentController.showUnknownSenders;
-  Color get backgroundColor =>
-      ss.settings.windowEffect.value == WindowEffect.disabled
-          ? context.theme.colorScheme.surface
-          : Colors.transparent;
+  Color get backgroundColor => ss.settings.windowEffect.value == WindowEffect.disabled
+      ? context.theme.colorScheme.background
+      : Colors.transparent;
   ConversationListController get controller => widget.parentController;
 
   @override
@@ -52,8 +49,7 @@ class _MaterialConversationListState
         if (controller.selectedChats.isNotEmpty) {
           controller.clearSelectedChats();
           return;
-        } else if (controller.showArchivedChats ||
-            controller.showUnknownSenders) {
+        } else if (controller.showArchivedChats || controller.showUnknownSenders) {
           // Pop the current page
           Navigator.of(context).pop();
         } else {
@@ -71,15 +67,12 @@ class _MaterialConversationListState
           ),
           backgroundColor: backgroundColor,
           extendBodyBehindAppBar: true,
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
           floatingActionButton: !showArchived && !showUnknown
               ? ConversationListFAB(parentController: controller)
               : const SizedBox.shrink(),
           body: Obx(() {
-            final _chats = chats.chats
-                .archivedHelper(showArchived)
-                .unknownSendersHelper(showUnknown);
+            final _chats = chats.chats.archivedHelper(showArchived).unknownSendersHelper(showUnknown);
 
             if (!chats.loadedChatBatch.value || _chats.isEmpty) {
               return Center(
@@ -101,8 +94,7 @@ class _MaterialConversationListState
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      if (!chats.loadedChatBatch.value)
-                        buildProgressIndicator(context, size: 15),
+                      if (!chats.loadedChatBatch.value) buildProgressIndicator(context, size: 15),
                     ],
                   ),
                 ),
@@ -112,35 +104,32 @@ class _MaterialConversationListState
             return NotificationListener(
               onNotification: (notif) {
                 if (notif is ScrollStartNotification) {
-                  controller.materialScrollStartPosition =
-                      controller.materialScrollController.offset;
+                  controller.materialScrollStartPosition = controller.materialScrollController.offset;
                 }
                 return true;
               },
               child: ScrollbarWrapper(
                 showScrollbar: true,
                 controller: controller.materialScrollController,
-                child: Obx(
-                  () => ListView.builder(
-                    controller: controller.materialScrollController,
-                    physics: ThemeSwitcher.getScrollPhysics(),
-                    findChildIndexCallback: (key) =>
-                        findChildIndexByKey(_chats, key, (item) => item.guid),
-                    itemBuilder: (context, index) {
-                      final chat = _chats[index];
-                      return Container(
-                        key: ValueKey(chat.guid),
-                        child: ListItem(
+                child: Obx(() => ListView.builder(
+                      controller: controller.materialScrollController,
+                      physics: ThemeSwitcher.getScrollPhysics(),
+                      findChildIndexCallback: (key) => findChildIndexByKey(_chats, key, (item) => item.guid),
+                      itemBuilder: (context, index) {
+                        final chat = _chats[index];
+                        return Container(
+                          key: ValueKey(chat.guid),
+                          child: ListItem(
                             chat: chat,
                             controller: controller,
                             update: () {
                               setState(() {});
-                            }),
-                      );
-                    },
-                    itemCount: _chats.length,
-                  ),
-                ),
+                            }
+                          )
+                        );
+                      },
+                      itemCount: _chats.length,
+                    )),
               ),
             );
           }),

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/database/models.dart';
 import 'package:bluebubbles/services/services.dart';
@@ -13,24 +14,18 @@ abstract class Queue extends GetxService {
     final returned = await prepItem(item);
     // we may get a link split into 2 messages
     if (item is OutgoingItem && returned is List) {
-      items.addAll(
-        returned.map(
-          (e) => OutgoingItem(
-            type: item.type,
-            chat: item.chat,
-            message: e,
-            completer: item.completer,
-            selected: item.selected,
-            reaction: item.reaction,
-          ),
-        ),
-      );
+      items.addAll(returned.map((e) => OutgoingItem(
+        type: item.type,
+        chat: item.chat,
+        message: e,
+        completer: item.completer,
+        selected: item.selected,
+        reaction: item.reaction,
+      )));
     } else {
       items.add(item);
     }
-    if (!isProcessing || (items.isEmpty && item is IncomingItem)) {
-      processNextItem();
-    }
+    if (!isProcessing || (items.isEmpty && item is IncomingItem)) processNextItem();
   }
 
   Future<dynamic> prepItem(QueueItem _);
@@ -47,15 +42,12 @@ abstract class Queue extends GetxService {
     try {
       await handleQueueItem(queued).catchError((err) async {
         if (queued is OutgoingItem && ss.settings.cancelQueuedMessages.value) {
-          final toCancel = List<OutgoingItem>.from(items
-              .whereType<OutgoingItem>()
-              .where((e) => e.chat.guid == queued.chat.guid));
+          final toCancel = List<OutgoingItem>.from(items.whereType<OutgoingItem>().where((e) => e.chat.guid == queued.chat.guid));
           for (OutgoingItem i in toCancel) {
             items.remove(i);
             final m = i.message;
             final tempGuid = m.guid;
-            m.guid = m.guid!
-                .replaceAll("temp", "error-Canceled due to previous failure");
+            m.guid = m.guid!.replaceAll("temp", "error-Canceled due to previous failure");
             m.error = MessageError.BAD_REQUEST.code;
             Message.replaceMessage(tempGuid, m);
           }
@@ -63,8 +55,7 @@ abstract class Queue extends GetxService {
       });
       queued.completer?.complete();
     } catch (ex, stacktrace) {
-      Logger.error("Failed to handle queued item!",
-          error: ex, trace: stacktrace);
+      Logger.error("Failed to handle queued item!", error: ex, trace: stacktrace);
       queued.completer?.completeError(ex);
     }
 

@@ -47,27 +47,21 @@ class IncrementalSyncManager extends SyncManager {
 
   // The default extra fields to fetch with the messages
   List<String> defaultWithQuery = [
-    "chats",
-    "chats.participants",
-    "attachments",
-    "attributedBody",
-    "messageSummaryInfo",
-    "payloadData"
-  ];
+    "chats", "chats.participants", "attachments", "attributedBody", "messageSummaryInfo", "payloadData"];
 
-  IncrementalSyncManager(
-      {this.startRowId,
+  IncrementalSyncManager({
+      this.startRowId,
       this.endRowId,
       this.startTimestamp,
       this.endTimestamp,
       this.batchSize = 1000,
       this.saveMarker = false,
       this.onComplete,
-      bool saveLogs = false})
-      : super("Incremental", saveLogs: saveLogs) {
-    if (startRowId == null && startTimestamp == null) {
-      throw Exception("Must provide either a startRowId or startTimestamp");
-    }
+      bool saveLogs = false
+  }) : super("Incremental", saveLogs: saveLogs) {
+      if (startRowId == null && startTimestamp == null) {
+        throw Exception("Must provide either a startRowId or startTimestamp");
+      }
   }
 
   @override
@@ -96,10 +90,8 @@ class IncrementalSyncManager extends SyncManager {
     // This is due to bugs in certain server versions as well as new features
     // in server versions to make the sync more efficient.
     int serverVersion = (await ss.getServerDetails()).item4;
-    bool isMin_1_2_0 =
-        serverVersion >= 142; // Server: v1.2.0 (1 * 100 + 2 * 21 + 0)
-    bool isMin_1_6_0 =
-        serverVersion >= 226; // Server: v1.6.0 (1 * 100 + 6 * 21 + 0)
+    bool isMin_1_2_0 = serverVersion >= 142; // Server: v1.2.0 (1 * 100 + 2 * 21 + 0)
+    bool isMin_1_6_0 = serverVersion >= 226; // Server: v1.6.0 (1 * 100 + 6 * 21 + 0)
 
     try {
       // If we've don't have a startRowId (null or 0), then sync using timestamps
@@ -151,8 +143,7 @@ class IncrementalSyncManager extends SyncManager {
 
   Future<void> startMin_1_2_0() async {
     if (startTimestamp == null) {
-      throw Exception(
-          "startTimestamp cannot be null for server versions >= 1.2.0 and < 1.6.0");
+      throw Exception("startTimestamp cannot be null for server versions >= 1.2.0 and < 1.6.0");
     }
 
     // Hit API endpoint to check for updated messages
@@ -168,8 +159,7 @@ class IncrementalSyncManager extends SyncManager {
 
   Future<void> startPre_1_2_0() async {
     if (startTimestamp == null) {
-      throw Exception(
-          "startTimestamp cannot be null for server versions < 1.2.0");
+      throw Exception("startTimestamp cannot be null for server versions < 1.2.0");
     }
 
     // In < 1.2.0, the message query API endpoint was a bit broken.
@@ -199,8 +189,7 @@ class IncrementalSyncManager extends SyncManager {
     await syncMessagePages(count);
   }
 
-  Future<void> syncMessagePages(int total,
-      {int startPage = 0, bool useRowId = false}) async {
+  Future<void> syncMessagePages(int total, {int startPage = 0, bool useRowId = false}) async {
     if (total == 0) return;
 
     int pages = (total / batchSize).ceil();
@@ -261,15 +250,12 @@ class IncrementalSyncManager extends SyncManager {
         messagesToSync[chat['guid']]!.add(msg);
 
         // Save the last synced ROWID
-        if (msg.originalROWID != null &&
-            (lastSyncedRowId == null ||
-                msg.originalROWID! > lastSyncedRowId!)) {
+        if (msg.originalROWID != null && (lastSyncedRowId == null || msg.originalROWID! > lastSyncedRowId!)) {
           lastSyncedRowId = msg.originalROWID;
         }
 
         // Save the last synced timestamp
-        if (msg.dateCreated != null && lastSyncedTimestamp == null ||
-            msg.dateCreated!.millisecondsSinceEpoch > lastSyncedTimestamp!) {
+        if (msg.dateCreated != null && lastSyncedTimestamp == null || msg.dateCreated!.millisecondsSinceEpoch > lastSyncedTimestamp!) {
           lastSyncedTimestamp = msg.dateCreated!.millisecondsSinceEpoch;
         }
       }
@@ -298,19 +284,22 @@ class IncrementalSyncManager extends SyncManager {
     }
   }
 
-  List<Map<String, dynamic>> buildRowIdWhereArgs(
-      int startRowId, int? endRowId) {
+  List<Map<String, dynamic>> buildRowIdWhereArgs(int startRowId, int? endRowId) {
     List<Map<String, dynamic>> whereArgs = [
       {
         'statement': 'message.ROWID > :startRowId',
-        'args': {'startRowId': startRowId}
+        'args': {
+          'startRowId': startRowId
+        }
       }
     ];
 
     if (endRowId != null && endRowId > startRowId) {
       whereArgs.add({
         'statement': 'message.ROWID <= :endRowId',
-        'args': {'endRowId': endRowId}
+        'args': {
+          'endRowId': endRowId
+        }
       });
     }
 

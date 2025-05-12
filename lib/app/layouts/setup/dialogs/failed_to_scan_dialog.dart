@@ -5,8 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class FailedToScanDialog extends StatelessWidget {
-  const FailedToScanDialog(
-      {super.key, required this.exception, required this.title});
+  const FailedToScanDialog({super.key, required this.exception, required this.title});
   final dynamic exception;
   final String title;
 
@@ -14,8 +13,7 @@ class FailedToScanDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     String error = exception.toString();
     if (error.contains("ROWID")) {
-      error =
-          "iMessage is not configured on the macOS server, please sign in with an Apple ID and try again.";
+      error = "iMessage is not configured on the macOS server, please sign in with an Apple ID and try again.";
     }
 
     return AlertDialog(
@@ -28,33 +26,19 @@ class FailedToScanDialog extends StatelessWidget {
         physics: ThemeSwitcher.getScrollPhysics(),
         child: Text(
           error,
-          style: context.theme.textTheme.bodyLarge,
+          style: context.theme.textTheme.bodyLarge
         ),
       ),
       actions: [
         TextButton(
-          child: Text(
-            "Copy",
-            style: context.theme.textTheme.bodyLarge!.copyWith(
-              color: context.theme.colorScheme.primary,
-            ),
-          ),
+          child: Text("Copy", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
           onPressed: () {
             Navigator.of(context).pop();
-            Clipboard.setData(
-              ClipboardData(
-                text: error.toString(),
-              ),
-            );
+            Clipboard.setData(ClipboardData(text: error.toString()));
           },
         ),
         TextButton(
-          child: Text(
-            "OK",
-            style: context.theme.textTheme.bodyLarge!.copyWith(
-              color: context.theme.colorScheme.primary,
-            ),
-          ),
+          child: Text("OK", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
           onPressed: () {
             Navigator.of(context).pop();
           },

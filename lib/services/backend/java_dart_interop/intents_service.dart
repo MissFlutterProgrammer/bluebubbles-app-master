@@ -1,9 +1,11 @@
 import 'dart:async';
+
 import 'package:bluebubbles/app/layouts/settings/pages/scheduling/scheduled_messages_panel.dart';
 import 'package:bluebubbles/app/layouts/settings/pages/server/server_management_panel.dart';
 import 'package:bluebubbles/app/wrappers/theme_switcher.dart';
 import 'package:bluebubbles/helpers/backend/startup_tasks.dart';
 import 'package:bluebubbles/helpers/ui/facetime_helpers.dart';
+
 import 'package:bluebubbles/utils/logger/logger.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/app/layouts/chat_creator/chat_creator.dart';
@@ -19,9 +21,7 @@ import 'package:tuple/tuple.dart';
 import 'package:universal_io/io.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-IntentsService intents = Get.isRegistered<IntentsService>()
-    ? Get.find<IntentsService>()
-    : Get.put(IntentsService());
+IntentsService intents = Get.isRegistered<IntentsService>() ? Get.find<IntentsService>() : Get.put(IntentsService());
 
 class IntentsService extends GetxService {
   late final StreamSubscription sub;
@@ -59,8 +59,7 @@ class IntentsService extends GetxService {
           if (data is List) {
             for (String? s in data) {
               if (s == null) continue;
-              final path =
-                  await mcs.invokeMethod("get-content-uri-path", {"uri": s});
+              final path = await mcs.invokeMethod("get-content-uri-path", {"uri": s});
               final bytes = await File(path).readAsBytes();
               files.add(PlatformFile(
                 path: path,
@@ -70,8 +69,7 @@ class IntentsService extends GetxService {
               ));
             }
           } else if (data != null) {
-            final path =
-                await mcs.invokeMethod("get-content-uri-path", {"uri": data});
+            final path = await mcs.invokeMethod("get-content-uri-path", {"uri": data});
             final bytes = await File(path).readAsBytes();
             files.add(PlatformFile(
               path: path,
@@ -85,21 +83,14 @@ class IntentsService extends GetxService {
         return;
       default:
         if (intent.data?.startsWith("imessage://") ?? false) {
-          final uri = Uri.tryParse(intent.data!
-              .replaceFirst("imessage://", "imessage:")
-              .replaceFirst("&body=", "?body="));
+          final uri = Uri.tryParse(intent.data!.replaceFirst("imessage://", "imessage:").replaceFirst("&body=", "?body="));
           if (uri != null) {
             final address = uri.path;
-            final handle =
-                Handle.findOne(addressAndService: Tuple2(address, "iMessage"));
+            final handle = Handle.findOne(addressAndService: Tuple2(address, "iMessage"));
             ns.pushAndRemoveUntil(
               Get.context!,
               ChatCreator(
-                initialSelected: [
-                  SelectedContact(
-                      displayName: handle?.displayName ?? address,
-                      address: address)
-                ],
+                initialSelected: [SelectedContact(displayName: handle?.displayName ?? address, address: address)],
                 initialText: uri.queryParameters['body'],
               ),
               (route) => route.isFirst,
@@ -115,8 +106,7 @@ class IntentsService extends GetxService {
           if (intent.extra?["answer"] == true) {
             await answerFaceTime(intent.extra?["callUuid"]!);
           } else {
-            await showFaceTimeOverlay(intent.extra?["callUuid"],
-                intent.extra?["caller"], null, false);
+            await showFaceTimeOverlay(intent.extra?["callUuid"], intent.extra?["caller"], null, false);
           }
         }
     }
@@ -138,14 +128,13 @@ class IntentsService extends GetxService {
                 child: Center(
                   child: CircularProgressIndicator(
                     backgroundColor: context.theme.colorScheme.properSurface,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      context.theme.colorScheme.primary,
-                    ),
+                    valueColor: AlwaysStoppedAnimation<Color>(context.theme.colorScheme.primary),
                   ),
                 ),
               ),
             );
-          });
+          }
+      );
       hideFaceTimeOverlay(callUuid);
     }
 
@@ -158,19 +147,18 @@ class IntentsService extends GetxService {
       Navigator.of(Get.context!).pop();
     }
     if (link == null) {
-      return showSnackbar(
-          "Failed to answer FaceTime", "Unable to generate FaceTime link!");
+      return showSnackbar("Failed to answer FaceTime", "Unable to generate FaceTime link!");
     }
 
     if (!kIsWeb) {
       await launchUrl(Uri.parse(link), mode: LaunchMode.externalApplication);
-    } else if (kIsWeb) {}
+    } else if (kIsWeb) {
+      // TODO: Implement web FaceTime
+    }
   }
 
-  Future<void> openChat(String? guid,
-      {String? text, List<PlatformFile> attachments = const []}) async {
-    Logger.info("Handling open chat intent with guid: $guid",
-        tag: "IntentsService");
+  Future<void> openChat(String? guid, {String? text, List<PlatformFile> attachments = const []}) async {
+    Logger.info("Handling open chat intent with guid: $guid", tag: "IntentsService");
 
     if (guid == null) {
       Logger.debug("Opening new chat creator..", tag: "IntentsService");
@@ -198,8 +186,7 @@ class IntentsService extends GetxService {
         ),
       );
     } else if (guid.contains("scheduled")) {
-      Logger.debug("Opening scheduled messages panel...",
-          tag: "IntentsService");
+      Logger.debug("Opening scheduled messages panel...", tag: "IntentsService");
       Navigator.of(Get.context!).push(
         ThemeSwitcher.buildPageRoute(
           builder: (BuildContext context) {
@@ -208,9 +195,7 @@ class IntentsService extends GetxService {
         ),
       );
     } else {
-      Logger.debug(
-          "Opening existing chat (Attachments: ${attachments.length}; Text: ${text?.shorten(10) ?? 'N/A'})",
-          tag: "IntentsService");
+      Logger.debug("Opening existing chat (Attachments: ${attachments.length}; Text: ${text?.shorten(10) ?? 'N/A'})", tag: "IntentsService");
       final chat = Chat.findOne(guid: guid);
       if (chat == null) {
         Logger.debug("Chat not found with guid: $guid", tag: "IntentsService");
@@ -231,8 +216,7 @@ class IntentsService extends GetxService {
       }
 
       if (!chatIsOpen) {
-        Logger.debug("Navigating to conversation view...",
-            tag: "IntentsService");
+        Logger.debug("Navigating to conversation view...", tag: "IntentsService");
         await StartupTasks.waitForUI();
         await Future.delayed(const Duration(seconds: 1));
         await ns.pushAndRemoveUntil(
@@ -244,8 +228,7 @@ class IntentsService extends GetxService {
           (route) => route.isFirst,
         );
       } else {
-        Logger.debug("Chat is already open, not navigating",
-            tag: "IntentsService");
+        Logger.debug("Chat is already open, not navigating", tag: "IntentsService");
         setPickedAttachments();
       }
     }

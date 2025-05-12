@@ -33,9 +33,7 @@ class FCMData {
       storageBucket: projectInfo["storage_bucket"],
       apiKey: client["api_key"][0]["current_key"],
       firebaseURL: projectInfo["firebase_url"],
-      clientID: clientID.contains("-")
-          ? clientID.substring(0, clientID.indexOf("-"))
-          : clientID,
+      clientID: clientID.contains("-") ? clientID.substring(0, clientID.indexOf("-")) : clientID,
       applicationID: client["client_info"]["mobilesdk_app_id"],
     );
   }
@@ -43,9 +41,7 @@ class FCMData {
   Future<FCMData> save({bool wait = false}) async {
     if (kIsWeb) return this;
     List<FCMData> data = Database.fcmData.getAll();
-    if (data.length > 1) {
-      data.removeRange(1, data.length); // These were being ignored anyway
-    }
+    if (data.length > 1) data.removeRange(1, data.length); // These were being ignored anyway
     id = !Database.fcmData.isEmpty() ? data.first.id : null;
     Database.fcmData.put(this);
     final future = Future(() async {
@@ -116,13 +112,13 @@ class FCMData {
   }
 
   Map<String, dynamic> toMap() => {
-        "project_id": projectID,
-        "storage_bucket": storageBucket,
-        "api_key": apiKey,
-        "firebase_url": firebaseURL,
-        "client_id": clientID,
-        "application_id": applicationID,
-      };
+    "project_id": projectID,
+    "storage_bucket": storageBucket,
+    "api_key": apiKey,
+    "firebase_url": firebaseURL,
+    "client_id": clientID,
+    "application_id": applicationID,
+  };
 
   bool get isNull =>
       projectID == null ||

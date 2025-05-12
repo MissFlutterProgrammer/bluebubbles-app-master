@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -16,8 +17,7 @@ class StatefulController extends GetxController {
 
 /// [StatefulWidget] with support for optimized state management and a built-in
 /// [GetxController]
-abstract class CustomStateful<T extends StatefulController>
-    extends StatefulWidget {
+abstract class CustomStateful<T extends StatefulController> extends StatefulWidget {
   const CustomStateful({super.key, required this.parentController});
 
   final T parentController;
@@ -25,25 +25,21 @@ abstract class CustomStateful<T extends StatefulController>
 
 /// [State] with support for optimized state management using a custom
 /// [GetxController]
-abstract class CustomState<T extends CustomStateful, R,
-    S extends StatefulController> extends State<T> with ThemeHelpers {
+abstract class CustomState<T extends CustomStateful, R, S extends StatefulController> extends State<T> with ThemeHelpers {
   // completer to check if the page animation is complete
   final animCompleted = Completer<void>();
 
   @protected
-
   /// Convenience getter for the [GetxController]
   S get controller => widget.parentController as S;
 
   @protected
   String? _tag;
-
   /// Set tag of associated [GetxController] if needed
   set tag(String t) => _tag = t;
 
   @protected
   bool _forceDelete = true;
-
   /// Set forceDelete false if needed
   set forceDelete(bool fd) => _forceDelete = fd;
 
@@ -65,8 +61,7 @@ abstract class CustomState<T extends CustomStateful, R,
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (!mounted) return;
       if (ModalRoute.of(context)?.animation != null) {
-        if (ModalRoute.of(context)?.animation?.status !=
-            AnimationStatus.completed) {
+        if (ModalRoute.of(context)?.animation?.status != AnimationStatus.completed) {
           late final AnimationStatusListener listener;
           listener = (AnimationStatus status) {
             if (status == AnimationStatus.completed) {
@@ -85,7 +80,6 @@ abstract class CustomState<T extends CustomStateful, R,
   }
 
   @override
-
   /// Force delete the [GetxController] when the page has disposed (unless we
   /// don't want to)
   void dispose() {
@@ -96,7 +90,6 @@ abstract class CustomState<T extends CustomStateful, R,
   @protected
   @mustCallSuper
   @optionalTypeArgs
-
   /// Override this method to update the widget easily
   /// ```
   /// @override
@@ -110,7 +103,6 @@ abstract class CustomState<T extends CustomStateful, R,
   }
 
   @override
-
   /// Optimized [setState] function
   void setState(VoidCallback fn) {
     _optimizedUpdate(() {
@@ -153,8 +145,7 @@ abstract class CustomState<T extends CustomStateful, R,
 /// Used for cases where we don't need a specific [GetxController], the main
 /// benefit of this class is to provide an optimized [setState] function to
 /// minimize lag and jank.
-abstract class OptimizedState<T extends StatefulWidget> extends State<T>
-    with ThemeHelpers {
+abstract class OptimizedState<T extends StatefulWidget> extends State<T> with ThemeHelpers {
   final animCompleted = Completer<void>();
 
   @override
@@ -164,8 +155,7 @@ abstract class OptimizedState<T extends StatefulWidget> extends State<T>
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (mounted && ModalRoute.of(context)?.animation != null) {
-        if (ModalRoute.of(context)?.animation?.status !=
-            AnimationStatus.completed) {
+        if (ModalRoute.of(context)?.animation?.status != AnimationStatus.completed) {
           late final AnimationStatusListener listener;
           listener = (AnimationStatus status) {
             if (status == AnimationStatus.completed) {

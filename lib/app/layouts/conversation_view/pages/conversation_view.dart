@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/header/cupertino_header.dart';
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/header/material_header.dart';
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/text_field/conversation_text_field.dart';
@@ -36,8 +34,7 @@ class ConversationView extends StatefulWidget {
 }
 
 class ConversationViewState extends OptimizedState<ConversationView> {
-  late final ConversationViewController controller =
-      cvc(chat, tag: widget.customService?.tag);
+  late final ConversationViewController controller = cvc(chat, tag: widget.customService?.tag);
 
   Chat get chat => widget.chat;
 
@@ -70,29 +67,24 @@ class ConversationViewState extends OptimizedState<ConversationView> {
       value: SystemUiOverlayStyle(
         systemNavigationBarColor: ss.settings.immersiveMode.value
             ? Colors.transparent
-            : context.theme.colorScheme.surface,
-        systemNavigationBarIconBrightness:
-            context.theme.colorScheme.brightness.opposite,
+            : context.theme.colorScheme.background,
+        systemNavigationBarIconBrightness: context.theme.colorScheme.brightness.opposite,
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: context.theme.colorScheme.brightness.opposite,
       ),
       child: Theme(
         data: context.theme.copyWith(
           // in case some components still use legacy theming
-          primaryColor:
-              context.theme.colorScheme.bubble(context, chat.isIMessage),
+          primaryColor: context.theme.colorScheme.bubble(context, chat.isIMessage),
           colorScheme: context.theme.colorScheme.copyWith(
             primary: context.theme.colorScheme.bubble(context, chat.isIMessage),
-            onPrimary:
-                context.theme.colorScheme.onBubble(context, chat.isIMessage),
+            onPrimary: context.theme.colorScheme.onBubble(context, chat.isIMessage),
             surface: ss.settings.monetTheming.value == Monet.full
                 ? null
-                : (context.theme.extensions[BubbleColors] as BubbleColors?)
-                    ?.receivedBubbleColor,
+                : (context.theme.extensions[BubbleColors] as BubbleColors?)?.receivedBubbleColor,
             onSurface: ss.settings.monetTheming.value == Monet.full
                 ? null
-                : (context.theme.extensions[BubbleColors] as BubbleColors?)
-                    ?.onReceivedBubbleColor,
+                : (context.theme.extensions[BubbleColors] as BubbleColors?)?.onReceivedBubbleColor,
           ),
         ),
         child: PopScope(
@@ -120,22 +112,13 @@ class ConversationViewState extends OptimizedState<ConversationView> {
             top: false,
             bottom: false,
             child: Scaffold(
-              backgroundColor:
-                  ss.settings.windowEffect.value != WindowEffect.disabled
-                      ? Colors.transparent
-                      : context.theme.colorScheme.background,
+              backgroundColor: ss.settings.windowEffect.value != WindowEffect.disabled ? Colors.transparent : context.theme.colorScheme.background,
               extendBodyBehindAppBar: true,
               appBar: PreferredSize(
-                  preferredSize: Size(
-                    ns.width(context),
-                    (kIsDesktop ? (!iOS ? 25 : 5) : 0) +
-                        90 * (iOS ? ss.settings.avatarScale.value : 0) +
-                        (!iOS ? kToolbarHeight : 0),
-                  ),
+                  preferredSize: Size(ns.width(context), (kIsDesktop ? (!iOS ? 25 : 5) : 0) + 90 * (iOS ? ss.settings.avatarScale.value : 0) + (!iOS ? kToolbarHeight : 0)),
                   child: iOS
-                      ? CupertinoHeader(controller: controller)
-                      : MaterialHeader(controller: controller)
-                          as PreferredSizeWidget),
+                  ? CupertinoHeader(controller: controller)
+                  : MaterialHeader(controller: controller) as PreferredSizeWidget),
               body: Actions(
                 actions: {
                   if (ss.settings.enablePrivateAPI.value)
@@ -152,8 +135,7 @@ class ConversationViewState extends OptimizedState<ConversationView> {
                     EmphasizeRecentIntent: EmphasizeRecentAction(widget.chat),
                   if (ss.settings.enablePrivateAPI.value)
                     QuestionRecentIntent: QuestionRecentAction(widget.chat),
-                  OpenChatDetailsIntent:
-                      OpenChatDetailsAction(context, widget.chat),
+                  OpenChatDetailsIntent: OpenChatDetailsAction(context, widget.chat),
                 },
                 child: GradientBackground(
                   controller: controller,
@@ -175,92 +157,49 @@ class ConversationViewState extends OptimizedState<ConversationView> {
                                     controller: controller,
                                   ),
                                   Align(
-                                    alignment: iOS
-                                        ? Alignment.bottomRight
-                                        : Alignment.bottomCenter,
+                                    alignment: iOS ? Alignment.bottomRight : Alignment.bottomCenter,
                                     child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 10, right: 10, left: 10),
-                                      child: Obx(
-                                        () => IgnorePointer(
-                                          ignoring:
-                                              controller.showScrollDown.value
-                                                  ? false
-                                                  : true,
-                                          child: AnimatedOpacity(
-                                            opacity:
-                                                controller.showScrollDown.value
-                                                    ? 1
-                                                    : 0,
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                            child: iOS
-                                                ? TextButton(
-                                                    style: TextButton.styleFrom(
-                                                      backgroundColor: context
-                                                          .theme
-                                                          .colorScheme
-                                                          .secondary,
-                                                      shape:
-                                                          const CircleBorder(),
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              0),
-                                                      maximumSize:
-                                                          const Size(32, 32),
-                                                      minimumSize:
-                                                          const Size(32, 32),
-                                                      tapTargetSize:
-                                                          MaterialTapTargetSize
-                                                              .shrinkWrap,
-                                                    ),
-                                                    onPressed: controller
-                                                        .scrollToBottom,
-                                                    child: Container(
-                                                      constraints:
-                                                          const BoxConstraints(
-                                                              minHeight: 32,
-                                                              minWidth: 32),
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                      ),
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 3, left: 1),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Icon(
-                                                        CupertinoIcons
-                                                            .chevron_down,
-                                                        color: context
-                                                            .theme
-                                                            .colorScheme
-                                                            .onSecondary,
-                                                        size: 20,
-                                                      ),
-                                                    ),
-                                                  )
-                                                : FloatingActionButton.small(
-                                                    heroTag: null,
-                                                    onPressed: controller
-                                                        .scrollToBottom,
-                                                    child: Icon(
-                                                      Icons.arrow_downward,
-                                                      color: context
-                                                          .theme
-                                                          .colorScheme
-                                                          .onSecondary,
-                                                    ),
-                                                    backgroundColor: context
-                                                        .theme
-                                                        .colorScheme
-                                                        .secondary,
-                                                  ),
+                                      padding: const EdgeInsets.only(bottom: 10, right: 10, left: 10),
+                                      child: Obx(() => IgnorePointer(
+                                        ignoring: controller.showScrollDown.value ? false : true,
+                                        child: AnimatedOpacity(
+                                          opacity: controller.showScrollDown.value ? 1 : 0,
+                                          duration: const Duration(milliseconds: 300),
+                                          child: iOS ? TextButton(
+                                            style: TextButton.styleFrom(
+                                              backgroundColor: context.theme.colorScheme.secondary,
+                                              shape: const CircleBorder(),
+                                              padding: const EdgeInsets.all(0),
+                                              maximumSize: const Size(32, 32),
+                                              minimumSize: const Size(32, 32),
+                                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                            ),
+                                            onPressed: controller.scrollToBottom,
+                                            child: Container(
+                                              constraints: const BoxConstraints(minHeight: 32, minWidth: 32),
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                              ),
+                                              padding: const EdgeInsets.only(top: 3, left: 1),
+                                              alignment: Alignment.center,
+                                              child: Icon(
+                                                CupertinoIcons.chevron_down,
+                                                color: context.theme.colorScheme.onSecondary,
+                                                size: 20,
+                                              ),
+                                            ),
+                                          ) : FloatingActionButton.small(
+                                            heroTag: null,
+                                            onPressed: controller.scrollToBottom,
+                                            child: Icon(
+                                              Icons.arrow_downward,
+                                              color: context.theme.colorScheme.onSecondary,
+                                            ),
+                                            backgroundColor: context.theme.colorScheme.secondary,
                                           ),
                                         ),
-                                      ),
-                                    ),
+                                      )),
+                                    )
                                   )
                                 ],
                               ),
@@ -272,14 +211,12 @@ class ConversationViewState extends OptimizedState<ConversationView> {
                                   child: GestureDetector(
                                     onPanUpdate: (details) {
                                       if (!mounted) return;
-                                      if (ss.settings.swipeToCloseKeyboard
-                                              .value &&
+                                      if (ss.settings.swipeToCloseKeyboard.value &&
                                           details.delta.dy > 0 &&
                                           controller.keyboardOpen) {
                                         controller.focusNode.unfocus();
                                         controller.subjectFocusNode.unfocus();
-                                      } else if (ss.settings.swipeToOpenKeyboard
-                                              .value &&
+                                      } else if (ss.settings.swipeToOpenKeyboard.value &&
                                           details.delta.dy < 0 &&
                                           !controller.keyboardOpen) {
                                         controller.focusNode.requestFocus();
@@ -290,7 +227,7 @@ class ConversationViewState extends OptimizedState<ConversationView> {
                                     ),
                                   ),
                                 )
-                              ],
+                              ]
                             ),
                           ],
                         ),
@@ -301,7 +238,7 @@ class ConversationViewState extends OptimizedState<ConversationView> {
               ),
             ),
           ),
-        ),
+        )
       ),
     );
   }

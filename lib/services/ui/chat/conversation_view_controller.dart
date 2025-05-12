@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:isolate';
+
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:bluebubbles/app/components/custom_text_editing_controllers.dart';
 import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
@@ -16,14 +17,10 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:tuple/tuple.dart';
 import 'package:universal_io/io.dart';
 
-ConversationViewController cvc(Chat chat, {String? tag}) =>
-    Get.isRegistered<ConversationViewController>(tag: tag ?? chat.guid)
-        ? Get.find<ConversationViewController>(tag: tag ?? chat.guid)
-        : Get.put(ConversationViewController(chat, tag_: tag),
-            tag: tag ?? chat.guid);
+ConversationViewController cvc(Chat chat, {String? tag}) => Get.isRegistered<ConversationViewController>(tag: tag ?? chat.guid)
+? Get.find<ConversationViewController>(tag: tag ?? chat.guid) : Get.put(ConversationViewController(chat, tag_: tag), tag: tag ?? chat.guid);
 
-class ConversationViewController extends StatefulController
-    with GetSingleTickerProviderStateMixin {
+class ConversationViewController extends StatefulController with GetSingleTickerProviderStateMixin {
   final Chat chat;
   late final String tag;
   bool fromChatCreator = false;
@@ -36,9 +33,7 @@ class ConversationViewController extends StatefulController
 
   // caching items
   final Map<String, Uint8List> imageData = {};
-  final List<
-          Tuple4<Attachment, PlatformFile, BuildContext, Completer<Uint8List>>>
-      imageCacheQueue = [];
+  final List<Tuple4<Attachment, PlatformFile, BuildContext, Completer<Uint8List>>> imageCacheQueue = [];
   final Map<String, Map<String, Uint8List>> stickerData = {};
   final Map<String, Metadata> legacyUrlPreviews = {};
   final Map<String, VideoController> videoPlayers = {};
@@ -52,19 +47,14 @@ class ConversationViewController extends StatefulController
   final RxDouble timestampOffset = 0.0.obs;
   final RxBool inSelectMode = false.obs;
   final RxList<Message> selected = <Message>[].obs;
-  final RxList<Tuple3<Message, MessagePart, SpellCheckTextEditingController>>
-      editing =
-      <Tuple3<Message, MessagePart, SpellCheckTextEditingController>>[].obs;
+  final RxList<Tuple3<Message, MessagePart, SpellCheckTextEditingController>> editing = <Tuple3<Message, MessagePart, SpellCheckTextEditingController>>[].obs;
   final GlobalKey focusInfoKey = GlobalKey();
   final RxBool recipientNotifsSilenced = false.obs;
   bool showingOverlays = false;
-  bool _subjectWasLastFocused =
-      false; // If this is false, then message field was last focused (default)
+  bool _subjectWasLastFocused = false; // If this is false, then message field was last focused (default)
 
-  FocusNode get lastFocusedNode =>
-      _subjectWasLastFocused ? subjectFocusNode : focusNode;
-  SpellCheckTextEditingController get lastFocusedTextController =>
-      _subjectWasLastFocused ? subjectTextController : textController;
+  FocusNode get lastFocusedNode => _subjectWasLastFocused ? subjectFocusNode : focusNode;
+  SpellCheckTextEditingController get lastFocusedTextController => _subjectWasLastFocused ? subjectTextController : textController;
 
   // text field items
   bool showAttachmentPicker = false;
@@ -73,10 +63,8 @@ class ConversationViewController extends StatefulController
   final RxList<PlatformFile> pickedAttachments = <PlatformFile>[].obs;
   final focusNode = FocusNode();
   final subjectFocusNode = FocusNode();
-  late final textController =
-      MentionTextEditingController(focusNode: focusNode);
-  late final subjectTextController =
-      SpellCheckTextEditingController(focusNode: subjectFocusNode);
+  late final textController = MentionTextEditingController(focusNode: focusNode);
+  late final subjectTextController = SpellCheckTextEditingController(focusNode: subjectFocusNode);
   final RxBool showRecording = false.obs;
   final RxList<Emoji> emojiMatches = <Emoji>[].obs;
   final RxInt emojiSelectedIndex = 0.obs;
@@ -84,8 +72,7 @@ class ConversationViewController extends StatefulController
   final RxInt mentionSelectedIndex = 0.obs;
   final ScrollController emojiScrollController = ScrollController();
   final Rxn<DateTime> scheduledDate = Rxn<DateTime>(null);
-  final Rxn<Tuple2<Message, int>> _replyToMessage =
-      Rxn<Tuple2<Message, int>>(null);
+  final Rxn<Tuple2<Message, int>> _replyToMessage = Rxn<Tuple2<Message, int>>(null);
   Tuple2<Message, int>? get replyToMessage => _replyToMessage.value;
   set replyToMessage(Tuple2<Message, int>? m) {
     _replyToMessage.value = m;
@@ -93,19 +80,14 @@ class ConversationViewController extends StatefulController
       lastFocusedNode.requestFocus();
     }
   }
-
-  late final mentionables = chat.participants
-      .map((e) => Mentionable(
-            handle: e,
-          ))
-      .toList();
+  late final mentionables = chat.participants.map((e) => Mentionable(
+    handle: e,
+  )).toList();
 
   bool keyboardOpen = false;
   double _keyboardOffset = 0;
   Timer? _scrollDownDebounce;
-  Future<void> Function(
-      Tuple6<List<PlatformFile>, String, String, String?, int?, String?>,
-      bool)? sendFunc;
+  Future<void> Function(Tuple6<List<PlatformFile>, String, String, String?, int?, String?>, bool)? sendFunc;
   bool isProcessingImage = false;
 
   @override
@@ -122,9 +104,9 @@ class ConversationViewController extends StatefulController
 
     scrollController.addListener(() {
       if (!scrollController.hasClients) return;
-      if (keyboardOpen &&
-          ss.settings.hideKeyboardOnScroll.value &&
-          scrollController.offset > _keyboardOffset + 100) {
+      if (keyboardOpen
+          && ss.settings.hideKeyboardOnScroll.value
+          && scrollController.offset > _keyboardOffset + 100) {
         focusNode.unfocus();
         subjectFocusNode.unfocus();
       }
@@ -134,9 +116,7 @@ class ConversationViewController extends StatefulController
 
       if (scrollController.offset >= 500 && !showScrollDown.value) {
         showScrollDown.value = true;
-        if (_scrollDownDebounce?.isActive ?? false) {
-          _scrollDownDebounce?.cancel();
-        }
+        if (_scrollDownDebounce?.isActive ?? false) _scrollDownDebounce?.cancel();
         _scrollDownDebounce = Timer(const Duration(seconds: 3), () {
           showScrollDown.value = false;
         });
@@ -176,8 +156,7 @@ class ConversationViewController extends StatefulController
   }
 
   Future<void> scrollToBottom() async {
-    if (scrollController.positions.isNotEmpty &&
-        scrollController.positions.first.extentBefore > 0) {
+    if (scrollController.positions.isNotEmpty && scrollController.positions.first.extentBefore > 0) {
       await scrollController.animateTo(
         0.0,
         curve: Curves.easeOut,
@@ -190,22 +169,11 @@ class ConversationViewController extends StatefulController
     }
   }
 
-  Future<void> send(
-      List<PlatformFile> attachments,
-      String text,
-      String subject,
-      String? replyGuid,
-      int? replyPart,
-      String? effectId,
-      bool isAudioMessage) async {
-    sendFunc?.call(
-        Tuple6(attachments, text, subject, replyGuid, replyPart, effectId),
-        isAudioMessage);
+  Future<void> send(List<PlatformFile> attachments, String text, String subject, String? replyGuid, int? replyPart, String? effectId, bool isAudioMessage) async {
+    sendFunc?.call(Tuple6(attachments, text, subject, replyGuid, replyPart, effectId), isAudioMessage);
   }
 
-  void queueImage(
-      Tuple4<Attachment, PlatformFile, BuildContext, Completer<Uint8List>>
-          item) {
+  void queueImage(Tuple4<Attachment, PlatformFile, BuildContext, Completer<Uint8List>> item) {
     imageCacheQueue.add(item);
     if (!isProcessingImage) _processNextImage();
   }
@@ -225,8 +193,7 @@ class ConversationViewController extends StatefulController
     if (kIsWeb || file.path == null) {
       if (attachment.mimeType?.contains("image/tif") ?? false) {
         final receivePort = ReceivePort();
-        await Isolate.spawn(
-            unsupportedToPngIsolate, IsolateData(file, receivePort.sendPort));
+        await Isolate.spawn(unsupportedToPngIsolate, IsolateData(file, receivePort.sendPort));
         // Get the processed image from the isolate.
         final image = await receivePort.first as Uint8List?;
         tmpData = image;
@@ -234,8 +201,7 @@ class ConversationViewController extends StatefulController
         tmpData = file.bytes;
       }
     } else if (attachment.canCompress) {
-      tmpData =
-          await as.loadAndGetProperties(attachment, actualPath: file.path!);
+      tmpData = await as.loadAndGetProperties(attachment, actualPath: file.path!);
       // All other attachments can be held in memory as bytes
     } else {
       tmpData = await File(file.path!).readAsBytes();
@@ -258,9 +224,7 @@ class ConversationViewController extends StatefulController
   }
 
   bool isEditing(String guid, int part) {
-    return editing.firstWhereOrNull(
-            (e) => e.item1.guid == guid && e.item2.part == part) !=
-        null;
+    return editing.firstWhereOrNull((e) => e.item1.guid == guid && e.item2.part == part) != null;
   }
 
   void close() {
@@ -271,10 +235,8 @@ class ConversationViewController extends StatefulController
 
   Future<void> saveReplyToMessageState() async {
     if (replyToMessage != null) {
-      await ss.prefs.setString(
-          'replyToMessage_${chat.guid}', replyToMessage!.item1.guid!);
-      await ss.prefs
-          .setInt('replyToMessagePart_${chat.guid}', replyToMessage!.item2);
+      await ss.prefs.setString('replyToMessage_${chat.guid}', replyToMessage!.item1.guid!);
+      await ss.prefs.setInt('replyToMessagePart_${chat.guid}', replyToMessage!.item2);
     } else {
       await ss.prefs.remove('replyToMessage_${chat.guid}');
       await ss.prefs.remove('replyToMessagePart_${chat.guid}');
@@ -282,10 +244,8 @@ class ConversationViewController extends StatefulController
   }
 
   Future<void> loadReplyToMessageState() async {
-    final replyToMessageGuid =
-        ss.prefs.getString('replyToMessage_${chat.guid}');
-    final replyToMessagePart =
-        ss.prefs.getInt('replyToMessagePart_${chat.guid}');
+    final replyToMessageGuid = ss.prefs.getString('replyToMessage_${chat.guid}');
+    final replyToMessagePart = ss.prefs.getInt('replyToMessagePart_${chat.guid}');
     if (replyToMessageGuid != null && replyToMessagePart != null) {
       final message = Message.findOne(guid: replyToMessageGuid);
       if (message != null) {

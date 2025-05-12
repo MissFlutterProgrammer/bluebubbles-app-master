@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:bluebubbles/helpers/types/constants.dart';
 import 'package:bluebubbles/services/services.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,16 +9,12 @@ class NextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => ss.settings.skin.value != Skins.Material
-          ? Icon(
-              ss.settings.skin.value != Skins.Material
-                  ? CupertinoIcons.chevron_right
-                  : Icons.arrow_forward,
-              color: context.theme.colorScheme.outline.withOpacity(0.5),
-              size: 18,
-            )
-          : const SizedBox.shrink(),
-    );
+    return Obx(() => ss.settings.skin.value != Skins.Material ? Icon(
+        ss.settings.skin.value != Skins.Material
+            ? CupertinoIcons.chevron_right
+            : Icons.arrow_forward,
+        color: context.theme.colorScheme.outline.withOpacity(0.5),
+        size: 18,
+      ) : const SizedBox.shrink());
   }
 }

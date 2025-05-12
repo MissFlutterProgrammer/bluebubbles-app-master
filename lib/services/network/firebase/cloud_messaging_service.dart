@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:bluebubbles/utils/logger/logger.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/database/models.dart';
@@ -10,9 +11,8 @@ import 'package:get/get.dart' hide Response;
 import 'package:universal_io/io.dart';
 
 /// Get an instance of our [CloudMessagingService]
-CloudMessagingService fcm = Get.isRegistered<CloudMessagingService>()
-    ? Get.find<CloudMessagingService>()
-    : Get.put(CloudMessagingService());
+CloudMessagingService fcm =
+    Get.isRegistered<CloudMessagingService>() ? Get.find<CloudMessagingService>() : Get.put(CloudMessagingService());
 
 /// Manager for registering the client with the server FCM client (used for notifications)
 ///
@@ -28,9 +28,7 @@ class CloudMessagingService extends GetxService {
   Future<void> registerDevice() async {
     // Make sure setup is complete, and that we aren't currently registering with FCM
     // Users can also choose to disable FCM in settings
-    if (!ss.settings.finishedSetup.value || ss.settings.keepAppAlive.value) {
-      return;
-    }
+    if (!ss.settings.finishedSetup.value || ss.settings.keepAppAlive.value) return;
 
     if (completer != null && !completer!.isCompleted) {
       return completer!.future;
@@ -43,15 +41,13 @@ class CloudMessagingService extends GetxService {
 
     // Make sure FCM data is available
     if (ss.fcmData.isNull) {
-      Logger.warn("No FCM Auth data found. Skipping FCM authentication",
-          tag: 'FCM-Auth');
+      Logger.warn("No FCM Auth data found. Skipping FCM authentication", tag: 'FCM-Auth');
       closeCompleter = true;
     }
 
     // If we've already got a token, re-register with this token
     if (!isNullOrEmpty(token)) {
-      Logger.debug("Already authorized FCM device! Token: $token",
-          tag: 'FCM-Auth');
+      Logger.debug("Already authorized FCM device! Token: $token", tag: 'FCM-Auth');
       Logger.info('Registering device with server...', tag: 'FCM-Auth');
       String deviceName = await getDeviceName();
       await http.addFcmDevice(deviceName.trim(), token!.trim()).then((_) {
@@ -59,16 +55,14 @@ class CloudMessagingService extends GetxService {
         completer?.complete();
       }).catchError((ex) {
         completer?.completeError(ex);
-        throw Exception(
-            "Failed to add FCM device to the server! Token: $token, ${ex.toString()}");
+        throw Exception("Failed to add FCM device to the server! Token: $token, ${ex.toString()}");
       });
       closeCompleter = true;
     }
 
     // Don't do anything if on web or desktop
     if (kIsWeb || kIsDesktop) {
-      Logger.debug(
-          "Platform ${kIsWeb ? "web" : Platform.operatingSystem} detected, not authing with FCM!",
+      Logger.debug("Platform ${kIsWeb ? "web" : Platform.operatingSystem} detected, not authing with FCM!",
           tag: 'FCM-Auth');
       closeCompleter = true;
     }
@@ -89,11 +83,8 @@ class CloudMessagingService extends GetxService {
       result = await mcs.invokeMethod('firebase-auth', ss.fcmData.toMap());
     } on PlatformException catch (ex, stack) {
       // Don't try to re-auth if device is de-Googled
-      if (ex.toString().contains("Google Play Services is not available")) {
-        return;
-      }
-      Logger.error('Failed to perform initial FCM authentication!',
-          error: ex, trace: stack, tag: 'FCM-Auth');
+      if (ex.toString().contains("Google Play Services is not available")) return;
+      Logger.error('Failed to perform initial FCM authentication!', error: ex, trace: stack, tag: 'FCM-Auth');
 
       // If the first try fails, let's try again with new FCM data from the server
       Logger.info('Fetching FCM data from the server...', tag: 'FCM-Auth');
@@ -106,12 +97,9 @@ class CloudMessagingService extends GetxService {
       });
 
       // If we get valid FCM data, redo the FCM auth, otherwise error out
-      if (response.statusCode == 200 &&
-          response.data['data'] is Map<String, dynamic>) {
+      if (response.statusCode == 200 && response.data['data'] is Map<String, dynamic>) {
         Map<String, dynamic> fcmMeta = response.data['data'];
-        Logger.info(
-            'Received FCM data from the server. Attempting to re-authenticate',
-            tag: 'FCM-Auth');
+        Logger.info('Received FCM data from the server. Attempting to re-authenticate', tag: 'FCM-Auth');
 
         try {
           // Parse and save new FCM data, then retry auth with FCM
@@ -120,15 +108,12 @@ class CloudMessagingService extends GetxService {
           result = await mcs.invokeMethod('firebase-auth', fcmData.toMap());
         } on PlatformException catch (e, stack) {
           // If we fail a second time, error out
-          Logger.error("Failed to register with FCM",
-              error: e, trace: stack, tag: 'FCM-Auth');
+          Logger.error("Failed to register with FCM", error: e, trace: stack, tag: 'FCM-Auth');
           completer?.completeError(e);
           return;
         }
       } else {
-        Logger.error(
-            'Failed to register with FCM - API error ${response.statusCode}: ${response.data}',
-            tag: 'FCM-Auth');
+        Logger.error('Failed to register with FCM - API error ${response.statusCode}: ${response.data}', tag: 'FCM-Auth');
         completer?.completeError("API Error ${response.statusCode}");
         return;
       }
@@ -136,8 +121,7 @@ class CloudMessagingService extends GetxService {
 
     // Make sure we got a valid response back from the FCM auth
     if (isNullOrEmpty(result)) {
-      Logger.warn("Empty results, not registering device with the server.",
-          tag: 'FCM-Auth');
+      Logger.warn("Empty results, not registering device with the server.", tag: 'FCM-Auth');
       completer?.complete();
       return;
     }
@@ -151,8 +135,7 @@ class CloudMessagingService extends GetxService {
       completer?.complete();
     }).catchError((ex) {
       completer?.completeError(ex);
-      throw Exception(
-          "Failed to add FCM device to the server! Token: $token, ${ex.toString()}");
+      throw Exception("Failed to add FCM device to the server! Token: $token, ${ex.toString()}");
     });
   }
 }

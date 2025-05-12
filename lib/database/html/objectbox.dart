@@ -47,14 +47,12 @@ class Order {
 }
 
 class Box<T> {
-  int put(T object, {PutMode mode = PutMode.put}) =>
-      throw Exception('Unsupported Platform');
+  int put(T object, {PutMode mode = PutMode.put}) => throw Exception('Unsupported Platform');
 
   /// Puts the given [objects] into this Box in a single transaction.
   ///
   /// Returns a list of all IDs of the inserted Objects.
-  List<int> putMany(List<T> objects, {PutMode mode = PutMode.put}) =>
-      throw Exception('Unsupported Platform');
+  List<int> putMany(List<T> objects, {PutMode mode = PutMode.put}) => throw Exception('Unsupported Platform');
 
   /// Retrieves the stored object with the ID [id] from this box's database.
   /// Returns null if an object with the given ID doesn't exist.
@@ -67,8 +65,7 @@ class Box<T> {
   /// the location of its ID in [ids]. Non-existent IDs become null.
   ///
   /// Pass growableResult: true for the resulting list to be growable.
-  List<T?> getMany(List<int> ids, {bool growableResult = false}) =>
-      throw Exception('Unsupported Platform');
+  List<T?> getMany(List<int> ids, {bool growableResult = false}) => throw Exception('Unsupported Platform');
 
   /// Removes (deletes) by ID, returning a list of IDs of all removed Objects.
   int removeMany(List<int> ids) => throw Exception('Unsupported Platform');
@@ -82,6 +79,7 @@ class Box<T> {
 }
 
 class ToOne<EntityT> {
+
   /// Get target object. If it's the first access, this reads from DB.
   EntityT? get target => null;
 
@@ -95,8 +93,7 @@ class ToOne<EntityT> {
 class Store {
   Box<T> box<T>() => throw Exception('Unsupported Platform');
 
-  R runInTransaction<R>(TxMode mode, R Function() fn) =>
-      throw Exception('Unsupported Platform');
+  R runInTransaction<R>(TxMode mode, R Function() fn) => throw Exception('Unsupported Platform');
 
   void close() => throw Exception('Unsupported Platform');
 

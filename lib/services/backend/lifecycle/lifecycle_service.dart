@@ -1,5 +1,6 @@
 import 'dart:isolate';
 import 'dart:ui' hide window;
+
 import 'package:bluebubbles/database/database.dart';
 import 'package:bluebubbles/services/services.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
@@ -12,34 +13,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_html/html.dart' hide Platform;
 import 'dart:io' show Platform;
 
-LifecycleService ls = Get.isRegistered<LifecycleService>()
-    ? Get.find<LifecycleService>()
-    : Get.put(LifecycleService());
+LifecycleService ls = Get.isRegistered<LifecycleService>() ? Get.find<LifecycleService>() : Get.put(LifecycleService());
 
 class LifecycleService extends GetxService with WidgetsBindingObserver {
   bool isBubble = false;
   bool isUiThread = true;
   bool windowFocused = true;
   bool? wasActiveAliveBefore;
-  bool get isAlive => kIsWeb
-      ? !(window.document.hidden ?? false)
-      : kIsDesktop
-          ? windowFocused
-          : (WidgetsBinding.instance.lifecycleState ==
-                  AppLifecycleState.resumed ||
-              IsolateNameServer.lookupPortByName('bg_isolate') != null);
+  bool get isAlive => kIsWeb ? !(window.document.hidden ?? false)
+      : kIsDesktop ? windowFocused : (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed
+        || IsolateNameServer.lookupPortByName('bg_isolate') != null);
 
   AppLifecycleState? get currentState => WidgetsBinding.instance.lifecycleState;
 
   List<AppLifecycleState> statesSinceLastResume = [];
 
-  bool get wasPaused =>
-      statesSinceLastResume.contains(AppLifecycleState.paused);
-  bool get wasHidden =>
-      statesSinceLastResume.contains(AppLifecycleState.inactive) ||
-      statesSinceLastResume.contains(AppLifecycleState.detached);
-  bool get hasResumed =>
-      statesSinceLastResume.contains(AppLifecycleState.resumed);
+  bool get wasPaused => statesSinceLastResume.contains(AppLifecycleState.paused);
+  bool get wasHidden => statesSinceLastResume.contains(AppLifecycleState.inactive) || statesSinceLastResume.contains(AppLifecycleState.detached);
+  bool get hasResumed => statesSinceLastResume.contains(AppLifecycleState.resumed);
 
   @override
   void onInit() {
@@ -48,8 +39,7 @@ class LifecycleService extends GetxService with WidgetsBindingObserver {
   }
 
   Future<void> init({bool headless = false, bool isBubble = false}) async {
-    Logger.debug(
-        "Initializing LifecycleService${headless ? " in headless mode" : ""}");
+    Logger.debug("Initializing LifecycleService${headless ? " in headless mode" : ""}");
 
     isUiThread = !headless;
     this.isBubble = isBubble;
@@ -70,11 +60,9 @@ class LifecycleService extends GetxService with WidgetsBindingObserver {
     Logger.debug("App State changed to $state");
 
     // If the current state is resume, and we've already had a resume, remove all states up to the last resume.
-    if (state == AppLifecycleState.resumed &&
-        statesSinceLastResume.contains(AppLifecycleState.resumed)) {
+    if (state == AppLifecycleState.resumed && statesSinceLastResume.contains(AppLifecycleState.resumed)) {
       // Remove states up to the last resume
-      while (statesSinceLastResume.isNotEmpty &&
-          statesSinceLastResume.first != AppLifecycleState.resumed) {
+      while (statesSinceLastResume.isNotEmpty && statesSinceLastResume.first != AppLifecycleState.resumed) {
         statesSinceLastResume.removeAt(0);
       }
     } else {
@@ -85,11 +73,8 @@ class LifecycleService extends GetxService with WidgetsBindingObserver {
       await Database.waitForInit();
       open();
     } else if (state != AppLifecycleState.inactive) {
-      SystemChannels.textInput
-          .invokeMethod('TextInput.hide')
-          .catchError((e, stack) {
-        Logger.error("Error caught while hiding keyboard!",
-            error: e, trace: stack);
+      SystemChannels.textInput.invokeMethod('TextInput.hide').catchError((e, stack) {
+        Logger.error("Error caught while hiding keyboard!", error: e, trace: stack);
       });
       if (isBubble) {
         closeBubble();
@@ -107,10 +92,7 @@ class LifecycleService extends GetxService with WidgetsBindingObserver {
     // is not started when in headless mode.
     if (!isUiThread) return;
 
-    if ([AppLifecycleState.inactive, AppLifecycleState.hidden]
-        .contains(state)) {
-      return;
-    }
+    if ([AppLifecycleState.inactive, AppLifecycleState.hidden].contains(state)) return;
 
     // This may get called before the settings service is initialized
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -121,8 +103,7 @@ class LifecycleService extends GetxService with WidgetsBindingObserver {
       if (state == AppLifecycleState.resumed) {
         Logger.info(tag: "LifecycleService", "Stopping foreground service");
         mcs.invokeMethod("stop-foreground-service");
-      } else if ([AppLifecycleState.paused, AppLifecycleState.detached]
-          .contains(state)) {
+      } else if ([AppLifecycleState.paused, AppLifecycleState.detached].contains(state)) {
         Logger.info(tag: "LifecycleService", "Starting foreground service");
         mcs.invokeMethod("start-foreground-service");
       }
@@ -148,7 +129,7 @@ class LifecycleService extends GetxService with WidgetsBindingObserver {
       if (!isBubble) {
         createFakePort();
       }
-
+      
       socket.reconnect();
     }
 

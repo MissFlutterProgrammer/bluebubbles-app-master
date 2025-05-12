@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/services/services.dart';
 import 'package:bluebubbles/database/models.dart';
@@ -34,51 +35,32 @@ class Share {
     _serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!_serviceEnabled) {
       await showDialog(
-        context: Get.context!,
-        builder: (context) => AlertDialog(
-          backgroundColor: Get.theme.colorScheme.properSurface,
-          title: Text(
-            "Location Services",
-            style: Get.textTheme.titleLarge,
-          ),
-          content: Text(
-            "Location Services must be enabled to send Locations",
-            style: Get.textTheme.bodyLarge,
-          ),
-          actions: [
-            if (!kIsDesktop || !Platform.isLinux)
-              TextButton(
-                onPressed: () => Get.back(),
-                child: Text(
-                  "Cancel",
-                  style: context.theme.textTheme.bodyLarge!.copyWith(
-                    color: context.theme.colorScheme.primary,
-                  ),
+          context: Get.context!,
+          builder: (context) => AlertDialog(
+                backgroundColor: Get.theme.colorScheme.properSurface,
+                title: Text(
+                  "Location Services",
+                  style: Get.textTheme.titleLarge,
                 ),
-              ),
-            if (!kIsDesktop || !Platform.isLinux)
-              TextButton(
-                onPressed: () async => await Geolocator.openLocationSettings(),
-                child: Text(
-                  "Open Settings",
-                  style: context.theme.textTheme.bodyLarge!.copyWith(
-                    color: context.theme.colorScheme.primary,
-                  ),
+                content: Text(
+                  "Location Services must be enabled to send Locations",
+                  style: Get.textTheme.bodyLarge,
                 ),
-              ),
-            if (kIsDesktop && Platform.isLinux)
-              TextButton(
-                onPressed: () => Get.back(),
-                child: Text(
-                  "OK",
-                  style: context.theme.textTheme.bodyLarge!.copyWith(
-                    color: context.theme.colorScheme.primary,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      );
+                actions: [
+                  if (!kIsDesktop || !Platform.isLinux)
+                    TextButton(
+                        onPressed: () => Get.back(),
+                        child: Text("Cancel", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary))),
+                  if (!kIsDesktop || !Platform.isLinux)
+                    TextButton(
+                        onPressed: () async => await Geolocator.openLocationSettings(),
+                        child: Text("Open Settings", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary))),
+                  if (kIsDesktop && Platform.isLinux)
+                    TextButton(
+                        onPressed: () => Get.back(),
+                        child: Text("OK", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary))),
+                ],
+              ));
       if (!_serviceEnabled) {
         return;
       }
@@ -89,44 +71,26 @@ class Share {
       if (_permissionGranted == LocationPermission.denied) {
         _permissionGranted = await Geolocator.requestPermission();
       }
-      if (_permissionGranted == LocationPermission.denied ||
-          _permissionGranted == LocationPermission.deniedForever) {
+      if (_permissionGranted == LocationPermission.denied || _permissionGranted == LocationPermission.deniedForever) {
         await showDialog(
             context: Get.context!,
             builder: (context) => AlertDialog(
                   backgroundColor: Get.theme.colorScheme.properSurface,
-                  title: Text(
-                    "Location Permission",
-                    style: Get.textTheme.titleLarge,
-                  ),
+                  title: Text("Location Permission", style: Get.textTheme.titleLarge),
                   content: Text(
                     "BlueBubbles needs the Location permission to send Locations",
                     style: Get.textTheme.bodyLarge,
                   ),
                   actions: [
                     TextButton(
-                      onPressed: () => Get.back(),
-                      child: Text(
-                        "Cancel",
-                        style: Get.textTheme.bodyLarge!.copyWith(
-                          color: Get.theme.colorScheme.primary,
-                        ),
-                      ),
-                    ),
+                        onPressed: () => Get.back(),
+                        child: Text("Cancel", style: Get.textTheme.bodyLarge!.copyWith(color: Get.theme.colorScheme.primary))),
                     TextButton(
-                      onPressed: () async =>
-                          await Geolocator.openLocationSettings(),
-                      child: Text(
-                        "Open Settings",
-                        style: Get.textTheme.bodyLarge!.copyWith(
-                          color: Get.theme.colorScheme.primary,
-                        ),
-                      ),
-                    )
+                        onPressed: () async => await Geolocator.openLocationSettings(),
+                        child: Text("Open Settings", style: Get.textTheme.bodyLarge!.copyWith(color: Get.theme.colorScheme.primary)))
                   ],
                 ));
-        if (_permissionGranted == LocationPermission.denied ||
-            _permissionGranted == LocationPermission.deniedForever) {
+        if (_permissionGranted == LocationPermission.denied || _permissionGranted == LocationPermission.deniedForever) {
           return;
         }
       }
@@ -138,29 +102,20 @@ class Share {
     String? url;
     String? title;
 
-    Future<Tuple5<String, String, Uint8List, String, String?>>
-        getLocationPreview() async {
+    Future<Tuple5<String, String, Uint8List, String, String?>> getLocationPreview() async {
       _locationData = await Geolocator.getCurrentPosition();
-      String vcfString = as.createAppleLocation(
-          _locationData.latitude, _locationData.longitude);
+      String vcfString = as.createAppleLocation(_locationData.latitude, _locationData.longitude);
 
       // Build out the file we are going to send
       String _attachmentGuid = "temp-${randomString(8)}";
       String fileName = "$_attachmentGuid-CL.loc.vcf";
       final bytes = Uint8List.fromList(utf8.encode(vcfString));
       final meta = await MetadataFetch.extract(
-        "https://maps.apple.com/?ll=${_locationData.latitude},${_locationData.longitude}&q=${_locationData.latitude},${_locationData.longitude}",
-      );
+          "https://maps.apple.com/?ll=${_locationData.latitude},${_locationData.longitude}&q=${_locationData.latitude},${_locationData.longitude}");
       String url = meta!.image!;
       String? title = meta.title;
 
-      return Tuple5(
-        _attachmentGuid,
-        fileName,
-        bytes,
-        url,
-        title,
-      );
+      return Tuple5(_attachmentGuid, fileName, bytes, url, title);
     }
 
     bool send = false;
@@ -168,92 +123,75 @@ class Share {
       cvc(chat).showingOverlays = true;
     }
     await showDialog(
-      context: Get.context!,
-      builder: (context) => FutureBuilder(
-          future: getLocationPreview(),
-          builder: (context, snapshot) {
-            if (snapshot.data != null) {
-              _attachmentGuid = snapshot.data!.item1;
-              fileName = snapshot.data!.item2;
-              bytes = snapshot.data!.item3;
-              url = snapshot.data!.item4;
-              title = snapshot.data!.item5;
-            }
-            if (url == null) {
-              return AbsorbPointer(
-                child: AlertDialog(
-                  backgroundColor: Get.theme.colorScheme.properSurface,
-                  title: Text(
-                    "Loading Location...",
-                    style: Get.textTheme.titleLarge,
+        context: Get.context!,
+        builder: (context) => FutureBuilder(
+            future: getLocationPreview(),
+            builder: (context, snapshot) {
+              if (snapshot.data != null) {
+                _attachmentGuid = snapshot.data!.item1;
+                fileName = snapshot.data!.item2;
+                bytes = snapshot.data!.item3;
+                url = snapshot.data!.item4;
+                title = snapshot.data!.item5;
+              }
+              if (url == null) {
+                return AbsorbPointer(
+                  child: AlertDialog(
+                    backgroundColor: Get.theme.colorScheme.properSurface,
+                    title: Text("Loading Location...", style: Get.textTheme.titleLarge),
+                    content: buildProgressIndicator(context),
                   ),
-                  content: buildProgressIndicator(context),
+                );
+              }
+              return AlertDialog(
+                backgroundColor: Get.theme.colorScheme.properSurface,
+                title: Text("Send Location?", style: Get.textTheme.titleLarge),
+                content: Container(
+                  width: 150,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.network(
+                        url!,
+                        gaplessPlayback: true,
+                        filterQuality: FilterQuality.none,
+                        errorBuilder: (_, __, ___) {
+                          return const SizedBox.shrink();
+                        },
+                        frameBuilder: (_, child, frame, __) {
+                          if (frame == null) {
+                            return Center(
+                              heightFactor: 1,
+                              child: buildProgressIndicator(context),
+                            );
+                          } else {
+                            return child;
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 15),
+                      Text(
+                        title ?? "No location details found",
+                        style: context.theme.textTheme.bodyMedium!.apply(fontWeightDelta: 2),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
+                actions: [
+                  TextButton(
+                      onPressed: () => Get.back(),
+                      child: Text("Cancel", style: Get.textTheme.bodyLarge!.copyWith(color: Get.theme.colorScheme.primary))),
+                  TextButton(
+                      onPressed: () {
+                        send = true;
+                        Get.back();
+                      },
+                      child: Text("Send", style: Get.textTheme.bodyLarge!.copyWith(color: Get.theme.colorScheme.primary)))
+                ],
               );
-            }
-            return AlertDialog(
-              backgroundColor: Get.theme.colorScheme.properSurface,
-              title: Text("Send Location?", style: Get.textTheme.titleLarge),
-              content: Container(
-                width: 150,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.network(
-                      url!,
-                      gaplessPlayback: true,
-                      filterQuality: FilterQuality.none,
-                      errorBuilder: (_, __, ___) {
-                        return const SizedBox.shrink();
-                      },
-                      frameBuilder: (_, child, frame, __) {
-                        if (frame == null) {
-                          return Center(
-                            heightFactor: 1,
-                            child: buildProgressIndicator(context),
-                          );
-                        } else {
-                          return child;
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 15),
-                    Text(
-                      title ?? "No location details found",
-                      style: context.theme.textTheme.bodyMedium!
-                          .apply(fontWeightDelta: 2),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Get.back(),
-                  child: Text(
-                    "Cancel",
-                    style: Get.textTheme.bodyLarge!.copyWith(
-                      color: Get.theme.colorScheme.primary,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    send = true;
-                    Get.back();
-                  },
-                  child: Text(
-                    "Send",
-                    style: Get.textTheme.bodyLarge!.copyWith(
-                      color: Get.theme.colorScheme.primary,
-                    ),
-                  ),
-                )
-              ],
-            );
-          }),
-    );
+            }));
     if (kIsDesktop || kIsWeb) {
       cvc(chat).showingOverlays = false;
     }
@@ -280,12 +218,10 @@ class Share {
       handleId: 0,
     );
 
-    outq.queue(
-      OutgoingItem(
-        type: QueueType.sendAttachment,
-        chat: chat,
-        message: message,
-      ),
-    );
+    outq.queue(OutgoingItem(
+      type: QueueType.sendAttachment,
+      chat: chat,
+      message: message,
+    ));
   }
 }

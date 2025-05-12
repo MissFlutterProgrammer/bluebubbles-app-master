@@ -1,16 +1,13 @@
-// ignore_for_file: no_wildcard_variable_uses
-
 import 'package:bluebubbles/database/models.dart';
 import 'package:bluebubbles/services/services.dart';
 import 'package:bluebubbles/utils/logger/logger.dart';
 import 'package:bluebubbles/services/backend/queue/queue_impl.dart';
 import 'package:get/get.dart';
 
-IncomingQueue inq = Get.isRegistered<IncomingQueue>()
-    ? Get.find<IncomingQueue>()
-    : Get.put(IncomingQueue());
+IncomingQueue inq = Get.isRegistered<IncomingQueue>() ? Get.find<IncomingQueue>() : Get.put(IncomingQueue());
 
 class IncomingQueue extends Queue {
+
   @override
   Future<void> prepItem(QueueItem _) async {}
 

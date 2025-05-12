@@ -10,8 +10,7 @@ class MacSetupCheck extends StatelessWidget {
   Widget build(BuildContext context) {
     return SetupPageTemplate(
       title: "Setup Check",
-      subtitle:
-          "Please ensure you have set up the BlueBubbles Server on macOS before proceeding.\n\nAdditionally, please ensure iMessage is signed into your Apple ID on macOS.",
+      subtitle: "Please ensure you have set up the BlueBubbles Server on macOS before proceeding.\n\nAdditionally, please ensure iMessage is signed into your Apple ID on macOS.",
       belowSubtitle: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 13),
         child: Align(
@@ -21,10 +20,7 @@ class MacSetupCheck extends StatelessWidget {
               borderRadius: BorderRadius.circular(25),
               gradient: LinearGradient(
                 begin: AlignmentDirectional.topStart,
-                colors: [
-                  HexColor('2772C3'),
-                  HexColor('5CA7F8').darkenPercent(5)
-                ],
+                colors: [HexColor('2772C3'), HexColor('5CA7F8').darkenPercent(5)],
               ),
             ),
             height: 40,
@@ -41,12 +37,7 @@ class MacSetupCheck extends StatelessWidget {
                 minimumSize: WidgetStateProperty.all(const Size(30, 30)),
               ),
               onPressed: () async {
-                await launchUrl(
-                    Uri(
-                        scheme: "https",
-                        host: "bluebubbles.app",
-                        path: "install"),
-                    mode: LaunchMode.externalApplication);
+                await launchUrl(Uri(scheme: "https", host: "bluebubbles.app", path: "install"), mode: LaunchMode.externalApplication);
               },
               child: Shimmer.fromColors(
                 baseColor: Colors.white70,
@@ -56,17 +47,10 @@ class MacSetupCheck extends StatelessWidget {
                   children: [
                     Text(
                       "Server setup instructions",
-                      style: context.theme.textTheme.bodyLarge!.apply(
-                        fontSizeFactor: 1.1,
-                        color: Colors.white,
-                      ),
+                      style: context.theme.textTheme.bodyLarge!.apply(fontSizeFactor: 1.1, color: Colors.white)
                     ),
                     const SizedBox(width: 10),
-                    const Icon(
-                      Icons.arrow_forward,
-                      color: Colors.white,
-                      size: 20,
-                    ),
+                    const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
                   ],
                 ),
               ),

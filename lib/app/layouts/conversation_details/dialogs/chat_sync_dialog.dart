@@ -11,7 +11,7 @@ class ChatSyncDialog extends StatefulWidget {
     required this.chat,
     this.initialMessage,
     this.withOffset = false,
-    this.limit = 100,
+    this.limit = 100
   });
 
   final Chat chat;
@@ -42,17 +42,14 @@ class _ChatSyncDialogState extends OptimizedState<ChatSyncDialog> {
       offset = Message.countForChat(widget.chat) ?? 0;
     }
 
-    cm
-        .getMessages(widget.chat.guid, offset: offset, limit: widget.limit)
-        .then((dynamic messages) {
+    cm.getMessages(widget.chat.guid, offset: offset, limit: widget.limit).then((dynamic messages) {
       if (mounted) {
         setState(() {
           message = "Adding ${messages.length} messages...";
         });
       }
 
-      MessageHelper.bulkAddMessages(widget.chat, messages,
-          onProgress: (int progress, int length) {
+      MessageHelper.bulkAddMessages(widget.chat, messages, onProgress: (int progress, int length) {
         if (progress == 0 || length == 0) {
           this.progress = null;
         } else {
@@ -75,24 +72,16 @@ class _ChatSyncDialogState extends OptimizedState<ChatSyncDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
-        errorCode != null ? "Error!" : message!,
-        style: context.theme.textTheme.titleLarge,
-      ),
+      title: Text(errorCode != null ? "Error!" : message!, style: context.theme.textTheme.titleLarge),
       content: errorCode != null
-          ? Text(
-              errorCode!,
-              style: context.theme.textTheme.bodyLarge,
-            )
+          ? Text(errorCode!, style: context.theme.textTheme.bodyLarge)
           : SizedBox(
               height: 5,
               child: Center(
                 child: LinearProgressIndicator(
                   value: progress,
                   backgroundColor: context.theme.colorScheme.outline,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    context.theme.colorScheme.primary,
-                  ),
+                  valueColor: AlwaysStoppedAnimation<Color>(context.theme.colorScheme.primary),
                 ),
               ),
             ),
@@ -103,10 +92,7 @@ class _ChatSyncDialogState extends OptimizedState<ChatSyncDialog> {
             Navigator.of(context).pop();
           },
           child: Text(
-            "OK",
-            style: context.theme.textTheme.bodyLarge!.copyWith(
-              color: context.theme.colorScheme.primary,
-            ),
+            "OK", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary),
           ),
         )
       ],

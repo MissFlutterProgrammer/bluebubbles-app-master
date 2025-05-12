@@ -7,34 +7,27 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ThemeSwitcher extends StatefulWidget {
-  ThemeSwitcher(
-      {super.key,
-      required this.iOSSkin,
-      required this.materialSkin,
-      this.samsungSkin});
+  ThemeSwitcher({super.key, required this.iOSSkin, required this.materialSkin, this.samsungSkin});
   final Widget iOSSkin;
   final Widget materialSkin;
   final Widget? samsungSkin;
 
-  static PageRoute<T> buildPageRoute<T>(
-      {required Widget Function(BuildContext context) builder}) {
+  static PageRoute<T> buildPageRoute<T>({required Widget Function(BuildContext context) builder}) {
     switch (ss.settings.skin.value) {
       case Skins.iOS:
-        return PageRouteBuilder<T>(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                builder.call(context),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return CustomCupertinoPageTransition(
-                primaryRouteAnimation: animation,
-                child: child,
-                linearTransition: false,
-              );
-            });
+        return PageRouteBuilder<T>(pageBuilder: (context, animation, secondaryAnimation) => builder.call(context),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return CustomCupertinoPageTransition(primaryRouteAnimation: animation, child: child, linearTransition: false);
+          });
       case Skins.Material:
         return MaterialPageRoute<T>(builder: builder);
       case Skins.Samsung:
         return MaterialPageRoute<T>(builder: builder);
+      default:
+        return PageRouteBuilder<T>(pageBuilder: (context, animation, secondaryAnimation) => builder.call(context),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return CustomCupertinoPageTransition(primaryRouteAnimation: animation, child: child, linearTransition: false);
+          });
     }
   }
 
@@ -52,6 +45,10 @@ class ThemeSwitcher extends StatefulWidget {
         return const AlwaysScrollableScrollPhysics(
           parent: ClampingScrollPhysics(),
         );
+      default:
+        return const AlwaysScrollableScrollPhysics(
+          parent: CustomBouncingScrollPhysics(),
+        );
     }
   }
 
@@ -60,6 +57,7 @@ class ThemeSwitcher extends StatefulWidget {
 }
 
 class _ThemeSwitcherState extends OptimizedState<ThemeSwitcher> {
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -70,6 +68,8 @@ class _ThemeSwitcherState extends OptimizedState<ThemeSwitcher> {
           return widget.materialSkin;
         case Skins.Samsung:
           return widget.samsungSkin ?? widget.materialSkin;
+        default:
+          return widget.iOSSkin;
       }
     });
   }

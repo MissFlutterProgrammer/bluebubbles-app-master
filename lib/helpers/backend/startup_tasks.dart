@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/database/database.dart';
@@ -15,6 +16,7 @@ import 'package:tuple/tuple.dart';
 import 'package:window_manager/window_manager.dart';
 
 class StartupTasks {
+
   static final Completer<void> uiReady = Completer<void>();
 
   static Future<void> waitForUI() async {
@@ -23,7 +25,7 @@ class StartupTasks {
 
   static Future<void> initStartupServices({bool isBubble = false}) async {
     debugPrint("Initializing startup services...");
-
+    
     // First, initialize the filesystem service as it's used by other necessary services
     await fs.init();
 
@@ -45,7 +47,7 @@ class StartupTasks {
     // Load FCM data into settings from the database
     // We only need to do this for the main startup
     ss.getFcmData();
-
+    
     // We then have to initialize all the services that the app will use.
     // Order matters here as some services may rely on others. For instance,
     // The MethodChannel service needs the database to be initialized to handle events.
@@ -53,7 +55,7 @@ class StartupTasks {
     await mcs.init();
     await ls.init(isBubble: isBubble);
     await ts.init();
-
+    
     if (!kIsWeb) {
       await cs.init();
       GlobalChatService;
@@ -104,15 +106,13 @@ class StartupTasks {
       try {
         ss.checkServerUpdate();
       } catch (ex, stack) {
-        Logger.warn("Failed to check for server update!",
-            error: ex, trace: stack);
+        Logger.warn("Failed to check for server update!", error: ex, trace: stack);
       }
 
       try {
         ss.checkClientUpdate();
       } catch (ex, stack) {
-        Logger.warn("Failed to check for client update!",
-            error: ex, trace: stack);
+        Logger.warn("Failed to check for client update!", error: ex, trace: stack);
       }
     });
 
@@ -155,16 +155,14 @@ class StartupTasks {
       Logger.debug("Got Signal to go to foreground");
       doWhenWindowReady(() async {
         await windowManager.show();
-        List<Tuple2<String, String>?> widAndNames =
-            await (await Process.start('wmctrl', ['-pl']))
-                .stdout
-                .transform(utf8.decoder)
-                .transform(const LineSplitter())
-                .map((line) => line.replaceAll(RegExp(r"\s+"), " ").split(" "))
-                .map((split) =>
-                    split[2] == "$pid" ? Tuple2(split.first, split.last) : null)
-                .where((tuple) => tuple != null)
-                .toList();
+        List<Tuple2<String, String>?> widAndNames = await (await Process.start('wmctrl', ['-pl']))
+            .stdout
+            .transform(utf8.decoder)
+            .transform(const LineSplitter())
+            .map((line) => line.replaceAll(RegExp(r"\s+"), " ").split(" "))
+            .map((split) => split[2] == "$pid" ? Tuple2(split.first, split.last) : null)
+            .where((tuple) => tuple != null)
+            .toList();
 
         for (Tuple2<String, String>? window in widAndNames) {
           if (window?.item2 == "BlueBubbles") {
@@ -194,17 +192,15 @@ Future<void> reviewFlow() async {
     // If the app has been installed for 7 days, request a review
     // And if the user has not been asked for a review ever.
     // If the user has already been asked, ask again after 30 days
-    if ((lastReviewRequest == 0 && days >= 7) ||
-        (lastReviewRequest > 0 && days >= 30)) {
+    if ((lastReviewRequest == 0 && days >= 7) || (lastReviewRequest > 0 && days >= 30)) {
       ss.settings.lastReviewRequestTimestamp.value = now.millisecondsSinceEpoch;
       await ss.settings.saveOne("lastReviewRequestTimestamp");
       await requestReview();
     } else {
-      Logger.info(
-          'Not requesting review, days since install/last request: $days');
+      Logger.info('Not requesting review, days since install/last request: $days');
     }
   } catch (e, st) {
-    Logger.warn("Failed to request app review", error: e, trace: st);
+      Logger.warn("Failed to request app review", error: e, trace: st);
   }
 }
 

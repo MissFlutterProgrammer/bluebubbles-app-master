@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
@@ -78,7 +76,7 @@ class Srgb extends Color {
 
   Srgb(int r, int g, int b)
       : this._(
-            r.toDouble() / 255.0, g.toDouble() / 255.0, b.toDouble() / 255.0);
+      r.toDouble() / 255.0, g.toDouble() / 255.0, b.toDouble() / 255.0);
   const Srgb._(this.r, this.g, this.b);
 
   // Convenient constructors for quantized values
@@ -86,10 +84,10 @@ class Srgb extends Color {
 
   @override
   LinearSrgb toLinearSrgb() => LinearSrgb(
-        LinearSrgb._eotf(r),
-        LinearSrgb._eotf(g),
-        LinearSrgb._eotf(b),
-      );
+    LinearSrgb._eotf(r),
+    LinearSrgb._eotf(g),
+    LinearSrgb._eotf(b),
+  );
 
   int quantize8() {
     return ui.Color.fromRGBO(_quantize8(r), _quantize8(g), _quantize8(b), 1)

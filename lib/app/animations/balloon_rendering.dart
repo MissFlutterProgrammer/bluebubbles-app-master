@@ -1,6 +1,5 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:math';
+
 import 'package:bluebubbles/helpers/ui/theme_helpers.dart';
 import 'package:bluebubbles/app/animations/balloon_classes.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +29,7 @@ class Balloons extends LeafRenderObjectWidget {
 class RenderBalloons extends RenderBox {
   RenderBalloons({
     required BalloonController controller,
-  }) : _controller = controller;
+  })   : _controller = controller;
 
   BalloonController get controller => _controller;
   BalloonController _controller;
@@ -115,13 +114,9 @@ class RenderBalloons extends RenderBox {
       double topLeftCurveEndY = centerY - radius;
 
       p.moveTo(topLeftCurveStartX, topLeftCurveStartY);
-      p.cubicTo(
-          topLeftCurveStartX,
-          topLeftCurveStartY - handleLength - widthDiff,
-          topLeftCurveEndX - handleLength,
-          topLeftCurveEndY,
-          topLeftCurveEndX,
-          topLeftCurveEndY);
+      p.cubicTo(topLeftCurveStartX, topLeftCurveStartY - handleLength - widthDiff,
+          topLeftCurveEndX - handleLength, topLeftCurveEndY,
+          topLeftCurveEndX, topLeftCurveEndY);
 
       // Top Right Curve
 
@@ -131,13 +126,9 @@ class RenderBalloons extends RenderBox {
       var topRightCurveEndX = centerX + radius;
       var topRightCurveEndY = centerY;
 
-      p.cubicTo(
-          topRightCurveStartX + handleLength + widthDiff,
-          topRightCurveStartY,
-          topRightCurveEndX,
-          topRightCurveEndY - handleLength,
-          topRightCurveEndX,
-          topRightCurveEndY);
+      p.cubicTo(topRightCurveStartX + handleLength + widthDiff, topRightCurveStartY,
+          topRightCurveEndX, topRightCurveEndY - handleLength,
+          topRightCurveEndX, topRightCurveEndY);
 
       // Bottom Right Curve
 
@@ -147,13 +138,9 @@ class RenderBalloons extends RenderBox {
       var bottomRightCurveEndX = centerX;
       var bottomRightCurveEndY = balloonBottomY;
 
-      p.cubicTo(
-          bottomRightCurveStartX,
-          bottomRightCurveStartY + handleLength,
-          bottomRightCurveEndX + handleLength,
-          bottomRightCurveEndY,
-          bottomRightCurveEndX,
-          bottomRightCurveEndY);
+      p.cubicTo(bottomRightCurveStartX, bottomRightCurveStartY + handleLength,
+          bottomRightCurveEndX + handleLength, bottomRightCurveEndY,
+          bottomRightCurveEndX, bottomRightCurveEndY);
 
       // Bottom Left Curve
 
@@ -163,38 +150,30 @@ class RenderBalloons extends RenderBox {
       var bottomLeftCurveEndX = centerX - radius;
       var bottomLeftCurveEndY = centerY;
 
-      p.cubicTo(
-          bottomLeftCurveStartX - handleLength,
-          bottomLeftCurveStartY,
-          bottomLeftCurveEndX,
-          bottomLeftCurveEndY + handleLength,
-          bottomLeftCurveEndX,
-          bottomLeftCurveEndY);
+      p.cubicTo(bottomLeftCurveStartX - handleLength, bottomLeftCurveStartY,
+          bottomLeftCurveEndX, bottomLeftCurveEndY + handleLength,
+          bottomLeftCurveEndX, bottomLeftCurveEndY);
 
       // Create balloon gradient
 
-      var gradientOffset = (radius / 3);
+      var gradientOffset = (radius/3);
 
-      canvas.drawPath(
-          p,
-          Paint()
-            ..style = PaintingStyle.fill
-            ..shader = RadialGradient(colors: [
+      canvas.drawPath(p, Paint()
+        ..style = PaintingStyle.fill
+        ..shader = RadialGradient(
+            colors: [
               balloon.color.darkenAmount(0.2).withOpacity(0.7),
               balloon.color.lightenAmount(0.1).withOpacity(0.7)
-            ], stops: [
-              0,
-              0.7
-            ]).createShader(Rect.fromCircle(
-                center:
-                    Offset(centerX + gradientOffset, centerY - gradientOffset),
-                radius: radius * 8)));
+            ],
+            stops: [0, 0.7]
+        ).createShader(Rect.fromCircle(center: Offset(centerX + gradientOffset, centerY - gradientOffset), radius: radius * 8))
+      );
 
       // End balloon path
 
       // Create balloon tie
 
-      var halfTieWidth = (radius * TIE_WIDTH_FACTOR) / 2;
+      var halfTieWidth = (radius * TIE_WIDTH_FACTOR)/2;
       var tieHeight = (radius * TIE_HEIGHT_FACTOR);
       var tieCurveHeight = (radius * TIE_CURVE_FACTOR);
 
@@ -205,23 +184,15 @@ class RenderBalloons extends RenderBox {
           centerX + halfTieWidth, balloonBottomY + tieHeight);
       p2.lineTo(centerX + 1, balloonBottomY);
 
-      canvas.drawPath(
-        p2,
-        Paint()
-          ..style = PaintingStyle.fill
-          ..shader = RadialGradient(
+      canvas.drawPath(p2, Paint()
+        ..style = PaintingStyle.fill
+        ..shader = RadialGradient(
             colors: [
               balloon.color.darkenAmount(0.2).withOpacity(0.7),
               balloon.color.lightenAmount(0.1).withOpacity(0.7)
             ],
-            stops: [0, 0.7],
-          ).createShader(
-            Rect.fromCircle(
-              center:
-                  Offset(centerX + gradientOffset, centerY - gradientOffset),
-              radius: radius * 8,
-            ),
-          ),
+            stops: [0, 0.7]
+        ).createShader(Rect.fromCircle(center: Offset(centerX + gradientOffset, centerY - gradientOffset), radius: radius * 8))
       );
 
       // Create balloon string
@@ -230,19 +201,17 @@ class RenderBalloons extends RenderBox {
       p3.moveTo(centerX, balloonBottomY);
       p3.lineTo(centerX, balloonBottomY + radius * 3);
 
-      canvas.drawPath(
-        p3,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 0.5
-          ..blendMode = BlendMode.screen
-          ..color = Colors.grey,
+      canvas.drawPath(p3, Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.5
+        ..blendMode = BlendMode.screen
+        ..color = Colors.grey
       );
     }
   }
 }
 
-final kappa = (4 * (sqrt(2) - 1)) / 3;
+final kappa = (4 * (sqrt(2) - 1))/3;
 const WIDTH_FACTOR = 0.0333;
 const HEIGHT_FACTOR = 0.4;
 const TIE_WIDTH_FACTOR = 0.12;

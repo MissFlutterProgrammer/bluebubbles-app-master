@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:bluebubbles/services/services.dart';
 import 'package:bluebubbles/utils/logger/logger.dart';
 
@@ -21,7 +22,6 @@ Future<void> restartForegroundService() async {
       await mcs.invokeMethod("start-foreground-service");
     }
   } catch (e, stack) {
-    Logger.error("Failed to restart foreground service!",
-        error: e, trace: stack);
+    Logger.error("Failed to restart foreground service!", error: e, trace: stack);
   }
 }

@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:async_task/async_task_extension.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/app/layouts/conversation_list/widgets/tile/conversation_tile.dart';
@@ -11,16 +9,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class MaterialConversationTile
-    extends CustomStateful<ConversationTileController> {
+class MaterialConversationTile extends CustomStateful<ConversationTileController> {
   const MaterialConversationTile({Key? key, required super.parentController});
 
   @override
   State<StatefulWidget> createState() => _MaterialConversationTileState();
 }
 
-class _MaterialConversationTileState extends CustomState<
-    MaterialConversationTile, void, ConversationTileController> {
+class _MaterialConversationTileState extends CustomState<MaterialConversationTile, void, ConversationTileController> {
   bool get shouldPartialHighlight => controller.shouldPartialHighlight.value;
 
   bool get shouldHighlight => controller.shouldHighlight.value;
@@ -48,8 +44,7 @@ class _MaterialConversationTileState extends CustomState<
       child: InkWell(
         mouseCursor: MouseCursor.defer,
         onTap: () => controller.onTap(context),
-        onSecondaryTapUp: (details) =>
-            controller.onSecondaryTap(Get.context!, details),
+        onSecondaryTapUp: (details) => controller.onSecondaryTap(Get.context!, details),
         onLongPress: controller.onLongPress,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
@@ -58,41 +53,34 @@ class _MaterialConversationTileState extends CustomState<
         child: ListTile(
           mouseCursor: MouseCursor.defer,
           dense: ss.settings.denseChatTiles.value,
-          visualDensity:
-              ss.settings.denseChatTiles.value ? VisualDensity.compact : null,
+          visualDensity: ss.settings.denseChatTiles.value ? VisualDensity.compact : null,
           minVerticalPadding: ss.settings.denseChatTiles.value ? 7.5 : 10,
-          title: Obx(
-            () => ChatTitle(
-              parentController: controller,
-              style: context.theme.textTheme.bodyLarge!
-                  .copyWith(
-                    fontWeight: controller.shouldHighlight.value
-                        ? FontWeight.w600
-                        : GlobalChatService.unreadState(controller.chat.guid)
-                                .value
-                            ? FontWeight.bold
-                            : null,
-                  )
-                  .apply(fontSizeFactor: 1.1),
-            ),
-          ),
+          title: Obx(() => ChatTitle(
+                parentController: controller,
+                style: context.theme.textTheme.bodyLarge!
+                    .copyWith(
+                      fontWeight: controller.shouldHighlight.value
+                          ? FontWeight.w600
+                          : GlobalChatService.unreadState(controller.chat.guid).value
+                              ? FontWeight.bold
+                              : null,
+                    )
+                    .apply(fontSizeFactor: 1.1),
+              )),
           subtitle: controller.subtitle ??
               Obx(() {
-                final unread =
-                    GlobalChatService.unreadState(controller.chat.guid).value;
+                final unread = GlobalChatService.unreadState(controller.chat.guid).value;
                 return ChatSubtitle(
-                  parentController: controller,
-                  style: context.theme.textTheme.bodyMedium!
-                      .copyWith(
-                        fontWeight: unread ? FontWeight.bold : null,
-                        color: controller.shouldHighlight.value || unread
-                            ? context.textTheme.bodyMedium!.color
-                            : context.theme.colorScheme.outline,
-                        height: 1.5,
-                      )
-                      .apply(fontSizeFactor: 1.05),
-                );
-              }),
+                    parentController: controller,
+                    style: context.theme.textTheme.bodyMedium!
+                        .copyWith(
+                          fontWeight: unread ? FontWeight.bold : null,
+                          color: controller.shouldHighlight.value || unread ? context.textTheme.bodyMedium!.color : context.theme.colorScheme.outline,
+                          height: 1.5,
+                        )
+                        .apply(fontSizeFactor: 1.05),
+                  );
+      }),
           contentPadding: const EdgeInsets.only(left: 6, right: 16),
           leading: leading,
           trailing: MaterialTrailing(parentController: controller),
@@ -117,8 +105,7 @@ class _MaterialConversationTileState extends CustomState<
                   : shouldHighlight
                       ? context.theme.colorScheme.primaryContainer
                       : hoverHighlight
-                          ? context.theme.colorScheme.properSurface
-                              .withOpacity(0.5)
+                          ? context.theme.colorScheme.properSurface.withOpacity(0.5)
                           : null,
         ),
         duration: const Duration(milliseconds: 100),
@@ -126,16 +113,14 @@ class _MaterialConversationTileState extends CustomState<
             ? InkWell(
                 mouseCursor: MouseCursor.defer,
                 onTap: () => controller.onTap(context),
-                onSecondaryTapUp: (details) =>
-                    controller.onSecondaryTap(Get.context!, details),
+                onSecondaryTapUp: (details) => controller.onSecondaryTap(Get.context!, details),
                 onLongPress: controller.onLongPress,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   bottomLeft: Radius.circular(20),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 15.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
                   child: Center(child: leading),
                 ),
               )
@@ -152,8 +137,7 @@ class MaterialTrailing extends CustomStateful<ConversationTileController> {
   State<StatefulWidget> createState() => _MaterialTrailingState();
 }
 
-class _MaterialTrailingState
-    extends CustomState<MaterialTrailing, void, ConversationTileController> {
+class _MaterialTrailingState extends CustomState<MaterialTrailing, void, ConversationTileController> {
   DateTime? dateCreated;
   late final StreamSubscription sub;
   String? cachedLatestMessageGuid = "";
@@ -172,14 +156,10 @@ class _MaterialTrailingState
     // run query after render has completed
     if (!kIsWeb) {
       updateObx(() {
-        final latestMessageQuery =
-            (Database.messages.query(Message_.dateDeleted.isNull())
-                  ..link(Message_.chat, Chat_.guid.equals(controller.chat.guid))
-                  ..order(
-                    Message_.dateCreated,
-                    flags: Order.descending,
-                  ))
-                .watch();
+        final latestMessageQuery = (Database.messages.query(Message_.dateDeleted.isNull())
+              ..link(Message_.chat, Chat_.guid.equals(controller.chat.guid))
+              ..order(Message_.dateCreated, flags: Order.descending))
+            .watch();
 
         sub = latestMessageQuery.listen((Query<Message> query) async {
           final message = await runAsync(() {
@@ -187,8 +167,7 @@ class _MaterialTrailingState
           });
           if (message != null &&
               ss.settings.statusIndicatorsOnChats.value &&
-              (message.dateDelivered != cachedLatestMessage?.dateDelivered ||
-                  message.dateRead != cachedLatestMessage?.dateRead)) {
+              (message.dateDelivered != cachedLatestMessage?.dateDelivered || message.dateRead != cachedLatestMessage?.dateRead)) {
             setState(() {});
           }
           cachedLatestMessage = message;
@@ -205,9 +184,7 @@ class _MaterialTrailingState
       });
     } else {
       sub = WebListeners.newMessage.listen((tuple) {
-        if (tuple.item2?.guid == controller.chat.guid &&
-            (dateCreated == null ||
-                tuple.item1.dateCreated!.isAfter(dateCreated!))) {
+        if (tuple.item2?.guid == controller.chat.guid && (dateCreated == null || tuple.item1.dateCreated!.isAfter(dateCreated!))) {
           cachedLatestMessage = tuple.item1;
           setState(() {
             dateCreated = tuple.item1.dateCreated;
@@ -229,17 +206,12 @@ class _MaterialTrailingState
     return Padding(
       padding: const EdgeInsets.only(right: 3),
       child: Obx(() {
-        final unread =
-            GlobalChatService.unreadState(controller.chat.guid).value;
-        final muteType =
-            GlobalChatService.muteState(controller.chat.guid).value;
+        final unread = GlobalChatService.unreadState(controller.chat.guid).value;
+        final muteType = GlobalChatService.muteState(controller.chat.guid).value;
 
         String indicatorText = "";
-        if (ss.settings.statusIndicatorsOnChats.value &&
-            (cachedLatestMessage?.isFromMe ?? false) &&
-            !controller.chat.isGroup) {
-          Indicator show =
-              cachedLatestMessage?.indicatorToShow ?? Indicator.NONE;
+        if (ss.settings.statusIndicatorsOnChats.value && (cachedLatestMessage?.isFromMe ?? false) && !controller.chat.isGroup) {
+          Indicator show = cachedLatestMessage?.indicatorToShow ?? Indicator.NONE;
           if (show != Indicator.NONE) {
             indicatorText = show.name.toLowerCase().capitalizeFirst!;
           }
@@ -275,7 +247,7 @@ class _MaterialTrailingState
                       .apply(fontSizeFactor: 1.1),
                   overflow: TextOverflow.clip,
                 ),
-                if (muteType != "mute" && unread)
+                if (muteType != "mute" && unread) 
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
                     child: Container(
@@ -295,25 +267,20 @@ class _MaterialTrailingState
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (controller.chat.isPinned!)
-                  Icon(Icons.push_pin_outlined,
-                      size: 15, color: context.theme.colorScheme.outline),
-                if (muteType == "mute") const SizedBox(width: 5),
+                if (controller.chat.isPinned!) Icon(Icons.push_pin_outlined, size: 15, color: context.theme.colorScheme.outline),
                 if (muteType == "mute")
-                  Obx(
-                    () => Icon(
-                      Icons.notifications_off_outlined,
-                      color: controller.shouldHighlight.value || unread
-                          ? context.theme.colorScheme.primary
-                          : context.theme.colorScheme.outline,
-                      size: 15,
-                    ),
-                  ),
+                  const SizedBox(width: 5),
+                if (muteType == "mute")
+                  Obx(() => Icon(
+                        Icons.notifications_off_outlined,
+                        color: controller.shouldHighlight.value || unread ? context.theme.colorScheme.primary : context.theme.colorScheme.outline,
+                        size: 15,
+                      )),
               ],
             ),
           ],
         );
-      }),
+    })
     );
   }
 }
@@ -325,8 +292,8 @@ class UnreadIcon extends CustomStateful<ConversationTileController> {
   State<StatefulWidget> createState() => _UnreadIconState();
 }
 
-class _UnreadIconState
-    extends CustomState<UnreadIcon, void, ConversationTileController> {
+class _UnreadIconState extends CustomState<UnreadIcon, void, ConversationTileController> {
+
   @override
   void initState() {
     super.initState();
@@ -338,20 +305,18 @@ class _UnreadIconState
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Padding(
-        padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-        child: (GlobalChatService.unreadState(controller.chat.guid).value)
-            ? Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(35),
-                  color: context.theme.colorScheme.primary,
-                ),
-                width: 10,
-                height: 10,
-              )
-            : const SizedBox(width: 10),
-      ),
-    );
+    return Obx(() => Padding(
+      padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+      child: (GlobalChatService.unreadState(controller.chat.guid).value)
+          ? Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(35),
+                color: context.theme.colorScheme.primary,
+              ),
+              width: 10,
+              height: 10,
+            )
+          : const SizedBox(width: 10),
+    ));
   }
 }

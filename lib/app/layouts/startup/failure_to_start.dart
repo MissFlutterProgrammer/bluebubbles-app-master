@@ -28,37 +28,21 @@ class FailureToStart extends StatelessWidget {
               children: [
                 Center(
                   child: Text(
-                    otherTitle ??
-                        "Whoops, looks like we messed up. Unfortunately you will need to reinstall the app, sorry for the inconvenience :(",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                    ),
+                    otherTitle ?? "Whoops, looks like we messed up. Unfortunately you will need to reinstall the app, sorry for the inconvenience :(",
+                    style: const TextStyle(color: Colors.white, fontSize: 30),
                     textAlign: TextAlign.center,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 20.0),
                   child: Center(
-                    child: Text(
-                      "Error: ${e.toString()}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                      ),
-                    ),
+                    child: Text("Error: ${e.toString()}", style: const TextStyle(color: Colors.white, fontSize: 10)),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 20.0),
                   child: Center(
-                    child: Text(
-                      "Stacktrace: ${s.toString()}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                      ),
-                    ),
+                    child: Text("Stacktrace: ${s.toString()}", style: const TextStyle(color: Colors.white, fontSize: 10)),
                   ),
                 )
               ],

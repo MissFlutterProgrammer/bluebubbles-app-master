@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:bluebubbles/utils/logger/logger.dart';
 import 'package:bluebubbles/database/models.dart';
 import 'package:bluebubbles/services/services.dart';
@@ -6,9 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:tuple/tuple.dart';
 
-ChatManager cm = Get.isRegistered<ChatManager>()
-    ? Get.find<ChatManager>()
-    : Get.put(ChatManager());
+ChatManager cm = Get.isRegistered<ChatManager>() ? Get.find<ChatManager>() : Get.put(ChatManager());
 
 class ChatManager extends GetxService {
   ChatLifecycleManager? activeChat;
@@ -16,8 +15,7 @@ class ChatManager extends GetxService {
 
   /// Same as setAllInactive but but removes lastOpenedChat from prefs on next frame
   void setAllInactiveSync({save = true, bool clearActive = true}) {
-    Logger.debug(
-        'Setting chats to inactive (save: $save, clearActive: $clearActive)');
+    Logger.debug('Setting chats to inactive (save: $save, clearActive: $clearActive)');
 
     String? skip;
     if (clearActive) {
@@ -47,8 +45,7 @@ class ChatManager extends GetxService {
 
   Future<void> setActiveChat(Chat chat, {clearNotifications = true}) async {
     await ss.prefs.setString('lastOpenedChat', chat.guid);
-    setActiveChatSync(chat,
-        clearNotifications: clearNotifications, save: false);
+    setActiveChatSync(chat, clearNotifications: clearNotifications, save: false);
   }
 
   /// Same as setActiveChat but saves lastOpenedChat to prefs on next frame
@@ -76,14 +73,11 @@ class ChatManager extends GetxService {
     activeChat?.isAlive = true;
   }
 
-  bool isChatActive(String guid) =>
-      (getChatController(guid)?.isActive ?? false) &&
-      (getChatController(guid)?.isAlive ?? false);
+  bool isChatActive(String guid) => (getChatController(guid)?.isActive ?? false) && (getChatController(guid)?.isAlive ?? false);
 
   ChatLifecycleManager createChatController(Chat chat, {active = false}) {
     // If a chat is passed, get the chat and set it be active and make sure it's stored
-    ChatLifecycleManager controller =
-        getChatController(chat.guid) ?? ChatLifecycleManager(chat);
+    ChatLifecycleManager controller = getChatController(chat.guid) ?? ChatLifecycleManager(chat);
     _chatControllers[chat.guid] = controller;
 
     // If we are setting a new active chat, we need to clear the active statuses on
@@ -110,20 +104,16 @@ class ChatManager extends GetxService {
   }
 
   /// Fetch chat information from the server
-  Future<Chat?> fetchChat(String chatGuid,
-      {withParticipants = true, withLastMessage = false}) async {
+  Future<Chat?> fetchChat(String chatGuid, {withParticipants = true, withLastMessage = false}) async {
     Logger.info("Fetching full chat metadata from server.", tag: "Fetch-Chat");
 
     final withQuery = <String>[];
     if (withParticipants) withQuery.add("participants");
     if (withLastMessage) withQuery.add("lastmessage");
 
-    final response = await http
-        .singleChat(chatGuid, withQuery: withQuery.join(","))
-        .catchError((err, stack) {
+    final response = await http.singleChat(chatGuid, withQuery: withQuery.join(",")).catchError((err, stack) {
       if (err is! Response) {
-        Logger.error("Failed to fetch chat metadata!",
-            error: err, trace: stack, tag: "Fetch-Chat");
+        Logger.error("Failed to fetch chat metadata!", error: err, trace: stack, tag: "Fetch-Chat");
         return err;
       }
       return Response(requestOptions: RequestOptions(path: ''));
@@ -132,8 +122,7 @@ class ChatManager extends GetxService {
     if (response.statusCode == 200 && response.data["data"] != null) {
       Map<String, dynamic> chatData = response.data["data"];
 
-      Logger.info("Got updated chat metadata from server. Saving.",
-          tag: "Fetch-Chat");
+      Logger.info("Got updated chat metadata from server. Saving.", tag: "Fetch-Chat");
       Chat updatedChat = Chat.fromMap(chatData);
       Chat? chat = Chat.findOne(guid: chatGuid);
       if (chat == null) {
@@ -141,19 +130,14 @@ class ChatManager extends GetxService {
         chat = Chat.findOne(guid: chatGuid)!;
       } else if (chat.handles.length > updatedChat.participants.length) {
         final newAddresses = updatedChat.participants.map((e) => e.address);
-        final handlesToUse =
-            chat.participants.where((e) => newAddresses.contains(e.address));
+        final handlesToUse = chat.participants.where((e) => newAddresses.contains(e.address));
         chat.handles.clear();
         chat.handles.addAll(handlesToUse);
         chat.handles.applyToDb();
       } else if (chat.handles.length < updatedChat.participants.length) {
         final existingAddresses = chat.participants.map((e) => e.address);
-        final newHandle = updatedChat.participants
-            .firstWhere((e) => !existingAddresses.contains(e.address));
-        final handle = Handle.findOne(
-                addressAndService: Tuple2(
-                    newHandle.address, chat.isIMessage ? "iMessage" : "SMS")) ??
-            newHandle.save();
+        final newHandle = updatedChat.participants.firstWhere((e) => !existingAddresses.contains(e.address));
+        final handle = Handle.findOne(addressAndService: Tuple2(newHandle.address, chat.isIMessage ? "iMessage" : "SMS")) ?? newHandle.save();
         chat.handles.add(handle);
         chat.handles.applyToDb();
       }
@@ -167,26 +151,14 @@ class ChatManager extends GetxService {
     return null;
   }
 
-  Future<List<Chat>> getChats({
-    bool withParticipants = false,
-    bool withLastMessage = false,
-    int offset = 0,
-    int limit = 100,
-  }) async {
+  Future<List<Chat>> getChats({bool withParticipants = false, bool withLastMessage = false, int offset = 0, int limit = 100,}) async {
     final withQuery = <String>[];
     if (withParticipants) withQuery.add("participants");
     if (withLastMessage) withQuery.add("lastmessage");
 
-    final response = await http
-        .chats(
-            withQuery: withQuery,
-            offset: offset,
-            limit: limit,
-            sort: withLastMessage ? "lastmessage" : null)
-        .catchError((err, stack) {
+    final response = await http.chats(withQuery: withQuery, offset: offset, limit: limit, sort: withLastMessage ? "lastmessage" : null).catchError((err, stack) {
       if (err is! Response) {
-        Logger.error("Failed to fetch chat metadata!",
-            error: err, trace: stack, tag: "Fetch-Chat");
+        Logger.error("Failed to fetch chat metadata!", error: err, trace: stack, tag: "Fetch-Chat");
         return err;
       }
       return Response(requestOptions: RequestOptions(path: ''));
@@ -206,32 +178,13 @@ class ChatManager extends GetxService {
     return chats;
   }
 
-  Future<List<dynamic>> getMessages(String guid,
-      {bool withAttachment = true,
-      bool withHandle = true,
-      int offset = 0,
-      int limit = 25,
-      String sort = "DESC",
-      int? after,
-      int? before}) async {
+  Future<List<dynamic>> getMessages(String guid, {bool withAttachment = true, bool withHandle = true, int offset = 0, int limit = 25, String sort = "DESC", int? after, int? before}) async {
     Completer<List<dynamic>> completer = Completer();
-    final withQuery = <String>[
-      "message.attributedBody",
-      "message.messageSummaryInfo",
-      "message.payloadData"
-    ];
+    final withQuery = <String>["message.attributedBody", "message.messageSummaryInfo", "message.payloadData"];
     if (withAttachment) withQuery.add("attachment");
     if (withHandle) withQuery.add("handle");
 
-    http
-        .chatMessages(guid,
-            withQuery: withQuery.join(","),
-            offset: offset,
-            limit: limit,
-            sort: sort,
-            after: after,
-            before: before)
-        .then((response) {
+    http.chatMessages(guid, withQuery: withQuery.join(","), offset: offset, limit: limit, sort: sort, after: after, before: before).then((response) {
       if (!completer.isCompleted) completer.complete(response.data["data"]);
     }).catchError((err) {
       late final dynamic error;

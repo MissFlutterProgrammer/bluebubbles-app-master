@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
 import 'package:bluebubbles/helpers/ui/theme_helpers.dart';
 import 'package:bluebubbles/database/models.dart';
@@ -24,8 +25,7 @@ class AttachmentPickerFile extends StatefulWidget {
   State<AttachmentPickerFile> createState() => _AttachmentPickerFileState();
 }
 
-class _AttachmentPickerFileState extends OptimizedState<AttachmentPickerFile>
-    with AutomaticKeepAliveClientMixin {
+class _AttachmentPickerFileState extends OptimizedState<AttachmentPickerFile> with AutomaticKeepAliveClientMixin {
   Uint8List? image;
   String? path;
 
@@ -45,16 +45,15 @@ class _AttachmentPickerFileState extends OptimizedState<AttachmentPickerFile>
         image = fs.noVideoPreviewIcon;
       }
       setState(() {});
-    } else if (widget.data.mimeType == "image/heic" ||
-        widget.data.mimeType == "image/heif" ||
-        widget.data.mimeType == "image/tif" ||
-        widget.data.mimeType == "image/tiff") {
+    } else if (widget.data.mimeType == "image/heic"
+        || widget.data.mimeType == "image/heif"
+        || widget.data.mimeType == "image/tif"
+        || widget.data.mimeType == "image/tiff") {
       final fakeAttachment = Attachment(
         transferName: file.path,
         mimeType: widget.data.mimeType!,
       );
-      image = await as.loadAndGetProperties(fakeAttachment,
-          actualPath: file.path, onlyFetchData: true, isPreview: true);
+      image = await as.loadAndGetProperties(fakeAttachment, actualPath: file.path, onlyFetchData: true, isPreview: true);
       setState(() {});
     } else {
       image = await file.readAsBytes();
@@ -64,14 +63,11 @@ class _AttachmentPickerFileState extends OptimizedState<AttachmentPickerFile>
 
   @override
   Widget build(BuildContext context) {
-    final hideAttachments =
-        ss.settings.redactedMode.value && ss.settings.hideAttachments.value;
+    final hideAttachments = ss.settings.redactedMode.value && ss.settings.hideAttachments.value;
 
     super.build(context);
     return Obx(() {
-      bool containsThis = widget.controller.pickedAttachments
-              .firstWhereOrNull((e) => e.path == path) !=
-          null;
+      bool containsThis = widget.controller.pickedAttachments.firstWhereOrNull((e) => e.path == path) != null;
       return AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         margin: EdgeInsets.all(containsThis ? 10 : 0),
@@ -92,8 +88,7 @@ class _AttachmentPickerFileState extends OptimizedState<AttachmentPickerFile>
                   width: 150,
                   height: 150,
                   cacheWidth: 300,
-                  frameBuilder:
-                      (context, child, frame, wasSynchronouslyLoaded) {
+                  frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
                     if (frame == null) {
                       return Positioned.fill(
                         child: Container(
@@ -118,20 +113,16 @@ class _AttachmentPickerFileState extends OptimizedState<AttachmentPickerFile>
                 ),
               if (containsThis || widget.data.type == AssetType.video)
                 Container(
-                  decoration: containsThis
-                      ? BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: context.theme.colorScheme.primary,
-                        )
-                      : null,
+                  decoration: containsThis ? BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: context.theme.colorScheme.primary
+                  ) : null,
                   child: Padding(
-                    padding: const EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(5.0),
                     child: Icon(
                       containsThis
                           ? (iOS ? CupertinoIcons.check_mark : Icons.check)
-                          : (iOS
-                              ? CupertinoIcons.play_circle_fill
-                              : Icons.play_circle_filled),
+                          : (iOS ? CupertinoIcons.play_circle_fill : Icons.play_circle_filled),
                       color: context.theme.colorScheme.onPrimary,
                       size: containsThis ? 18 : 50,
                     ),

@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:bluebubbles/helpers/ui/theme_helpers.dart';
 import 'package:bluebubbles/database/html/objectbox.dart';
 import 'package:bluebubbles/database/html/theme_object.dart';
@@ -37,17 +35,14 @@ class ThemeEntry {
       name: title,
       isFont: true,
       fontSize: style.fontSize != null ? style.fontSize!.toInt() : 14,
-      fontWeight:
-          FontWeight.values.indexOf(style.fontWeight ?? FontWeight.w400) + 1,
+      fontWeight: FontWeight.values.indexOf(style.fontWeight ?? FontWeight.w400) + 1,
     );
   }
 
   dynamic get style => isFont!
       ? TextStyle(
           color: color,
-          fontWeight: fontWeight != null
-              ? FontWeight.values[fontWeight! - 1]
-              : FontWeight.normal,
+          fontWeight: fontWeight != null ? FontWeight.values[fontWeight! - 1] : FontWeight.normal,
           fontSize: fontSize?.toDouble(),
         )
       : color;

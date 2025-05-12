@@ -1,23 +1,20 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SettingsSlider extends StatelessWidget {
-  SettingsSlider({
-    required this.startingVal,
-    this.update,
-    this.onChangeEnd,
-    this.formatValue,
-    required this.min,
-    required this.max,
-    this.leadingMinWidth,
-    required this.divisions,
-    this.leading,
-    this.backgroundColor,
-    super.key,
-  });
+  SettingsSlider(
+      {required this.startingVal,
+        this.update,
+        this.onChangeEnd,
+        this.formatValue,
+        required this.min,
+        required this.max,
+        this.leadingMinWidth,
+        required this.divisions,
+        this.leading,
+        this.backgroundColor,
+        super.key});
 
   final double startingVal;
   final Function(double val)? update;
@@ -42,10 +39,8 @@ class SettingsSlider extends StatelessWidget {
       trailing: Text(value, style: context.theme.textTheme.bodyLarge),
       minLeadingWidth: leadingMinWidth,
       title: Slider(
-        activeColor:
-            context.theme.colorScheme.primary.oppositeLightenOrDarken(20),
-        secondaryActiveColor:
-            context.theme.colorScheme.primary.withOpacity(0.6),
+        activeColor: context.theme.colorScheme.primary.oppositeLightenOrDarken(20),
+        secondaryActiveColor: context.theme.colorScheme.primary.withOpacity(0.6),
         thumbColor: context.theme.colorScheme.primary,
         inactiveColor: context.theme.colorScheme.primary.withOpacity(0.2),
         value: startingVal,

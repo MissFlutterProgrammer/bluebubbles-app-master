@@ -28,8 +28,7 @@ class SyncSettings extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 8),
               child: Text(
                 "Sync Options",
-                style: context.theme.textTheme.titleLarge!
-                    .copyWith(color: context.theme.colorScheme.properOnSurface),
+                style: context.theme.textTheme.titleLarge!.copyWith(color: context.theme.colorScheme.properOnSurface),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -43,10 +42,7 @@ class SyncSettings extends StatelessWidget {
                 children: [
                   Text(
                     "Skip empty chats",
-                    style: context.theme.textTheme.bodyLarge!
-                        .copyWith(
-                            color: context.theme.colorScheme.properOnSurface)
-                        .copyWith(height: 1.5),
+                    style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.properOnSurface).copyWith(height: 1.5),
                     textAlign: TextAlign.center,
                   ),
                   StatefulSwitch(
@@ -61,18 +57,14 @@ class SyncSettings extends StatelessWidget {
             ),
             if (!kIsWeb)
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 40.0, right: 40.0, bottom: 20),
+                padding: const EdgeInsets.only(left: 40.0, right: 40.0, bottom: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Text(
                       "Save sync log to downloads",
-                      style: context.theme.textTheme.bodyLarge!
-                          .copyWith(
-                              color: context.theme.colorScheme.properOnSurface)
-                          .copyWith(height: 1.5),
+                      style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.properOnSurface).copyWith(height: 1.5),
                       textAlign: TextAlign.center,
                     ),
                     StatefulSwitch(
@@ -106,18 +98,14 @@ class SyncSettings extends StatelessWidget {
             ),
             backgroundColor: WidgetStateProperty.all(Colors.transparent),
             shadowColor: WidgetStateProperty.all(Colors.transparent),
-            maximumSize:
-                WidgetStateProperty.all(Size(context.width * 2 / 3, 36)),
-            minimumSize:
-                WidgetStateProperty.all(Size(context.width * 2 / 3, 36)),
+            maximumSize: WidgetStateProperty.all(Size(context.width * 2 / 3, 36)),
+            minimumSize: WidgetStateProperty.all(Size(context.width * 2 / 3, 36)),
           ),
           onPressed: () {
-            final numberOfMessagesPerPage =
-                controller.numberToDownload.clamp(1, double.infinity).toInt();
+            final numberOfMessagesPerPage = controller.numberToDownload.clamp(1, double.infinity).toInt();
             final skipEmptyChats = controller.skipEmptyChats;
             final saveToDownloads = controller.saveToDownloads;
-            setup.startSetup(
-                numberOfMessagesPerPage, skipEmptyChats, saveToDownloads);
+            setup.startSetup(numberOfMessagesPerPage, skipEmptyChats, saveToDownloads);
 
             controller.pageController.nextPage(
               duration: const Duration(milliseconds: 300),
@@ -132,9 +120,10 @@ class SyncSettings extends StatelessWidget {
                 color: Colors.white,
               ),
               const SizedBox(width: 10),
-              Text("Start Sync",
-                  style: context.theme.textTheme.bodyLarge!
-                      .apply(fontSizeFactor: 1.1, color: Colors.white)),
+              Text(
+                  "Start Sync",
+                  style: context.theme.textTheme.bodyLarge!.apply(fontSizeFactor: 1.1, color: Colors.white)
+              ),
             ],
           ),
         ),
@@ -150,8 +139,8 @@ class NumberOfMessagesText extends CustomStateful<SetupViewController> {
   State<StatefulWidget> createState() => _NumberOfMessagesTextState();
 }
 
-class _NumberOfMessagesTextState
-    extends CustomState<NumberOfMessagesText, int, SetupViewController> {
+class _NumberOfMessagesTextState extends CustomState<NumberOfMessagesText, int, SetupViewController> {
+
   @override
   void updateWidget(int newVal) {
     controller.numberToDownload = newVal;
@@ -169,12 +158,10 @@ class _NumberOfMessagesTextState
             alignment: Alignment.centerLeft,
             child: Text(
               "We will now download the first ${controller.numberToDownload == 0 ? "message" : "${controller.numberToDownload.toString().split(".").first} messages"} for each of your chats.\nYou can see more messages by simply scrolling up in the chat.",
-              style: context.theme.textTheme.bodyLarge!
-                  .apply(
-                    fontSizeDelta: 1.5,
-                    color: context.theme.colorScheme.outline,
-                  )
-                  .copyWith(height: 1),
+              style: context.theme.textTheme.bodyLarge!.apply(
+                fontSizeDelta: 1.5,
+                color: context.theme.colorScheme.outline,
+              ).copyWith(height: 1),
             ),
           ),
         ),
@@ -184,11 +171,9 @@ class _NumberOfMessagesTextState
             alignment: Alignment.centerLeft,
             child: Text(
               "Note: If the syncing gets stuck, try reducing the number of messages to sync to 1.",
-              style: context.theme.textTheme.bodyLarge!
-                  .apply(
-                    color: context.theme.colorScheme.outline,
-                  )
-                  .copyWith(height: 1),
+              style: context.theme.textTheme.bodyLarge!.apply(
+                color: context.theme.colorScheme.outline,
+              ).copyWith(height: 1),
             ),
           ),
         ),
@@ -204,8 +189,7 @@ class NumberOfMessagesSlider extends CustomStateful<SetupViewController> {
   State<StatefulWidget> createState() => _NumberOfMessagesSliderState();
 }
 
-class _NumberOfMessagesSliderState
-    extends CustomState<NumberOfMessagesSlider, int, SetupViewController> {
+class _NumberOfMessagesSliderState extends CustomState<NumberOfMessagesSlider, int, SetupViewController> {
   double numberOfMessages = 25;
 
   @override
@@ -217,9 +201,7 @@ class _NumberOfMessagesSliderState
           padding: const EdgeInsets.all(8.0),
           child: Text(
             "Number of Messages to Sync Per Chat: $numberOfMessages",
-            style: context.theme.textTheme.bodyLarge!
-                .copyWith(color: context.theme.colorScheme.properOnSurface)
-                .copyWith(height: 1.5),
+            style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.properOnSurface).copyWith(height: 1.5),
             textAlign: TextAlign.center,
           ),
         ),
@@ -243,10 +225,11 @@ class _NumberOfMessagesSliderState
 }
 
 class StatefulSwitch extends CustomStateful<SetupViewController> {
-  StatefulSwitch(
-      {required super.parentController,
-      required this.initial,
-      required this.update});
+  StatefulSwitch({
+    required super.parentController,
+    required this.initial,
+    required this.update
+  });
 
   final bool initial;
   final Function(bool) update;
@@ -255,8 +238,7 @@ class StatefulSwitch extends CustomStateful<SetupViewController> {
   State<StatefulWidget> createState() => _StatefulSwitchState();
 }
 
-class _StatefulSwitchState
-    extends CustomState<StatefulSwitch, int, SetupViewController> {
+class _StatefulSwitchState extends CustomState<StatefulSwitch, int, SetupViewController> {
   late bool value;
 
   @override

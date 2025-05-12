@@ -16,27 +16,18 @@ class TimestampSeparator extends StatelessWidget {
 
   bool withinTimeThreshold(Message first, Message? second) {
     if (second == null) return false;
-    return second.dateCreated!.difference(first.dateCreated!).inMinutes.abs() >
-        30;
+    return second.dateCreated!.difference(first.dateCreated!).inMinutes.abs() > 30;
   }
 
   Tuple2<String?, String>? buildTimeStamp() {
-    if (ss.settings.skin.value == Skins.Samsung &&
-        message.dateCreated?.day != olderMessage?.dateCreated?.day) {
-      return Tuple2(
-        null,
-        buildSeparatorDateSamsung(message.dateCreated!),
-      );
-    } else if (ss.settings.skin.value != Skins.Samsung &&
-        withinTimeThreshold(message, olderMessage)) {
+    if (ss.settings.skin.value == Skins.Samsung && message.dateCreated?.day != olderMessage?.dateCreated?.day) {
+      return Tuple2(null, buildSeparatorDateSamsung(message.dateCreated!));
+    } else if (ss.settings.skin.value != Skins.Samsung && withinTimeThreshold(message, olderMessage)) {
       final time = message.dateCreated!;
       if (ss.settings.skin.value == Skins.iOS) {
-        return Tuple2(
-            time.isToday() ? "Today" : buildDate(time), buildTime(time));
+        return Tuple2(time.isToday() ? "Today" : buildDate(time), buildTime(time));
       } else {
-        return Tuple2(
-            time.isToday() ? "Today" : buildSeparatorDateMaterial(time),
-            buildTime(time));
+        return Tuple2(time.isToday() ? "Today" : buildSeparatorDateMaterial(time), buildTime(time));
       }
     } else {
       return null;
@@ -47,30 +38,21 @@ class TimestampSeparator extends StatelessWidget {
   Widget build(BuildContext context) {
     final timestamp = buildTimeStamp();
 
-    return timestamp != null
-        ? Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: RichText(
-              text: TextSpan(
-                style: context.theme.textTheme.labelSmall!.copyWith(
-                    color: context.theme.colorScheme.outline,
-                    fontWeight: FontWeight.normal),
-                children: [
-                  if (timestamp.item1 != null)
-                    TextSpan(
-                      text: "${timestamp.item1!} ",
-                      style: context.theme.textTheme.labelSmall!.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: context.theme.colorScheme.outline,
-                      ),
-                    ),
-                  TextSpan(
-                    text: timestamp.item2,
-                  )
-                ],
+    return timestamp != null ? Padding(
+      padding: const EdgeInsets.all(14.0),
+      child: RichText(
+        text: TextSpan(
+          style: context.theme.textTheme.labelSmall!.copyWith(color: context.theme.colorScheme.outline, fontWeight: FontWeight.normal),
+          children: [
+            if (timestamp.item1 != null)
+              TextSpan(
+                text: "${timestamp.item1!} ",
+                style: context.theme.textTheme.labelSmall!.copyWith(fontWeight: FontWeight.w600, color: context.theme.colorScheme.outline),
               ),
-            ),
-          )
-        : const SizedBox.shrink();
+            TextSpan(text: timestamp.item2)
+          ],
+        ),
+      ),
+    ) : const SizedBox.shrink();
   }
 }

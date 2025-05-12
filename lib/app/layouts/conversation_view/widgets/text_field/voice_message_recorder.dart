@@ -1,10 +1,10 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'dart:async';
+
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 
 class VoiceMessageRecorder extends StatefulWidget {
   const VoiceMessageRecorder({
@@ -40,47 +40,39 @@ class _VoiceMessageRecorderState extends State<VoiceMessageRecorder> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 1),
-      child: Row(
-        children: [
-          AudioWaveforms(
-            size: Size(
-                widget.textFieldSize.width -
-                    getWidth(widget.iOS, widget.samsung),
-                widget.textFieldSize.height - 15),
-            recorderController: widget.recorderController!,
-            padding: EdgeInsets.symmetric(
-              vertical: 5,
-              horizontal: widget.iOS ? 10 : 15,
-            ), // need extra spacing in case of iOS for recording duration
-            waveStyle: WaveStyle(
-              waveColor: widget.iOS
-                  ? context.theme.colorScheme.primary
-                  : context.theme.colorScheme.properOnSurface,
-              waveCap: StrokeCap.square,
-              spacing: 4,
-              showBottom: true,
-              extendWaveform: true,
-              showMiddleLine: false,
-            ),
-            decoration: BoxDecoration(
-              border: Border.fromBorderSide(
-                BorderSide(
+        padding: const EdgeInsets.only(left: 1),
+        child: Row(
+          children: [
+            AudioWaveforms(
+              size: Size(
+                  widget.textFieldSize.width - getWidth(widget.iOS, widget.samsung),
+                  widget.textFieldSize.height - 15),
+              recorderController: widget.recorderController!,
+              padding: EdgeInsets.symmetric(vertical: 5, horizontal: widget.iOS ? 10 : 15), // need extra spacing in case of iOS for recording duration
+              waveStyle: WaveStyle(
+                waveColor: widget.iOS ? context.theme.colorScheme.primary : context.theme.colorScheme.properOnSurface,
+                waveCap: StrokeCap.square,
+                spacing: 4.0,
+                showBottom: true,
+                extendWaveform: true,
+                showMiddleLine: false,
+              ),
+              decoration: BoxDecoration(
+                border: Border.fromBorderSide(BorderSide(
                   color: widget.iOS
                       ? Colors.transparent
                       : context.theme.colorScheme.outline,
                   width: 1,
-                ),
+                )),
+                borderRadius: BorderRadius.circular(20),
+                color: widget.iOS
+                    ? Colors.transparent
+                    : context.theme.colorScheme.properSurface,
               ),
-              borderRadius: BorderRadius.circular(20),
-              color: widget.iOS
-                  ? Colors.transparent
-                  : context.theme.colorScheme.properSurface,
             ),
-          ),
-          Visibility(
-            visible: widget.iOS,
-            child: Center(
+            Visibility(
+              visible: widget.iOS,
+              child: Center(
               child: StreamBuilder<Duration>(
                 stream: recordingDurationStream,
                 builder: (context, snapshot) {
@@ -93,9 +85,7 @@ class _VoiceMessageRecorderState extends State<VoiceMessageRecorder> {
 
                     return Text(
                       '$minutes:$seconds',
-                      style: TextStyle(
-                        color: context.theme.colorScheme.primary,
-                      ),
+                      style: TextStyle(color: context.theme.colorScheme.primary),
                     );
                   } else {
                     return Container();
@@ -104,16 +94,15 @@ class _VoiceMessageRecorderState extends State<VoiceMessageRecorder> {
               ),
             ),
           ),
-        ],
-      ),
-    );
+          ],
+        ));
   }
 
-  int getWidth(bool iOS, bool samsung) {
-    if (samsung) {
+  int getWidth(bool iOS, bool samsung){
+    if (samsung){
       // width for samsung style
       return 0;
-    } else if (iOS) {
+    } else if (iOS){
       return 105;
     }
     // for material

@@ -25,40 +25,28 @@ class SettingsLeadingIcon extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Obx(
-          () => Material(
-            shape: ss.settings.skin.value == Skins.Samsung
-                ? SquircleBorder(
-                    side: BorderSide(
-                      color:
-                          containerColor ?? context.theme.colorScheme.outline,
-                      width: 3,
-                    ),
-                  )
-                : null,
-            color: ss.settings.skin.value != Skins.Material
-                ? containerColor ?? context.theme.colorScheme.outline
-                : Colors.transparent,
-            borderRadius: ss.settings.skin.value == Skins.iOS
-                ? BorderRadius.circular(6)
-                : null,
-            child: SizedBox(
-              width: boxSize ?? 30,
-              height: boxSize ?? 30,
-              child: Center(
-                child: Icon(
-                  ss.settings.skin.value == Skins.iOS ? iosIcon : materialIcon,
-                  color: ss.settings.skin.value != Skins.Material
-                      ? Colors.white
-                      : context.theme.colorScheme.outline,
-                  size: ss.settings.skin.value != Skins.Material
-                      ? iconSize ?? 21
-                      : iconSizeMaterial ?? 28,
-                ),
-              ),
+        Obx(() => Material(
+          shape: ss.settings.skin.value == Skins.Samsung ? SquircleBorder(
+            side: BorderSide(
+                color: containerColor ?? context.theme.colorScheme.outline,
+                width: 3.0
+            ),
+          ) : null,
+          color: ss.settings.skin.value != Skins.Material
+              ? containerColor ?? context.theme.colorScheme.outline
+              : Colors.transparent,
+          borderRadius: ss.settings.skin.value == Skins.iOS
+              ? BorderRadius.circular(6) : null,
+          child: SizedBox(
+            width: boxSize ?? 30,
+            height: boxSize ?? 30,
+            child: Center(
+              child: Icon(ss.settings.skin.value == Skins.iOS ? iosIcon : materialIcon,
+                  color: ss.settings.skin.value != Skins.Material ? Colors.white : context.theme.colorScheme.outline,
+                  size: ss.settings.skin.value != Skins.Material ? iconSize ?? 21 : iconSizeMaterial ?? 28),
             ),
           ),
-        ),
+        )),
       ],
     );
   }
@@ -113,8 +101,7 @@ class SquircleBorder extends ShapeBorder {
       case BorderStyle.none:
         break;
       case BorderStyle.solid:
-        var path = getOuterPath(rect.deflate(side.width / 2.0),
-            textDirection: textDirection);
+        var path = getOuterPath(rect.deflate(side.width / 2.0), textDirection: textDirection);
         canvas.drawPath(path, side.toPaint());
     }
   }

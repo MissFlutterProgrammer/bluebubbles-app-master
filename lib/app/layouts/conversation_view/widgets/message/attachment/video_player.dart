@@ -1,7 +1,6 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 import 'dart:math';
+
 import 'package:bluebubbles/app/layouts/conversation_view/widgets/message/reply/reply_bubble.dart';
 import 'package:bluebubbles/app/layouts/fullscreen_media/fullscreen_holder.dart';
 import 'package:bluebubbles/app/wrappers/theme_switcher.dart';
@@ -22,13 +21,8 @@ class VideoPlayer extends StatefulWidget {
   final Attachment attachment;
   final bool isFromMe;
 
-  VideoPlayer({
-    super.key,
-    required this.file,
-    required this.attachment,
-    required this.controller,
-    required this.isFromMe,
-  });
+  VideoPlayer(
+      {super.key, required this.file, required this.attachment, required this.controller, required this.isFromMe});
 
   final ConversationViewController? controller;
 
@@ -62,8 +56,7 @@ class PlayPauseButton extends StatelessWidget {
           child: AnimatedOpacity(
             opacity: _hover.value
                 ? 1
-                : showPlayPauseOverlay.value &&
-                        ReplyScope.maybeOf(context) == null
+                : showPlayPauseOverlay.value && ReplyScope.maybeOf(context) == null
                     ? 0.5
                     : 0,
             duration: const Duration(milliseconds: 100),
@@ -93,16 +86,14 @@ class PlayPauseButton extends StatelessWidget {
                   height: 75,
                   width: 75,
                   decoration: BoxDecoration(
-                    color: context.theme.colorScheme.surface.withOpacity(0.5),
+                    color: context.theme.colorScheme.background.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: Padding(
                     padding: EdgeInsets.only(
-                      left: ss.settings.skin.value == Skins.iOS &&
-                              !(controller?.player.state.playing ?? false)
-                          ? 17
-                          : 10,
+                      left:
+                          ss.settings.skin.value == Skins.iOS && !(controller?.player.state.playing ?? false) ? 17 : 10,
                       top: ss.settings.skin.value == Skins.iOS ? 13 : 10,
                       right: 10,
                       bottom: 10,
@@ -110,16 +101,12 @@ class PlayPauseButton extends StatelessWidget {
                     child: Obx(
                       () => controller?.player.state.playing ?? false
                           ? Icon(
-                              ss.settings.skin.value == Skins.iOS
-                                  ? CupertinoIcons.pause
-                                  : Icons.pause,
+                              ss.settings.skin.value == Skins.iOS ? CupertinoIcons.pause : Icons.pause,
                               color: context.iconColor,
                               size: 45,
                             )
                           : Icon(
-                              ss.settings.skin.value == Skins.iOS
-                                  ? CupertinoIcons.play
-                                  : Icons.play_arrow,
+                              ss.settings.skin.value == Skins.iOS ? CupertinoIcons.play : Icons.play_arrow,
                               color: context.iconColor,
                               size: 45,
                             ),
@@ -136,13 +123,12 @@ class PlayPauseButton extends StatelessWidget {
 }
 
 class MuteButton extends StatelessWidget {
-  const MuteButton({
-    super.key,
-    required this.showPlayPauseOverlay,
-    required this.muted,
-    required this.controller,
-    required this.isFromMe,
-  });
+  const MuteButton(
+      {super.key,
+      required this.showPlayPauseOverlay,
+      required this.muted,
+      required this.controller,
+      required this.isFromMe});
 
   final RxBool showPlayPauseOverlay;
   final RxBool muted;
@@ -152,57 +138,50 @@ class MuteButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 8,
-      right: (isFromMe) ? 15 : 8,
-      child: Obx(() {
-        return AnimatedOpacity(
-          opacity:
-              showPlayPauseOverlay.value && ReplyScope.maybeOf(context) == null
-                  ? 1
-                  : 0,
-          duration: const Duration(milliseconds: 250),
-          child: AbsorbPointer(
-            absorbing: !showPlayPauseOverlay.value,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(40),
-                onTap: () async {
-                  muted.value = !muted.value;
-                  await controller?.player.setVolume(muted.value ? 0.0 : 100.0);
-                },
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  decoration: BoxDecoration(
-                    color:
-                        context.theme.colorScheme.background.withOpacity(0.5),
+        bottom: 8,
+        right: (isFromMe) ? 15 : 8,
+        child: Obx(() {
+          return AnimatedOpacity(
+              opacity: showPlayPauseOverlay.value && ReplyScope.maybeOf(context) == null ? 1 : 0,
+              duration: const Duration(milliseconds: 250),
+              child: AbsorbPointer(
+                absorbing: !showPlayPauseOverlay.value,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
                     borderRadius: BorderRadius.circular(40),
-                  ),
-                  padding: const EdgeInsets.all(5),
-                  child: Icon(
-                    muted.value
-                        ? ss.settings.skin.value == Skins.iOS
-                            ? CupertinoIcons.volume_mute
-                            : Icons.volume_mute
-                        : ss.settings.skin.value == Skins.iOS
-                            ? CupertinoIcons.volume_up
-                            : Icons.volume_up,
-                    color: Colors.white,
-                    size: 15,
+                    onTap: () async {
+                      muted.value = !muted.value;
+                      await controller?.player.setVolume(muted.value ? 0.0 : 100.0);
+                    },
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      decoration: BoxDecoration(
+                        color: context.theme.colorScheme.background.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      padding: const EdgeInsets.all(5),
+                      child: Icon(
+                        muted.value
+                            ? ss.settings.skin.value == Skins.iOS
+                                ? CupertinoIcons.volume_mute
+                                : Icons.volume_mute
+                            : ss.settings.skin.value == Skins.iOS
+                                ? CupertinoIcons.volume_up
+                                : Icons.volume_up,
+                        color: Colors.white,
+                        size: 15,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
-        );
-      }),
-    );
+              ));
+        }));
   }
 }
 
-class _VideoPlayerState extends OptimizedState<VideoPlayer>
-    with AutomaticKeepAliveClientMixin {
+class _VideoPlayerState extends OptimizedState<VideoPlayer> with AutomaticKeepAliveClientMixin {
   Attachment get attachment => widget.attachment;
 
   PlatformFile get file => widget.file;
@@ -221,8 +200,7 @@ class _VideoPlayerState extends OptimizedState<VideoPlayer>
 
   @override
   void initState() {
-    VideoController? cachedController =
-        cvController?.videoPlayers[attachment.guid];
+    VideoController? cachedController = cvController?.videoPlayers[attachment.guid];
     thumbnail = cvController?.imageData[attachment.guid];
 
     if (cachedController != null) {
@@ -318,8 +296,7 @@ class _VideoPlayerState extends OptimizedState<VideoPlayer>
     if (videoController != null) {
       return MouseRegion(
         onEnter: (event) => showPlayPauseOverlay.value = true,
-        onExit: (event) =>
-            showPlayPauseOverlay.value = !videoController!.player.state.playing,
+        onExit: (event) => showPlayPauseOverlay.value = !videoController!.player.state.playing,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: !kIsDesktop && !kIsWeb
@@ -364,18 +341,14 @@ class _VideoPlayerState extends OptimizedState<VideoPlayer>
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
-              Obx(
-                () => AspectRatio(
-                  aspectRatio: aspectRatio.value,
-                  child: Video(
-                    controller: videoController!,
-                    controls: null,
-                  ),
-                ),
-              ),
-              PlayPauseButton(
-                  showPlayPauseOverlay: showPlayPauseOverlay,
-                  controller: videoController),
+              Obx(() => AspectRatio(
+                    aspectRatio: aspectRatio.value,
+                    child: Video(
+                      controller: videoController!,
+                      controls: null,
+                    ),
+                  )),
+              PlayPauseButton(showPlayPauseOverlay: showPlayPauseOverlay, controller: videoController),
               MuteButton(
                   showPlayPauseOverlay: showPlayPauseOverlay,
                   muted: muted,
@@ -383,9 +356,10 @@ class _VideoPlayerState extends OptimizedState<VideoPlayer>
                   isFromMe: widget.isFromMe),
               if (kIsDesktop)
                 FullscreenButton(
-                    attachment: attachment,
-                    isFromMe: widget.isFromMe,
-                    muted: muted),
+                  attachment: attachment,
+                  isFromMe: widget.isFromMe,
+                  muted: muted
+                ),
             ],
           ),
         ),
@@ -394,135 +368,117 @@ class _VideoPlayerState extends OptimizedState<VideoPlayer>
     final RxBool hover = false.obs;
     return Obx(
       () => InkWell(
-        hoverColor: hover.value ? Colors.transparent : null,
-        focusColor: hover.value ? Colors.transparent : null,
-        onTap: () async {
-          if (attachment.id == null || (!kIsDesktop && !kIsWeb)) return;
-          await Navigator.of(Get.context!).push(
-            ThemeSwitcher.buildPageRoute(
-              builder: (context) => FullscreenMediaHolder(
-                currentChat: cm.activeChat,
-                attachment: attachment,
-                showInteractions: true,
-                mute: muted,
-                videoController: videoController,
-              ),
-            ),
-          );
-        },
-        child: thumbnail == null
-            ? Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    PlayPauseButton(
-                      showPlayPauseOverlay: showPlayPauseOverlay,
-                      controller: videoController,
-                      hover: hover,
-                      customOnTap: () async {
-                        await initializeController();
-                        await videoController?.player
-                            .setVolume(muted.value ? 0.0 : 100.0);
-                        await videoController?.player.play();
-                        showPlayPauseOverlay.value = false;
-                      },
-                    ),
-                    const SizedBox(width: 10),
-                    Flexible(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            file.name,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: context.theme.textTheme.bodyMedium!
-                                .apply(fontWeightDelta: 2),
-                          ),
-                          const SizedBox(height: 2.5),
-                          Text(
-                            "${(mime(file.name)?.split("/").lastOrNull ?? mime(file.name) ?? "file").toUpperCase()} • ${file.size.toDouble().getFriendlySize()}",
-                            style: context.theme.textTheme.labelMedium!
-                                .copyWith(
-                                    fontWeight: FontWeight.normal,
-                                    color: context.theme.colorScheme.outline),
-                            overflow: TextOverflow.clip,
-                            maxLines: 1,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+          hoverColor: hover.value ? Colors.transparent : null,
+          focusColor: hover.value ? Colors.transparent : null,
+          onTap: () async {
+            if (attachment.id == null || (!kIsDesktop && !kIsWeb)) return;
+            await Navigator.of(Get.context!).push(
+              ThemeSwitcher.buildPageRoute(
+                builder: (context) => FullscreenMediaHolder(
+                  currentChat: cm.activeChat,
+                  attachment: attachment,
+                  showInteractions: true,
+                  mute: muted,
+                  videoController: videoController,
                 ),
-              )
-            : Image.memory(
-                thumbnail!,
-                // prevents the image widget from "refreshing" when the provider changes
-                gaplessPlayback: true,
-                filterQuality: FilterQuality.none,
-                cacheWidth:
-                    (min((attachment.width ?? 0), ns.width(context) * 0.5) *
-                            Get.pixelRatio /
-                            2)
-                        .round()
-                        .abs()
-                        .nonZero,
-                cacheHeight: (min((attachment.height ?? 0),
-                            ns.width(context) * 0.5 / attachment.aspectRatio) *
-                        Get.pixelRatio /
-                        2)
-                    .round()
-                    .abs()
-                    .nonZero,
-                fit: BoxFit.cover,
-                frameBuilder: (context, widget, frame, wasSyncLoaded) {
-                  return AnimatedCrossFade(
-                    crossFadeState: frame == null
-                        ? CrossFadeState.showFirst
-                        : CrossFadeState.showSecond,
-                    alignment: Alignment.center,
-                    duration: const Duration(milliseconds: 150),
-                    secondChild: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        widget,
-                        PlayPauseButton(
-                          showPlayPauseOverlay: showPlayPauseOverlay,
-                          controller: videoController,
-                          customOnTap: () async {
-                            await initializeController();
-                            await videoController?.player
-                                .setVolume(muted.value ? 0.0 : 100.0);
-                            await videoController?.player.play();
-                            showPlayPauseOverlay.value = false;
-                          },
-                        ),
-                        MuteButton(
-                          showPlayPauseOverlay: showPlayPauseOverlay,
-                          muted: muted,
-                          controller: videoController,
-                          isFromMe: isFromMe,
-                        ),
-                      ],
-                    ),
-                    firstChild: SizedBox(
-                      width: min(
-                          (attachment.width?.toDouble() ??
-                              ns.width(context) * 0.5),
-                          ns.width(context) * 0.5),
-                      height: min(
-                        (attachment.height?.toDouble() ??
-                            ns.width(context) * 0.5 / attachment.aspectRatio),
-                        ns.width(context) * 0.5 / attachment.aspectRatio,
-                      ),
-                    ),
-                  );
-                },
               ),
-      ),
+            );
+          },
+          child: thumbnail == null
+              ? Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      PlayPauseButton(
+                        showPlayPauseOverlay: showPlayPauseOverlay,
+                        controller: videoController,
+                        hover: hover,
+                        customOnTap: () async {
+                          await initializeController();
+                          await videoController?.player.setVolume(muted.value ? 0.0 : 100.0);
+                          await videoController?.player.play();
+                          showPlayPauseOverlay.value = false;
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                      Flexible(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              file.name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.theme.textTheme.bodyMedium!.apply(fontWeightDelta: 2),
+                            ),
+                            const SizedBox(height: 2.5),
+                            Text(
+                              "${(mime(file.name)?.split("/").lastOrNull ?? mime(file.name) ?? "file").toUpperCase()} • ${file.size.toDouble().getFriendlySize()}",
+                              style: context.theme.textTheme.labelMedium!
+                                  .copyWith(fontWeight: FontWeight.normal, color: context.theme.colorScheme.outline),
+                              overflow: TextOverflow.clip,
+                              maxLines: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Image.memory(
+                  thumbnail!,
+                  // prevents the image widget from "refreshing" when the provider changes
+                  gaplessPlayback: true,
+                  filterQuality: FilterQuality.none,
+                  cacheWidth: (min((attachment.width ?? 0), ns.width(context) * 0.5) * Get.pixelRatio / 2)
+                      .round()
+                      .abs()
+                      .nonZero,
+                  cacheHeight: (min((attachment.height ?? 0), ns.width(context) * 0.5 / attachment.aspectRatio) *
+                          Get.pixelRatio /
+                          2)
+                      .round()
+                      .abs()
+                      .nonZero,
+                  fit: BoxFit.cover,
+                  frameBuilder: (context, widget, frame, wasSyncLoaded) {
+                    return AnimatedCrossFade(
+                        crossFadeState: frame == null ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                        alignment: Alignment.center,
+                        duration: const Duration(milliseconds: 150),
+                        secondChild: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            widget,
+                            PlayPauseButton(
+                              showPlayPauseOverlay: showPlayPauseOverlay,
+                              controller: videoController,
+                              customOnTap: () async {
+                                await initializeController();
+                                await videoController?.player.setVolume(muted.value ? 0.0 : 100.0);
+                                await videoController?.player.play();
+                                showPlayPauseOverlay.value = false;
+                              },
+                            ),
+                            MuteButton(
+                                showPlayPauseOverlay: showPlayPauseOverlay,
+                                muted: muted,
+                                controller: videoController,
+                                isFromMe: isFromMe),
+                          ],
+                        ),
+                        firstChild: SizedBox(
+                          width:
+                              min((attachment.width?.toDouble() ?? ns.width(context) * 0.5), ns.width(context) * 0.5),
+                          height: min(
+                              (attachment.height?.toDouble() ?? ns.width(context) * 0.5 / attachment.aspectRatio),
+                              ns.width(context) * 0.5 / attachment.aspectRatio),
+                        ));
+                  },
+                )),
     );
   }
 
@@ -531,13 +487,7 @@ class _VideoPlayerState extends OptimizedState<VideoPlayer>
 }
 
 class FullscreenButton extends StatelessWidget {
-  const FullscreenButton({
-    super.key,
-    required this.attachment,
-    required this.isFromMe,
-    this.videoController,
-    this.muted,
-  });
+  const FullscreenButton({super.key, required this.attachment, required this.isFromMe, this.videoController, this.muted});
 
   final Attachment attachment;
   final bool isFromMe;
@@ -559,11 +509,12 @@ class FullscreenButton extends StatelessWidget {
               await Navigator.of(Get.context!).push(
                 ThemeSwitcher.buildPageRoute(
                   builder: (context) => FullscreenMediaHolder(
-                      currentChat: cm.activeChat,
-                      attachment: attachment,
-                      showInteractions: true,
-                      videoController: videoController,
-                      mute: muted),
+                    currentChat: cm.activeChat,
+                    attachment: attachment,
+                    showInteractions: true,
+                    videoController: videoController,
+                    mute: muted
+                  ),
                 ),
               );
             },
@@ -576,9 +527,7 @@ class FullscreenButton extends StatelessWidget {
               ),
               padding: const EdgeInsets.all(5),
               child: Icon(
-                ss.settings.skin.value == Skins.iOS
-                    ? CupertinoIcons.fullscreen
-                    : Icons.fullscreen,
+                ss.settings.skin.value == Skins.iOS ? CupertinoIcons.fullscreen : Icons.fullscreen,
                 color: Colors.white,
                 size: 15,
               ),

@@ -11,11 +11,13 @@ import 'package:get/get.dart';
 import 'package:universal_io/io.dart';
 
 class CustomAvatarPanel extends StatefulWidget {
+
   @override
   State<StatefulWidget> createState() => _CustomAvatarPanelState();
 }
 
 class _CustomAvatarPanelState extends OptimizedState<CustomAvatarPanel> {
+
   @override
   Widget build(BuildContext context) {
     return SettingsScaffold(
@@ -31,7 +33,7 @@ class _CustomAvatarPanelState extends OptimizedState<CustomAvatarPanel> {
             return SliverToBoxAdapter(
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 50),
+                  padding: const EdgeInsets.only(top: 50.0),
                   child: Column(
                     children: [
                       Padding(
@@ -52,7 +54,7 @@ class _CustomAvatarPanelState extends OptimizedState<CustomAvatarPanel> {
             return SliverToBoxAdapter(
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 50),
+                  padding: const EdgeInsets.only(top: 50.0),
                   child: Text(
                     "You have no chats :(",
                     style: context.theme.textTheme.labelLarge,
@@ -64,16 +66,15 @@ class _CustomAvatarPanelState extends OptimizedState<CustomAvatarPanel> {
 
           return SliverList(
             delegate: SliverChildBuilderDelegate(
-              (context, index) {
+                  (context, index) {
                 return ConversationTile(
-                  key: Key(chats.chats[index].guid.toString()),
+                  key: Key(
+                      chats.chats[index].guid.toString()),
                   chat: chats.chats[index],
                   controller: Get.put(
-                      ConversationListController(
-                        showUnknownSenders: true,
-                        showArchivedChats: true,
-                      ),
-                      tag: "custom-avatar-panel"),
+                    ConversationListController(showUnknownSenders: true, showArchivedChats: true),
+                    tag: "custom-avatar-panel"
+                  ),
                   inSelectMode: true,
                   onSelect: (_) {
                     if (chats.chats[index].customAvatarPath != null) {
@@ -81,70 +82,44 @@ class _CustomAvatarPanelState extends OptimizedState<CustomAvatarPanel> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            backgroundColor:
-                                context.theme.colorScheme.properSurface,
-                            title: Text(
-                              "Custom Avatar",
-                              style: context.theme.textTheme.titleLarge,
-                            ),
-                            content: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "You have already set a custom avatar for this chat. What would you like to do?",
-                                  style: context.theme.textTheme.bodyLarge,
-                                ),
-                              ],
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                  child: Text(
-                                    "Cancel",
-                                    style: context.theme.textTheme.bodyLarge!
-                                        .copyWith(
-                                      color: context.theme.colorScheme.primary,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  }),
-                              TextButton(
-                                  child: Text(
-                                    "Reset",
-                                    style: context.theme.textTheme.bodyLarge!
-                                        .copyWith(
-                                      color: context.theme.colorScheme.primary,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    File file = File(
-                                      chats.chats[index].customAvatarPath!,
-                                    );
-                                    file.delete();
-                                    chats.chats[index].customAvatarPath = null;
-                                    chats.chats[index]
-                                        .save(updateCustomAvatarPath: true);
-                                    Get.back();
-                                  }),
-                              TextButton(
-                                  child: Text(
-                                    "Set New",
-                                    style: context.theme.textTheme.bodyLarge!
-                                        .copyWith(
-                                      color: context.theme.colorScheme.primary,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    ns.pushSettings(
-                                      context,
-                                      AvatarCrop(index: index),
-                                    );
-                                  }),
-                            ],
-                          );
+                              backgroundColor: context.theme.colorScheme.properSurface,
+                              title: Text("Custom Avatar",
+                                  style: context.theme.textTheme.titleLarge),
+                              content: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      "You have already set a custom avatar for this chat. What would you like to do?",
+                                      style: context.theme.textTheme.bodyLarge),
+                                ],
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                    child: Text("Cancel", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    }),
+                                TextButton(
+                                    child: Text("Reset", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
+                                    onPressed: () {
+                                      File file = File(chats.chats[index].customAvatarPath!);
+                                      file.delete();
+                                      chats.chats[index].customAvatarPath = null;
+                                      chats.chats[index].save(updateCustomAvatarPath: true);
+                                      Get.back();
+                                    }),
+                                TextButton(
+                                    child: Text("Set New", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      ns.pushSettings(
+                                        context,
+                                        AvatarCrop(index: index),
+                                      );
+                                    }),
+                              ]);
                         },
                       );
                     } else {
@@ -160,7 +135,7 @@ class _CustomAvatarPanelState extends OptimizedState<CustomAvatarPanel> {
             ),
           );
         }),
-      ],
+      ]
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/database/models.dart';
 import 'package:collection/collection.dart';
@@ -28,8 +29,7 @@ class Contact {
   set dbStructuredName(Map<String, String>? map) => StructuredName.fromMap(map);
 
   String? get initials {
-    String initials = (structuredName?.givenName.characters.firstOrNull ?? "") +
-        (structuredName?.familyName.characters.firstOrNull ?? "");
+    String initials = (structuredName?.givenName.characters.firstOrNull ?? "") + (structuredName?.familyName.characters.firstOrNull ?? "");
     // If the initials are empty, get them from the display name
     if (initials.trim().isEmpty) {
       initials = displayName.characters.firstOrNull ?? "";
@@ -77,13 +77,13 @@ class Contact {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Contact &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          displayName == other.displayName &&
-          phones == other.phones &&
-          emails == other.emails &&
-          avatar?.length == other.avatar?.length;
+          other is Contact &&
+              runtimeType == other.runtimeType &&
+              id == other.id &&
+              displayName == other.displayName &&
+              phones == other.phones &&
+              emails == other.emails &&
+              avatar?.length == other.avatar?.length;
 
   @override
   int get hashCode => id.hashCode;

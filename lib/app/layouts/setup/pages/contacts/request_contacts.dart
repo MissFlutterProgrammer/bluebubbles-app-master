@@ -11,8 +11,7 @@ class RequestContacts extends StatelessWidget {
   Widget build(BuildContext context) {
     return SetupPageTemplate(
       title: "Contacts Permission",
-      subtitle:
-          "We'd like to access your contacts to show contact info in the app.",
+      subtitle: "We'd like to access your contacts to show contact info in the app.",
       belowSubtitle: FutureBuilder<PermissionStatus>(
         future: Permission.contacts.status,
         initialData: PermissionStatus.denied,
@@ -22,17 +21,11 @@ class RequestContacts extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                "Permission Status: ${granted ? "Granted" : "Denied"}",
-                style: context.theme.textTheme.bodyLarge!
-                    .apply(
-                      fontSizeDelta: 1.5,
-                      color: granted
-                          ? Colors.green
-                          : context.theme.colorScheme.error,
-                    )
-                    .copyWith(height: 2),
-              ),
+              child: Text("Permission Status: ${granted ? "Granted" : "Denied"}",
+                style: context.theme.textTheme.bodyLarge!.apply(
+                  fontSizeDelta: 1.5,
+                  color: granted ? Colors.green : context.theme.colorScheme.error,
+                ).copyWith(height: 2)),
             ),
           );
         },
@@ -54,28 +47,18 @@ class RequestContacts extends StatelessWidget {
                 content: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                      "We weren't able to access your contacts.\n\nAre you sure you want to proceed without contacts?",
-                      style: context.theme.textTheme.bodyLarge),
+                    "We weren't able to access your contacts.\n\nAre you sure you want to proceed without contacts?",
+                    style: context.theme.textTheme.bodyLarge),
                 ),
                 actions: <Widget>[
                   TextButton(
-                    child: Text(
-                      "No",
-                      style: context.theme.textTheme.bodyLarge!.copyWith(
-                        color: context.theme.colorScheme.primary,
-                      ),
-                    ),
+                    child: Text("No", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
                     onPressed: () {
                       Navigator.of(context).pop(false);
                     },
                   ),
                   TextButton(
-                    child: Text(
-                      "Yes",
-                      style: context.theme.textTheme.bodyLarge!.copyWith(
-                        color: context.theme.colorScheme.primary,
-                      ),
-                    ),
+                    child: Text("Yes", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
                     onPressed: () {
                       Navigator.of(context).pop(true);
                     },

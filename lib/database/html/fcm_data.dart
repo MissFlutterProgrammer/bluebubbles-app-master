@@ -28,9 +28,7 @@ class FCMData {
       storageBucket: projectInfo["storage_bucket"],
       apiKey: client["api_key"][0]["current_key"],
       firebaseURL: projectInfo["firebase_url"],
-      clientID: clientID.contains("-")
-          ? clientID.substring(0, clientID.indexOf("-"))
-          : clientID,
+      clientID: clientID.contains("-") ? clientID.substring(0, clientID.indexOf("-")) : clientID,
       applicationID: client["client_info"]["mobilesdk_app_id"],
     );
   }
@@ -41,9 +39,7 @@ class FCMData {
       await ss.prefs.setString('projectID', projectID!);
       await ss.prefs.setString('storageBucket', storageBucket!);
       await ss.prefs.setString('apiKey', apiKey!);
-      if (firebaseURL != null) {
-        await ss.prefs.setString('firebaseURL', firebaseURL!);
-      }
+      if (firebaseURL != null) await ss.prefs.setString('firebaseURL', firebaseURL!);
       await ss.prefs.setString('clientID', clientID!);
       await ss.prefs.setString('applicationID', applicationID!);
     });

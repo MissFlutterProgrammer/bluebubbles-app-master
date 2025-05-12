@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/database/html/message.dart';
 import 'package:bluebubbles/database/html/objectbox.dart';
@@ -43,8 +44,7 @@ class Attachment {
 
   factory Attachment.fromMap(Map<String, dynamic> json) {
     String? mimeType = json["mimeType"];
-    if (json["uti"] == "com.apple.coreaudio_format" ||
-        json['transferName'].toString().endsWith(".caf")) {
+    if (json["uti"] == "com.apple.coreaudio_format" || json['transferName'].toString().endsWith(".caf")) {
       mimeType = "audio/caf";
     }
 
@@ -86,8 +86,7 @@ class Attachment {
   }
 
   /// replaces a temporary attachment with the new one from the server
-  static Attachment replaceAttachment(
-      String? oldGuid, Attachment newAttachment) {
+  static Attachment replaceAttachment(String? oldGuid, Attachment newAttachment) {
     return newAttachment;
   }
 
@@ -111,11 +110,7 @@ class Attachment {
 
   bool get hasValidSize => (width ?? 0) > 0 && (height ?? 0) > 0;
 
-  double get aspectRatio => hasValidSize
-      ? (_isPortrait && height! < width!
-          ? (height! / width!).abs()
-          : (width! / height!).abs())
-      : 0.78;
+  double get aspectRatio => hasValidSize ? (_isPortrait && height! < width! ?  (height! / width!).abs() : (width! / height!).abs()) : 0.78;
 
   String? get mimeStart => mimeType?.split("/").first;
 
@@ -145,8 +140,7 @@ class Attachment {
     attachment1.transferName ??= attachment2.transferName;
     attachment1.uti ??= attachment2.uti;
     attachment1.webUrl ??= attachment2.webUrl;
-    attachment1.metadata =
-        mergeTopLevelDicts(attachment1.metadata, attachment2.metadata);
+    attachment1.metadata = mergeTopLevelDicts(attachment1.metadata, attachment2.metadata);
     if (attachment2.hasLivePhoto) {
       attachment1.hasLivePhoto = attachment2.hasLivePhoto;
     }
@@ -154,21 +148,21 @@ class Attachment {
   }
 
   Map<String, dynamic> toMap() => {
-        "ROWID": id,
-        "originalROWID": originalROWID,
-        "guid": guid,
-        "uti": uti,
-        "mimeType": mimeType,
-        "isOutgoing": isOutgoing!,
-        "transferName": transferName,
-        "totalBytes": totalBytes,
-        "height": height,
-        "width": width,
-        "metadata": jsonEncode(metadata),
-        "hasLivePhoto": hasLivePhoto,
-      };
+    "ROWID": id,
+    "originalROWID": originalROWID,
+    "guid": guid,
+    "uti": uti,
+    "mimeType": mimeType,
+    "isOutgoing": isOutgoing!,
+    "transferName": transferName,
+    "totalBytes": totalBytes,
+    "height": height,
+    "width": width,
+    "metadata": jsonEncode(metadata),
+    "hasLivePhoto": hasLivePhoto,
+  };
 
-  bool get _isPortrait {
+  bool  get _isPortrait {
     if (metadata?['orientation'] == '1') return true;
     if (metadata?['orientation'] == 1) return true;
     if (metadata?['orientation'] == 'portrait') return true;

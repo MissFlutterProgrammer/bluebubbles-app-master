@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:bluebubbles/app/wrappers/scrollbar_wrapper.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/services/services.dart';
@@ -66,20 +67,20 @@ class _LiveLoggingPanel extends State<LiveLoggingPanel> {
     final Rx<Color> _backgroundColor =
         (kIsDesktop && ss.settings.windowEffect.value == WindowEffect.disabled
                 ? Colors.transparent
-                : context.theme.colorScheme.surface)
+                : context.theme.colorScheme.background)
             .obs;
 
     if (kIsDesktop) {
       ss.settings.windowEffect.listen((WindowEffect effect) =>
           _backgroundColor.value = effect != WindowEffect.disabled
               ? Colors.transparent
-              : context.theme.colorScheme.surface);
+              : context.theme.colorScheme.background);
     }
     return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
           systemNavigationBarColor: ss.settings.immersiveMode.value
               ? Colors.transparent
-              : context.theme.colorScheme.surface, // navigation bar color
+              : context.theme.colorScheme.background, // navigation bar color
           systemNavigationBarIconBrightness:
               context.theme.colorScheme.brightness.opposite,
           statusBarColor: Colors.transparent, // status bar color
@@ -95,7 +96,7 @@ class _LiveLoggingPanel extends State<LiveLoggingPanel> {
                 child: BackdropFilter(
                   child: AppBar(
                     systemOverlayStyle: ThemeData.estimateBrightnessForColor(
-                                context.theme.colorScheme.surface) ==
+                                context.theme.colorScheme.background) ==
                             Brightness.dark
                         ? SystemUiOverlayStyle.light
                         : SystemUiOverlayStyle.dark,
@@ -151,47 +152,46 @@ class _LiveLoggingPanel extends State<LiveLoggingPanel> {
               showScrollbar: true,
               controller: scrollController,
               child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: StreamBuilder<String>(
-                    stream: Logger.logStream.stream,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: Text('Waiting for logs...'));
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (snapshot.hasData) {
-                        _logs.add(snapshot.data!);
-                      }
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: StreamBuilder<String>(
+                  stream: Logger.logStream.stream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: Text('Waiting for logs...'));
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (snapshot.hasData) {
+                      _logs.add(snapshot.data!);
+                    }
 
-                      return ListView.separated(
-                        itemCount: _logs.length,
-                        shrinkWrap: true,
-                        controller: scrollController,
-                        separatorBuilder: (context, index) => Divider(
-                            thickness: 0.25,
-                            color: context.theme.colorScheme.onSurface),
-                        itemBuilder: (context, index) {
-                          Color textColor = Colors.black;
-                          if (_logs[index].startsWith('[ERROR]')) {
-                            textColor = Colors.red;
-                          } else if (_logs[index].startsWith('[WARNING]')) {
-                            textColor = Colors.orange;
-                          } else if (_logs[index].startsWith('[TRACE]')) {
-                            textColor = context.theme.colorScheme.primary;
-                          } else if (_logs[index].startsWith('[FATAL]')) {
-                            textColor = Colors.red;
-                          } else if (_logs[index].startsWith('[DEBUG]')) {
-                            textColor = context.theme.colorScheme.secondary;
-                          }
+                    return ListView.separated(
+                      itemCount: _logs.length,
+                      shrinkWrap: true,
+                      controller: scrollController,
+                      separatorBuilder: (context, index) => Divider(thickness: 0.25, color: context.theme.colorScheme.onSurface),
+                      itemBuilder: (context, index) {
+                        Color textColor = Colors.black;
+                        if (_logs[index].startsWith('[ERROR]')) {
+                          textColor = Colors.red;
+                        } else if (_logs[index].startsWith('[WARNING]')) {
+                          textColor = Colors.orange;
+                        } else if (_logs[index].startsWith('[TRACE]')) {
+                          textColor = context.theme.colorScheme.primary;
+                        } else if (_logs[index].startsWith('[FATAL]')) {
+                          textColor = Colors.red;
+                        } else if (_logs[index].startsWith('[DEBUG]')) {
+                          textColor = context.theme.colorScheme.secondary;
+                        }
 
-                          return Text(
-                            _logs[index].trim(),
-                            style: TextStyle(fontSize: 12.0, color: textColor),
-                          );
-                        },
-                      );
-                    },
-                  )),
+                        return Text(
+                          _logs[index].trim(),
+                          style: TextStyle(fontSize: 12.0, color: textColor),
+                        );
+                      },
+                    );
+                  },
+                )
+              ),
             ),
           ),
         ));

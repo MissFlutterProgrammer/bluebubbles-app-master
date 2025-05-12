@@ -13,6 +13,7 @@ class AudioPlayer extends StatefulWidget {
   final Attachment? attachment;
   final String? transcript;
 
+
   AudioPlayer({
     super.key,
     required this.file,
@@ -45,9 +46,8 @@ class _AudioPlayerState extends OptimizedState<AudioPlayer>
   @override
   void initState() {
     super.initState();
-    if (attachment != null) {
+    if (attachment != null)
       controller = cvController?.audioPlayers[attachment!.guid];
-    }
     updateObx(() {
       initBytes();
     });
@@ -63,9 +63,8 @@ class _AudioPlayerState extends OptimizedState<AudioPlayer>
   }
 
   void initBytes() async {
-    if (attachment != null) {
+    if (attachment != null)
       controller = cvController?.audioPlayers[attachment!.guid];
-    }
     if (controller == null) {
       controller = PlayerController()
         ..addListener(() {
@@ -80,9 +79,8 @@ class _AudioPlayerState extends OptimizedState<AudioPlayer>
         setState(() {});
       });
       await controller!.preparePlayer(path: file.path!);
-      if (attachment != null) {
+      if (attachment != null)
         cvController?.audioPlayers[attachment!.guid!] = controller!;
-      }
     }
     setState(() {});
   }
@@ -91,11 +89,11 @@ class _AudioPlayerState extends OptimizedState<AudioPlayer>
   Widget build(BuildContext context) {
     super.build(context);
     return Padding(
-      padding: const EdgeInsets.all(5),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        padding: const EdgeInsets.all(5),
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+          children: [
           Row(
             children: [
               IconButton(
@@ -120,51 +118,41 @@ class _AudioPlayerState extends OptimizedState<AudioPlayer>
               (controller?.maxDuration ?? 0) == 0
                   ? SizedBox(width: ns.width(context) * 0.25)
                   : AudioFileWaveforms(
-                      size: Size(
-                        ns.width(context) * 0.20,
-                        40,
-                      ),
+                      size: Size(ns.width(context) * 0.20, 40),
                       playerController: controller!,
                       padding: EdgeInsets.zero,
                       playerWaveStyle: PlayerWaveStyle(
-                        fixedWaveColor: context.theme.colorScheme.properSurface
-                            .oppositeLightenOrDarken(20),
-                        liveWaveColor:
-                            context.theme.colorScheme.properOnSurface,
-                        waveCap: StrokeCap.square,
-                        waveThickness: 2,
-                        seekLineThickness: 2,
-                        showSeekLine: false,
-                      ),
+                          fixedWaveColor: context
+                              .theme.colorScheme.properSurface
+                              .oppositeLightenOrDarken(20),
+                          liveWaveColor:
+                              context.theme.colorScheme.properOnSurface,
+                          waveCap: StrokeCap.square,
+                          waveThickness: 2,
+                          seekLineThickness: 2,
+                          showSeekLine: false),
                     ),
               const SizedBox(width: 5),
               Expanded(
                 child: Center(
                   heightFactor: 1,
                   child: Text(
-                    prettyDuration(
-                      Duration(
-                        milliseconds: controller?.maxDuration ?? 0,
-                      ),
-                    ),
-                    style: context.theme.textTheme.labelLarge!,
-                  ),
+                      prettyDuration(
+                          Duration(milliseconds: controller?.maxDuration ?? 0)),
+                      style: context.theme.textTheme.labelLarge!),
                 ),
               ),
             ],
           ),
           if (widget.transcript != null)
             Padding(
-              padding:
-                  const EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 5),
+              padding: const EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 5),
               child: Text(
                 "${widget.transcript}",
                 style: context.theme.textTheme.bodySmall,
               ),
             ),
-        ],
-      ),
-    );
+        ]));
   }
 
   @override
@@ -181,17 +169,15 @@ class _DesktopAudioPlayerState extends OptimizedState<AudioPlayer>
 
   Player? controller;
   late final animController = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 400),
-    animationBehavior: AnimationBehavior.preserve,
-  );
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+      animationBehavior: AnimationBehavior.preserve);
 
   @override
   void initState() {
     super.initState();
-    if (attachment != null) {
+    if (attachment != null)
       controller = cvController?.audioPlayersDesktop[attachment!.guid];
-    }
     updateObx(() {
       initBytes();
     });
@@ -207,9 +193,8 @@ class _DesktopAudioPlayerState extends OptimizedState<AudioPlayer>
   }
 
   void initBytes() async {
-    if (attachment != null) {
+    if (attachment != null)
       controller = cvController?.audioPlayersDesktop[attachment!.guid];
-    }
     if (controller == null) {
       controller = Player()
         ..stream.position.listen((position) => setState(() {}))
@@ -223,9 +208,8 @@ class _DesktopAudioPlayerState extends OptimizedState<AudioPlayer>
         });
       await controller!.setPlaylistMode(PlaylistMode.none);
       await controller!.open(Media(file.path!), play: false);
-      if (attachment != null) {
+      if (attachment != null)
         cvController?.audioPlayersDesktop[attachment!.guid!] = controller!;
-      }
     }
     setState(() {});
   }
@@ -234,50 +218,48 @@ class _DesktopAudioPlayerState extends OptimizedState<AudioPlayer>
   Widget build(BuildContext context) {
     super.build(context);
     return Padding(
-      padding: const EdgeInsets.all(5),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            onPressed: () async {
-              if (controller == null) return;
-              if (controller!.state.playing) {
-                animController.reverse();
-                await controller!.pause();
-              } else {
-                animController.forward();
-                await controller!.play();
-              }
-              setState(() {});
-            },
-            icon: AnimatedIcon(
-              icon: AnimatedIcons.play_pause,
-              progress: animController,
-            ),
-            color: context.theme.colorScheme.properOnSurface,
-            visualDensity: VisualDensity.compact,
-          ),
-          if (controller != null)
-            SizedBox(
-              height: 30,
-              child: Slider(
-                value: controller!.state.position.inSeconds.toDouble(),
-                onChanged: (double value) {
-                  controller!.seek(Duration(seconds: value.toInt()));
-                },
-                min: 0,
-                max: controller!.state.duration.inSeconds.toDouble(),
+        padding: const EdgeInsets.all(5),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              onPressed: () async {
+                if (controller == null) return;
+                if (controller!.state.playing) {
+                  animController.reverse();
+                  await controller!.pause();
+                } else {
+                  animController.forward();
+                  await controller!.play();
+                }
+                setState(() {});
+              },
+              icon: AnimatedIcon(
+                icon: AnimatedIcons.play_pause,
+                progress: animController,
               ),
+              color: context.theme.colorScheme.properOnSurface,
+              visualDensity: VisualDensity.compact,
             ),
-          Padding(
-            padding: const EdgeInsets.only(left: 10, right: 16),
-            child: Text(
-              "${prettyDuration(controller?.state.position ?? Duration.zero)} / ${prettyDuration(controller?.state.duration ?? Duration.zero)}",
-            ),
-          )
-        ],
-      ),
-    );
+            if (controller != null)
+              SizedBox(
+                height: 30,
+                child: Slider(
+                  value: controller!.state.position.inSeconds.toDouble(),
+                  onChanged: (double value) {
+                    controller!.seek(Duration(seconds: value.toInt()));
+                  },
+                  min: 0,
+                  max: controller!.state.duration.inSeconds.toDouble(),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 16),
+              child: Text(
+                  "${prettyDuration(controller?.state.position ?? Duration.zero)} / ${prettyDuration(controller?.state.duration ?? Duration.zero)}"),
+            )
+          ],
+        ));
   }
 
   @override

@@ -1,7 +1,6 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:math';
 import 'dart:ui';
+
 import 'package:bluebubbles/helpers/types/constants.dart';
 import 'package:bluebubbles/helpers/ui/theme_helpers.dart';
 import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
@@ -26,34 +25,15 @@ class ContactAvatarGroupWidget extends StatefulWidget {
   final bool editable;
 
   @override
-  State<ContactAvatarGroupWidget> createState() =>
-      _ContactAvatarGroupWidgetState();
+  State<ContactAvatarGroupWidget> createState() => _ContactAvatarGroupWidgetState();
 }
 
-class _ContactAvatarGroupWidgetState
-    extends OptimizedState<ContactAvatarGroupWidget> {
+class _ContactAvatarGroupWidgetState extends OptimizedState<ContactAvatarGroupWidget> {
   late final List<Handle> participants = widget.chat.participants;
   final Map materialGeneration = {
-    2: [
-      24.5 / 40,
-      10.5 / 40,
-      [Alignment.topRight, Alignment.bottomLeft]
-    ],
-    3: [
-      21.5 / 40,
-      9 / 40,
-      [Alignment.bottomRight, Alignment.bottomLeft, Alignment.topCenter]
-    ],
-    4: [
-      1 / 2,
-      8.7 / 40,
-      [
-        Alignment.bottomRight,
-        Alignment.bottomLeft,
-        Alignment.topLeft,
-        Alignment.topRight
-      ]
-    ],
+    2: [24.5/40, 10.5/40, [Alignment.topRight, Alignment.bottomLeft]],
+    3: [21.5/40, 9/40, [Alignment.bottomRight, Alignment.bottomLeft, Alignment.topCenter]],
+    4: [1/2, 8.7/40, [Alignment.bottomRight, Alignment.bottomLeft, Alignment.topLeft, Alignment.topRight]],
   };
 
   @override
@@ -79,10 +59,8 @@ class _ContactAvatarGroupWidgetState
       );
     }
 
-    return Obx(
-      () {
-        final hide =
-            ss.settings.redactedMode.value && ss.settings.hideContactInfo.value;
+    return Obx(() {
+        final hide = ss.settings.redactedMode.value && ss.settings.hideContactInfo.value;
         final avatarSize = widget.size * ss.settings.avatarScale.value;
         final maxAvatars = ss.settings.maxAvatarsInGroupWidget.value;
 
@@ -118,21 +96,14 @@ class _ContactAvatarGroupWidgetState
                           int realLength = min(participants.length, maxAvatars);
                           double padding = avatarSize * 0.08;
                           double angle = index / realLength * 2 * pi + pi / 4;
-                          double adjustedWidth =
-                              avatarSize * (-0.07 * realLength + 1);
-                          double innerRadius =
-                              avatarSize - adjustedWidth / 2 - 2 * padding;
+                          double adjustedWidth = avatarSize * (-0.07 * realLength + 1);
+                          double innerRadius = avatarSize - adjustedWidth / 2 - 2 * padding;
                           double size = adjustedWidth * 0.65;
-                          double top = (avatarSize / 2) +
-                              (innerRadius / 2) * sin(angle + pi) -
-                              size / 2;
-                          double right = (avatarSize / 2) +
-                              (innerRadius / 2) * cos(angle + pi) -
-                              size / 2;
+                          double top = (avatarSize / 2) + (innerRadius / 2) * sin(angle + pi) - size / 2;
+                          double right = (avatarSize / 2) + (innerRadius / 2) * cos(angle + pi) - size / 2;
 
                           // indicate more users than shown
-                          if (index == maxAvatars - 1 &&
-                              participants.length > maxAvatars) {
+                          if (index == maxAvatars - 1 && participants.length > maxAvatars) {
                             return Positioned(
                               top: top,
                               right: right,
@@ -148,23 +119,13 @@ class _ContactAvatarGroupWidgetState
                                     height: size,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: context
-                                          .theme.colorScheme.properSurface
-                                          .withOpacity(0.8),
-                                      border: Border.all(
-                                        color: context
-                                            .theme.colorScheme.background,
-                                        width: avatarSize * 0.01,
-                                      ),
+                                      color: context.theme.colorScheme.properSurface.withOpacity(0.8),
+                                      border: Border.all(color: context.theme.colorScheme.background, width: avatarSize * 0.01)
                                     ),
                                     child: Icon(
-                                      ss.settings.skin.value == Skins.iOS
-                                          ? CupertinoIcons.group_solid
-                                          : Icons.people,
+                                      ss.settings.skin.value == Skins.iOS ? CupertinoIcons.group_solid : Icons.people,
                                       size: size * 0.65,
-                                      color: context
-                                          .theme.colorScheme.properOnSurface
-                                          .withOpacity(0.8),
+                                      color: context.theme.colorScheme.properOnSurface.withOpacity(0.8),
                                     ),
                                   ),
                                 ),
@@ -176,9 +137,7 @@ class _ContactAvatarGroupWidgetState
                             top: top,
                             right: right,
                             child: ContactAvatarWidget(
-                              key: Key(
-                                "${participants[index].address}-contact-avatar-group-widget",
-                              ),
+                              key: Key("${participants[index].address}-contact-avatar-group-widget"),
                               handle: participants[index],
                               size: size,
                               borderThickness: avatarSize * 0.01,
@@ -192,25 +151,16 @@ class _ContactAvatarGroupWidgetState
                     ],
                   ),
                   materialSkin: Stack(
-                    children: List.generate(
-                      min(participants.length, 4),
-                      (index) => Align(
-                        alignment:
-                            materialGeneration[min(participants.length, 4)][2]
-                                [index],
-                        child: ContactAvatarWidget(
-                          handle: participants[index],
-                          size: avatarSize *
-                              materialGeneration[min(participants.length, 4)]
-                                  [0],
-                          fontSize: avatarSize *
-                              materialGeneration[min(participants.length, 4)]
-                                  [1],
-                          editable: widget.editable,
-                          scaleSize: false,
-                        ),
+                    children: List.generate(min(participants.length, 4), (index) => Align(
+                      alignment: materialGeneration[min(participants.length, 4)][2][index],
+                      child: ContactAvatarWidget(
+                        handle: participants[index],
+                        size: avatarSize * materialGeneration[min(participants.length, 4)][0],
+                        fontSize: avatarSize * materialGeneration[min(participants.length, 4)][1],
+                        editable: widget.editable,
+                        scaleSize: false,
                       ),
-                    ),
+                    )),
                   ),
                 )
               : ContactAvatarWidget(

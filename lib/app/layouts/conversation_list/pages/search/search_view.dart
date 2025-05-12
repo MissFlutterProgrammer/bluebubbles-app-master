@@ -1,5 +1,14 @@
-// ignore_for_file: implementation_imports, deprecated_member_use
-
+import 'package:bluebubbles/app/components/avatars/contact_avatar_group_widget.dart';
+import 'package:bluebubbles/app/layouts/chat_selector_view/chat_selector_view.dart';
+import 'package:bluebubbles/app/layouts/conversation_details/dialogs/timeframe_picker.dart';
+import 'package:bluebubbles/app/layouts/handle_selector_view/handle_selector_view.dart';
+import 'package:bluebubbles/helpers/helpers.dart';
+import 'package:bluebubbles/app/layouts/conversation_view/pages/conversation_view.dart';
+import 'package:bluebubbles/app/layouts/settings/widgets/settings_widgets.dart';
+import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
+import 'package:bluebubbles/database/database.dart';
+import 'package:bluebubbles/database/models.dart';
+import 'package:bluebubbles/services/services.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -7,20 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:get/get.dart';
-import 'package:objectbox/src/native/query/query.dart' as obx;
 import 'package:sliding_up_panel2/sliding_up_panel2.dart';
 import 'package:tuple/tuple.dart';
-import 'package:bluebubbles/app/components/avatars/contact_avatar_group_widget.dart';
-import 'package:bluebubbles/app/layouts/chat_selector_view/chat_selector_view.dart';
-import 'package:bluebubbles/app/layouts/conversation_details/dialogs/timeframe_picker.dart';
-import 'package:bluebubbles/app/layouts/conversation_view/pages/conversation_view.dart';
-import 'package:bluebubbles/app/layouts/handle_selector_view/handle_selector_view.dart';
-import 'package:bluebubbles/app/layouts/settings/widgets/settings_widgets.dart';
-import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
-import 'package:bluebubbles/database/database.dart';
-import 'package:bluebubbles/database/models.dart';
-import 'package:bluebubbles/helpers/helpers.dart';
-import 'package:bluebubbles/services/services.dart';
+import 'package:objectbox/src/native/query/query.dart' as obx;
 
 class SearchResult {
   final String search;
@@ -63,10 +61,9 @@ class SearchViewState extends OptimizedState<SearchView> {
   bool isNotFromMe = false;
   DateTime? sinceDate;
 
-  Color get backgroundColor =>
-      ss.settings.windowEffect.value == WindowEffect.disabled
-          ? context.theme.colorScheme.surface
-          : Colors.transparent;
+  Color get backgroundColor => ss.settings.windowEffect.value == WindowEffect.disabled
+      ? context.theme.colorScheme.background
+      : Colors.transparent;
 
   @override
   void initState() {
@@ -88,11 +85,7 @@ class SearchViewState extends OptimizedState<SearchView> {
 
     // If we've already searched for the results and there are none, set no results and return
     if (pastSearches
-            .firstWhereOrNull(
-              (e) =>
-                  e.search == newSearch &&
-                  e.method == (local ? "local" : "network"),
-            )
+            .firstWhereOrNull((e) => e.search == newSearch && e.method == (local ? "local" : "network"))
             ?.results
             .isEmpty ??
         false) {
@@ -123,24 +116,20 @@ class SearchViewState extends OptimizedState<SearchView> {
       } else if (isNotFromMe) {
         condition = condition.and(Message_.isFromMe.equals(false));
       } else if (selectedHandle != null) {
-        condition = condition
-            .and(Message_.handleId.equals(selectedHandle!.originalROWID!));
+        condition = condition.and(Message_.handleId.equals(selectedHandle!.originalROWID!));
       }
 
       if (sinceDate != null) {
-        condition = condition.and(Message_.dateCreated
-            .greaterOrEqual(sinceDate!.millisecondsSinceEpoch));
+        condition = condition.and(Message_.dateCreated.greaterOrEqual(sinceDate!.millisecondsSinceEpoch));
       }
 
       QueryBuilder<Message> qBuilder = Database.messages.query(condition);
 
       if (selectedChat != null) {
-        qBuilder = qBuilder
-          ..link(Message_.chat, Chat_.guid.equals(selectedChat!.guid));
+        qBuilder = qBuilder..link(Message_.chat, Chat_.guid.equals(selectedChat!.guid));
       }
 
-      final query =
-          qBuilder.order(Message_.dateCreated, flags: Order.descending).build();
+      final query = qBuilder.order(Message_.dateCreated, flags: Order.descending).build();
       query.limit = 50;
       final results = query.find();
       query.close();
@@ -157,12 +146,7 @@ class SearchViewState extends OptimizedState<SearchView> {
       chats = results.map((e) => e.chat.target!).toList();
       chats.forEachIndexed((index, element) {
         element.latestMessage = messages[index];
-        search.results.add(
-          Tuple2(
-            element,
-            messages[index],
-          ),
-        );
+        search.results.add(Tuple2(element, messages[index]));
       });
     } else {
       final whereClause = [
@@ -216,19 +200,11 @@ class SearchViewState extends OptimizedState<SearchView> {
         items.item2.add(message);
       }
       final chatsToGet = items.item1.map((e) => e.guid).toList();
-      final dbChats =
-          Database.chats.query(Chat_.guid.oneOf(chatsToGet)).build().find();
+      final dbChats = Database.chats.query(Chat_.guid.oneOf(chatsToGet)).build().find();
       for (int i = 0; i < items.item1.length; i++) {
-        final chat =
-            dbChats.firstWhereOrNull((e) => e.guid == items.item1[i].guid) ??
-                items.item1[i];
+        final chat = dbChats.firstWhereOrNull((e) => e.guid == items.item1[i].guid) ?? items.item1[i];
         chat.latestMessage = items.item2[i];
-        search.results.add(
-          Tuple2(
-            chat,
-            items.item2[i],
-          ),
-        );
+        search.results.add(Tuple2(chat, items.item2[i]));
       }
     }
 
@@ -249,22 +225,20 @@ class SearchViewState extends OptimizedState<SearchView> {
     if (isNotFromMe) filterCount++;
     if (sinceDate != null) filterCount++;
 
-    bool showSenderFilter =
-        !isNotFromMe && !isFromMe && (selectedChat?.isGroup ?? true);
+    bool showSenderFilter = !isNotFromMe && !isFromMe && (selectedChat?.isGroup ?? true);
 
     return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) {
-        if (didPop) return;
-        if (panelController.isPanelOpen) {
-          panelController.close();
-        } else {
-          final NavigatorState navigator = Navigator.of(context);
-          navigator.pop();
-        }
-      },
-      child: Stack(
-        children: [
+        canPop: false,
+        onPopInvoked: (bool didPop) {
+          if (didPop) return;
+          if (panelController.isPanelOpen) {
+            panelController.close();
+          } else {
+            final NavigatorState navigator = Navigator.of(context);
+            navigator.pop();
+          }
+        },
+        child: Stack(children: [
           SettingsScaffold(
             title: "Search",
             initialHeader: null,
@@ -277,187 +251,141 @@ class SearchViewState extends OptimizedState<SearchView> {
                 delegate: SliverChildListDelegate([
                   const SizedBox(height: 8),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15.0, vertical: 10.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Icon(
-                          ss.settings.skin.value == Skins.iOS
-                              ? CupertinoIcons.info
-                              : Icons.info_outline,
+                          ss.settings.skin.value == Skins.iOS ? CupertinoIcons.info : Icons.info_outline,
                           size: 20,
                           color: context.theme.colorScheme.primary,
                         ),
                         const SizedBox(width: 10),
                         Expanded(
-                          child: Text(
-                            "Enter at least 3 characters to begin a search",
-                            style: context.theme.textTheme.bodySmall!.copyWith(
-                              color: context.theme.colorScheme.properOnSurface,
-                            ),
-                          ),
-                        ),
+                            child: Text(
+                          "Enter at least 3 characters to begin a search",
+                          style: context.theme.textTheme.bodySmall!
+                              .copyWith(color: context.theme.colorScheme.properOnSurface),
+                        )),
                       ],
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
+                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Flexible(
                           child: CupertinoTextField(
-                            textInputAction: TextInputAction.done,
-                            onSubmitted: (_) {
-                              search(textEditingController.text);
-                            },
-                            focusNode: focusNode,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15.0, vertical: 10),
-                            controller: textEditingController,
-                            placeholder: "Enter a search term...",
-                            style: context.theme.textTheme.bodyLarge,
-                            placeholderStyle:
-                                context.theme.textTheme.bodyLarge!.copyWith(
-                              color: context.theme.colorScheme.outline,
-                            ),
-                            cursorColor: context.theme.colorScheme.primary,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: context.theme.colorScheme.primary,
-                              ),
-                            ),
-                            maxLines: 1,
-                            prefix: Padding(
-                              padding: const EdgeInsets.only(left: 15),
-                              child: Icon(
-                                ss.settings.skin.value == Skins.iOS
-                                    ? CupertinoIcons.search
-                                    : Icons.search,
-                                color: context.theme.colorScheme.outline,
-                              ),
-                            ),
-                            suffix: Padding(
-                              padding: const EdgeInsets.only(right: 15),
-                              child: !isSearching
-                                  ? InkWell(
-                                      child: Icon(
-                                        Icons.arrow_forward,
-                                        color:
-                                            context.theme.colorScheme.primary,
-                                      ),
-                                      onTap: () {
-                                        search(textEditingController.text);
-                                      })
-                                  : Padding(
-                                      padding: const EdgeInsets.all(12.0),
-                                      child: ss.settings.skin.value == Skins.iOS
-                                          ? Theme(
-                                              data: ThemeData(
-                                                cupertinoOverrideTheme:
-                                                    CupertinoThemeData(
-                                                  brightness: ThemeData
-                                                      .estimateBrightnessForColor(
-                                                    context.theme.colorScheme
-                                                        .background,
-                                                  ),
-                                                ),
-                                              ),
-                                              child:
-                                                  const CupertinoActivityIndicator(),
-                                            )
-                                          : Container(
-                                              height: 20,
-                                              width: 20,
-                                              child: Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                          Color>(
-                                                    context.theme.colorScheme
-                                                        .primary,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                    ),
-                            ),
-                            suffixMode: OverlayVisibilityMode.editing,
-                          ),
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) {
+                          search(textEditingController.text);
+                        },
+                        focusNode: focusNode,
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
+                        controller: textEditingController,
+                        placeholder: "Enter a search term...",
+                        style: context.theme.textTheme.bodyLarge,
+                        placeholderStyle:
+                            context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.outline),
+                        cursorColor: context.theme.colorScheme.primary,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: context.theme.colorScheme.primary),
                         ),
-                        Container(
+                        maxLines: 1,
+                        prefix: Padding(
+                          padding: const EdgeInsets.only(left: 15),
+                          child: Icon(ss.settings.skin.value == Skins.iOS ? CupertinoIcons.search : Icons.search,
+                              color: context.theme.colorScheme.outline),
+                        ),
+                        suffix: Padding(
+                          padding: const EdgeInsets.only(right: 15),
+                          child: !isSearching
+                              ? InkWell(
+                                  child: Icon(Icons.arrow_forward, color: context.theme.colorScheme.primary),
+                                  onTap: () {
+                                    search(textEditingController.text);
+                                  })
+                              : Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: ss.settings.skin.value == Skins.iOS
+                                      ? Theme(
+                                          data: ThemeData(
+                                            cupertinoOverrideTheme: CupertinoThemeData(
+                                                brightness: ThemeData.estimateBrightnessForColor(
+                                                    context.theme.colorScheme.background)),
+                                          ),
+                                          child: const CupertinoActivityIndicator(),
+                                        )
+                                      : Container(
+                                          height: 20,
+                                          width: 20,
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(context.theme.colorScheme.primary),
+                                            ),
+                                          ),
+                                        ),
+                                ),
+                        ),
+                        suffixMode: OverlayVisibilityMode.editing,
+                      )),
+                      Container(
                           margin: const EdgeInsets.only(left: 10),
                           width: 35,
                           height: 40,
-                          child: Stack(
-                            children: [
-                              if (filterCount > 0)
-                                Positioned(
-                                  top: -4,
-                                  right: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      color: context.theme.colorScheme.primary,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Text(
-                                      filterCount.toString(),
-                                      style: context.theme.textTheme.bodySmall!
-                                          .copyWith(
-                                        color:
-                                            context.theme.colorScheme.onPrimary,
-                                      ),
-                                    ),
+                          child: Stack(children: [
+                            if (filterCount > 0)
+                              Positioned(
+                                top: -4,
+                                right: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: context.theme.colorScheme.primary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    filterCount.toString(),
+                                    style: context.theme.textTheme.bodySmall!
+                                        .copyWith(color: context.theme.colorScheme.onPrimary),
                                   ),
                                 ),
-                              Container(
+                              ),
+                            Container(
                                 margin: const EdgeInsets.only(left: 5),
                                 child: Padding(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  child: InkWell(
-                                    onTap: () {
-                                      HapticFeedback.lightImpact();
-                                      if (focusNode.hasFocus) {
-                                        focusNode.unfocus();
-                                      }
+                                    padding: const EdgeInsets.only(top: 10),
+                                    child: InkWell(
+                                      onTap: () {
+                                        HapticFeedback.lightImpact();
+                                        if (focusNode.hasFocus) {
+                                          focusNode.unfocus();
+                                        }
 
-                                      if (panelController.isPanelOpen) {
-                                        panelController.close();
-                                      } else {
-                                        panelController.open();
-                                      }
-                                    },
-                                    child: Icon(
-                                      Icons.tune,
-                                      color: context.theme.colorScheme.primary,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                                        if (panelController.isPanelOpen) {
+                                          panelController.close();
+                                        } else {
+                                          panelController.open();
+                                        }
+                                      },
+                                      child: Icon(
+                                        Icons.tune,
+                                        color: context.theme.colorScheme.primary,
+                                      ),
+                                    )))
+                          ]))
+                    ]),
                   ),
                   if (!kIsWeb)
                     Padding(
-                      padding: const EdgeInsets.only(
-                          left: 15, right: 15, top: 15, bottom: 10),
+                      padding: const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 10),
                       child: ToggleButtons(
-                        constraints: BoxConstraints(
-                          minWidth: (ns.width(context) * 0.9) / 2,
-                        ),
-                        fillColor:
-                            context.theme.colorScheme.primary.withOpacity(0.2),
-                        splashColor:
-                            context.theme.colorScheme.primary.withOpacity(0.2),
+                        constraints: BoxConstraints(minWidth: (ns.width(context) * 0.9) / 2),
+                        fillColor: context.theme.colorScheme.primary.withOpacity(0.2),
+                        splashColor: context.theme.colorScheme.primary.withOpacity(0.2),
                         children: [
                           const Row(
                             children: [
@@ -465,10 +393,7 @@ class SearchViewState extends OptimizedState<SearchView> {
                                 padding: EdgeInsets.all(8.0),
                                 child: Text("Search Device"),
                               ),
-                              Icon(
-                                Icons.storage_outlined,
-                                size: 16,
-                              ),
+                              Icon(Icons.storage_outlined, size: 16),
                             ],
                           ),
                           const Row(
@@ -484,8 +409,7 @@ class SearchViewState extends OptimizedState<SearchView> {
                         borderRadius: BorderRadius.circular(20),
                         selectedBorderColor: context.theme.colorScheme.primary,
                         selectedColor: context.theme.colorScheme.primary,
-                        borderColor:
-                            context.theme.colorScheme.primary.withOpacity(0.5),
+                        borderColor: context.theme.colorScheme.primary.withOpacity(0.5),
                         isSelected: [local, network],
                         onPressed: (index) {
                           if (index == 0) {
@@ -507,37 +431,20 @@ class SearchViewState extends OptimizedState<SearchView> {
                         },
                       ),
                     ),
-                  Divider(
-                    color: context.theme.colorScheme.outline.withOpacity(0.75),
-                  ),
+                  Divider(color: context.theme.colorScheme.outline.withOpacity(0.75)),
                   if (!isSearching && noResults)
                     Padding(
-                      padding: const EdgeInsets.only(top: 25.0),
-                      child: Center(
-                        child: Text(
-                          "No results found!",
-                          style: context.theme.textTheme.bodyLarge,
-                        ),
-                      ),
-                    ),
+                        padding: const EdgeInsets.only(top: 25.0),
+                        child: Center(child: Text("No results found!", style: context.theme.textTheme.bodyLarge))),
                 ]),
               ),
               if (!isSearching && currentSearch != null)
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      TextStyle subtitleStyle =
-                          context.theme.textTheme.bodySmall!
-                              .copyWith(
-                                color: context.theme.colorScheme.outline,
-                                height: 1.5,
-                              )
-                              .apply(
-                                fontSizeFactor:
-                                    ss.settings.skin.value == Skins.Material
-                                        ? 1.05
-                                        : 1.0,
-                              );
+                      TextStyle subtitleStyle = context.theme.textTheme.bodySmall!
+                          .copyWith(color: context.theme.colorScheme.outline, height: 1.5)
+                          .apply(fontSizeFactor: ss.settings.skin.value == Skins.Material ? 1.05 : 1.0);
 
                       final chat = currentSearch!.results[index].item1;
                       final message = currentSearch!.results[index].item2;
@@ -546,9 +453,7 @@ class SearchViewState extends OptimizedState<SearchView> {
                       List<InlineSpan> spans = [];
 
                       // Get the current position of the search term
-                      int termStart = message.fullText
-                          .toLowerCase()
-                          .indexOf(currentSearchTerm!.toLowerCase());
+                      int termStart = message.fullText.toLowerCase().indexOf(currentSearchTerm!.toLowerCase());
                       int termEnd = termStart + currentSearchTerm!.length;
 
                       if (termStart >= 0) {
@@ -560,49 +465,24 @@ class SearchViewState extends OptimizedState<SearchView> {
                         );
 
                         // Recalculate the term position in the snippet
-                        termStart = subText
-                            .toLowerCase()
-                            .indexOf(currentSearchTerm!.toLowerCase());
+                        termStart = subText.toLowerCase().indexOf(currentSearchTerm!.toLowerCase());
                         termEnd = termStart + currentSearchTerm!.length;
 
                         // Add the beginning string
-                        spans.add(
-                          TextSpan(
-                            text: subText.substring(0, termStart).trimLeft(),
-                            style: subtitleStyle,
-                          ),
-                        );
+                        spans.add(TextSpan(text: subText.substring(0, termStart).trimLeft(), style: subtitleStyle));
 
                         // Add the search term (bolded with color)
                         spans.add(
                           TextSpan(
-                            text: subText.substring(termStart, termEnd),
-                            style: subtitleStyle.apply(
-                              color: context.theme.colorScheme.primary,
-                              fontWeightDelta: 2,
-                            ),
-                          ),
+                              text: subText.substring(termStart, termEnd),
+                              style: subtitleStyle.apply(color: context.theme.colorScheme.primary, fontWeightDelta: 2)),
                         );
 
                         // Add the ending string
-                        spans.add(
-                          TextSpan(
-                            text: subText
-                                .substring(
-                                  termEnd,
-                                  subText.length,
-                                )
-                                .trimRight(),
-                            style: subtitleStyle,
-                          ),
-                        );
+                        spans.add(TextSpan(
+                            text: subText.substring(termEnd, subText.length).trimRight(), style: subtitleStyle));
                       } else {
-                        spans.add(
-                          TextSpan(
-                            text: message.text,
-                            style: subtitleStyle,
-                          ),
-                        );
+                        spans.add(TextSpan(text: message.text, style: subtitleStyle));
                       }
 
                       return Container(
@@ -610,8 +490,7 @@ class SearchViewState extends OptimizedState<SearchView> {
                           border: !ss.settings.hideDividers.value
                               ? Border(
                                   bottom: BorderSide(
-                                    color: context.theme.colorScheme.background
-                                        .oppositeLightenOrDarken(15),
+                                    color: context.theme.colorScheme.background.oppositeLightenOrDarken(15),
                                     width: 0.5,
                                   ),
                                 )
@@ -653,9 +532,7 @@ class SearchViewState extends OptimizedState<SearchView> {
                           onTap: () {
                             final service = ms(chat.guid);
                             service.method = local ? "local" : "network";
-                            service.struct.addMessages(
-                              [message],
-                            );
+                            service.struct.addMessages([message]);
                             ns.pushAndRemoveUntil(
                               context,
                               ConversationView(
@@ -690,145 +567,116 @@ class SearchViewState extends OptimizedState<SearchView> {
             maxHeight: 225,
             panelBuilder: () {
               return Container(
-                padding: const EdgeInsets.only(
-                    left: 10, right: 10, bottom: 20, top: 20),
-                child: Column(
-                  children: [
-                    Center(
+                padding: const EdgeInsets.only(left: 10, right: 10, bottom: 20, top: 20),
+                child: Column(children: [
+                  Center(
                       child: Text(
-                        "Search Filters",
-                        style: context.theme.textTheme.headlineSmall,
-                      ),
-                    ),
-                    Material(
+                    "Search Filters",
+                    style: context.theme.textTheme.headlineSmall,
+                  )),
+                  Material(
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Wrap(
-                          direction: Axis.horizontal,
-                          alignment: WrapAlignment.start,
-                          spacing: 10,
-                          children: [
-                            RawChip(
-                              tapEnabled: true,
-                              deleteIcon: const Icon(Icons.close, size: 16),
-                              side: BorderSide(
-                                color: context.theme.colorScheme.outline
-                                    .withOpacity(0.1),
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              avatar: CircleAvatar(
-                                backgroundColor:
-                                    context.theme.colorScheme.primaryContainer,
-                                child: Icon(
-                                  Icons.calendar_today_outlined,
-                                  color: context.theme.colorScheme.primary,
-                                  size: 12,
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Wrap(
+                            direction: Axis.horizontal,
+                            alignment: WrapAlignment.start,
+                            spacing: 10,
+                            children: [
+                              RawChip(
+                                tapEnabled: true,
+                                deleteIcon: const Icon(Icons.close, size: 16),
+                                side: BorderSide(color: context.theme.colorScheme.outline.withOpacity(0.1)),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                avatar: CircleAvatar(
+                                  backgroundColor: context.theme.colorScheme.primaryContainer,
+                                  child: Icon(
+                                    Icons.calendar_today_outlined,
+                                    color: context.theme.colorScheme.primary,
+                                    size: 12,
+                                  ),
                                 ),
+                                label: sinceDate != null
+                                    ? Text(
+                                        "Since ${buildFullDate(sinceDate!, includeTime: sinceDate!.isToday(), useTodayYesterday: true)}",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal,
+                                            color: context.theme.colorScheme.onSurface),
+                                        overflow: TextOverflow.ellipsis)
+                                    : Text('Filter by Date',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal,
+                                            color: context.theme.colorScheme.onSurface)),
+                                onDeleted: sinceDate == null
+                                    ? null
+                                    : () {
+                                        setState(() {
+                                          sinceDate = null;
+                                          isSearching = false;
+                                          noResults = false;
+                                          currentSearch = null;
+                                        });
+                                      },
+                                onPressed: () async {
+                                  sinceDate = await showTimeframePicker("Since When?", context,
+                                      customTimeframes: {
+                                        "1 Hour": 1,
+                                        "1 Day": 24,
+                                        "1 Week": 168,
+                                        "1 Month": 720,
+                                        "6 Months": 4320,
+                                        "1 Year": 8760,
+                                      },
+                                      selectionSuffix: "Ago",
+                                      useTodayYesterday: true);
+                                  setState(() {
+                                    isSearching = false;
+                                    noResults = false;
+                                    currentSearch = null;
+                                  });
+                                },
                               ),
-                              label: sinceDate != null
-                                  ? Text(
-                                      "Since ${buildFullDate(sinceDate!, includeTime: sinceDate!.isToday(), useTodayYesterday: true)}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                        color:
-                                            context.theme.colorScheme.onSurface,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    )
-                                  : Text(
-                                      'Filter by Date',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                        color:
-                                            context.theme.colorScheme.onSurface,
-                                      ),
-                                    ),
-                              onDeleted: sinceDate == null
-                                  ? null
-                                  : () {
-                                      setState(() {
-                                        sinceDate = null;
-                                        isSearching = false;
-                                        noResults = false;
-                                        currentSearch = null;
-                                      });
-                                    },
-                              onPressed: () async {
-                                sinceDate = await showTimeframePicker(
-                                    "Since When?", context,
-                                    customTimeframes: {
-                                      "1 Hour": 1,
-                                      "1 Day": 24,
-                                      "1 Week": 168,
-                                      "1 Month": 720,
-                                      "6 Months": 4320,
-                                      "1 Year": 8760,
-                                    },
-                                    selectionSuffix: "Ago",
-                                    useTodayYesterday: true);
-                                setState(() {
-                                  isSearching = false;
-                                  noResults = false;
-                                  currentSearch = null;
-                                });
-                              },
-                            ),
-                            RawChip(
-                              tapEnabled: true,
-                              deleteIcon: const Icon(Icons.close, size: 16),
-                              side: BorderSide(
-                                  color: context.theme.colorScheme.outline
-                                      .withOpacity(0.1)),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                              avatar: CircleAvatar(
-                                backgroundColor:
-                                    context.theme.colorScheme.primaryContainer,
-                                child: Padding(
-                                    padding:
-                                        const EdgeInsets.only(left: 1, top: 1),
-                                    child: Icon(
-                                      Icons.chat_bubble_outline_rounded,
-                                      color: context.theme.colorScheme.primary,
-                                      size: 12,
-                                    )),
-                              ),
-                              label: selectedChat != null
-                                  ? Text(selectedChat!.getTitle(),
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                          color: context
-                                              .theme.colorScheme.onSurface),
-                                      overflow: TextOverflow.ellipsis)
-                                  : Text(
-                                      'Filter by Chat',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                        color:
-                                            context.theme.colorScheme.onSurface,
-                                      ),
-                                    ),
-                              onDeleted: selectedChat == null
-                                  ? null
-                                  : () {
-                                      setState(() {
-                                        selectedChat = null;
-                                        isSearching = false;
-                                        noResults = false;
-                                        currentSearch = null;
-                                      });
-                                    },
-                              onPressed: () {
-                                // Push a route that allows the user to select a chat
-                                ns.push(
-                                  context,
-                                  ChatSelectorView(
+                              RawChip(
+                                tapEnabled: true,
+                                deleteIcon: const Icon(Icons.close, size: 16),
+                                side: BorderSide(color: context.theme.colorScheme.outline.withOpacity(0.1)),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                avatar: CircleAvatar(
+                                  backgroundColor: context.theme.colorScheme.primaryContainer,
+                                  child: Padding(
+                                      padding: const EdgeInsets.only(left: 1, top: 1),
+                                      child: Icon(
+                                        Icons.chat_bubble_outline_rounded,
+                                        color: context.theme.colorScheme.primary,
+                                        size: 12,
+                                      )),
+                                ),
+                                label: selectedChat != null
+                                    ? Text(selectedChat!.getTitle(),
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal,
+                                            color: context.theme.colorScheme.onSurface),
+                                        overflow: TextOverflow.ellipsis)
+                                    : Text('Filter by Chat',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.normal,
+                                            color: context.theme.colorScheme.onSurface)),
+                                onDeleted: selectedChat == null
+                                    ? null
+                                    : () {
+                                        setState(() {
+                                          selectedChat = null;
+                                          isSearching = false;
+                                          noResults = false;
+                                          currentSearch = null;
+                                        });
+                                      },
+                                onPressed: () {
+                                  // Push a route that allows the user to select a chat
+                                  ns.push(context, ChatSelectorView(
                                     onSelect: (chat) {
                                       setState(() {
                                         selectedChat = chat;
@@ -837,150 +685,112 @@ class SearchViewState extends OptimizedState<SearchView> {
                                         currentSearch = null;
                                       });
                                     },
+                                  ));
+                                },
+                              ),
+                              if (showSenderFilter)
+                                RawChip(
+                                  tapEnabled: true,
+                                  deleteIcon: const Icon(Icons.close, size: 16),
+                                  side: BorderSide(color: context.theme.colorScheme.outline.withOpacity(0.1)),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                  avatar: CircleAvatar(
+                                    backgroundColor: context.theme.colorScheme.primaryContainer,
+                                    child: Icon(
+                                      Icons.person_2_outlined,
+                                      color: context.theme.colorScheme.primary,
+                                      size: 12,
+                                    ),
                                   ),
-                                );
-                              },
-                            ),
-                            if (showSenderFilter)
-                              RawChip(
-                                tapEnabled: true,
-                                deleteIcon: const Icon(Icons.close, size: 16),
-                                side: BorderSide(
-                                  color: context.theme.colorScheme.outline
-                                      .withOpacity(0.1),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                avatar: CircleAvatar(
-                                  backgroundColor: context
-                                      .theme.colorScheme.primaryContainer,
-                                  child: Icon(
-                                    Icons.person_2_outlined,
-                                    color: context.theme.colorScheme.primary,
-                                    size: 12,
-                                  ),
-                                ),
-                                label: selectedHandle != null
-                                    ? Text(
-                                        selectedHandle!.displayName,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                          color: context
-                                              .theme.colorScheme.onSurface,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      )
-                                    : Text(
-                                        'Filter by Sender',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                          color: context
-                                              .theme.colorScheme.onSurface,
-                                        ),
-                                      ),
-                                onDeleted: selectedHandle == null
-                                    ? null
-                                    : () {
-                                        setState(() {
-                                          selectedHandle = null;
-                                          isSearching = false;
-                                          noResults = false;
-                                          currentSearch = null;
-                                        });
-                                      },
-                                onPressed: () {
-                                  // Push a route that allows the user to select a chat
-                                  ns.push(
-                                      context,
-                                      HandleSelectorView(
-                                        forChat: selectedChat,
-                                        onSelect: (handle) {
+                                  label: selectedHandle != null
+                                      ? Text(selectedHandle!.displayName,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.normal,
+                                              color: context.theme.colorScheme.onSurface),
+                                          overflow: TextOverflow.ellipsis)
+                                      : Text('Filter by Sender',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.normal,
+                                              color: context.theme.colorScheme.onSurface)),
+                                  onDeleted: selectedHandle == null
+                                      ? null
+                                      : () {
                                           setState(() {
-                                            selectedHandle = handle;
+                                            selectedHandle = null;
                                             isSearching = false;
                                             noResults = false;
                                             currentSearch = null;
                                           });
                                         },
-                                      ));
-                                },
-                              ),
-                            if (selectedHandle == null && !isNotFromMe)
-                              RawChip(
-                                tapEnabled: true,
-                                showCheckmark: true,
-                                selected: isFromMe,
-                                checkmarkColor:
-                                    context.theme.colorScheme.primary,
-                                side: BorderSide(
-                                  color: context.theme.colorScheme.outline
-                                      .withOpacity(0.1),
+                                  onPressed: () {
+                                    // Push a route that allows the user to select a chat
+                                    ns.push(
+                                        context,
+                                        HandleSelectorView(
+                                          forChat: selectedChat,
+                                          onSelect: (handle) {
+                                            setState(() {
+                                              selectedHandle = handle;
+                                              isSearching = false;
+                                              noResults = false;
+                                              currentSearch = null;
+                                            });
+                                          },
+                                        ));
+                                  },
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                              if (selectedHandle == null && !isNotFromMe)
+                                RawChip(
+                                  tapEnabled: true,
+                                  showCheckmark: true,
+                                  selected: isFromMe,
+                                  checkmarkColor: context.theme.colorScheme.primary,
+                                  side: BorderSide(color: context.theme.colorScheme.outline.withOpacity(0.1)),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                  label: Text('From You',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                          color: context.theme.colorScheme.onSurface)),
+                                  onSelected: (selected) {
+                                    setState(() {
+                                      isFromMe = selected;
+                                      isSearching = false;
+                                      noResults = false;
+                                      currentSearch = null;
+                                    });
+                                  },
                                 ),
-                                label: Text(
-                                  'From You',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                    color: context.theme.colorScheme.onSurface,
-                                  ),
+                              if (selectedHandle == null && !isFromMe)
+                                RawChip(
+                                  tapEnabled: true,
+                                  showCheckmark: true,
+                                  selected: isNotFromMe,
+                                  checkmarkColor: context.theme.colorScheme.primary,
+                                  side: BorderSide(color: context.theme.colorScheme.outline.withOpacity(0.1)),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                  label: Text('Not From You',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                          color: context.theme.colorScheme.onSurface)),
+                                  onSelected: (selected) {
+                                    setState(() {
+                                      isNotFromMe = selected;
+                                      isSearching = false;
+                                      noResults = false;
+                                      currentSearch = null;
+                                    });
+                                  },
                                 ),
-                                onSelected: (selected) {
-                                  setState(() {
-                                    isFromMe = selected;
-                                    isSearching = false;
-                                    noResults = false;
-                                    currentSearch = null;
-                                  });
-                                },
-                              ),
-                            if (selectedHandle == null && !isFromMe)
-                              RawChip(
-                                tapEnabled: true,
-                                showCheckmark: true,
-                                selected: isNotFromMe,
-                                checkmarkColor:
-                                    context.theme.colorScheme.primary,
-                                side: BorderSide(
-                                  color: context.theme.colorScheme.outline
-                                      .withOpacity(0.1),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                label: Text(
-                                  'Not From You',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                    color: context.theme.colorScheme.onSurface,
-                                  ),
-                                ),
-                                onSelected: (selected) {
-                                  setState(() {
-                                    isNotFromMe = selected;
-                                    isSearching = false;
-                                    noResults = false;
-                                    currentSearch = null;
-                                  });
-                                },
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                            ],
+                          ))),
+                ]),
               );
             },
           )
-        ],
-      ),
-    );
+        ]));
   }
 }

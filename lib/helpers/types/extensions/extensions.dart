@@ -13,13 +13,10 @@ extension DateHelpers on DateTime {
 
   bool isYesterday() {
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    return yesterday.day == day &&
-        yesterday.month == month &&
-        yesterday.year == year;
+    return yesterday.day == day && yesterday.month == month && yesterday.year == year;
   }
 
-  bool isWithin(DateTime other,
-      {int? ms, int? seconds, int? minutes, int? hours, int? days}) {
+  bool isWithin(DateTime other, {int? ms, int? seconds, int? minutes, int? hours, int? days}) {
     Duration diff = difference(other);
     if (ms != null) {
       return diff.inMilliseconds.abs() < ms;
@@ -50,11 +47,7 @@ extension MessageErrorExtension on MessageError {
 }
 
 extension EffectHelper on MessageEffect {
-  bool get isBubble =>
-      this == MessageEffect.slam ||
-      this == MessageEffect.loud ||
-      this == MessageEffect.gentle ||
-      this == MessageEffect.invisibleInk;
+  bool get isBubble => this == MessageEffect.slam || this == MessageEffect.loud || this == MessageEffect.gentle || this == MessageEffect.invisibleInk;
 }
 
 /// Used when playing iMessage effects
@@ -66,8 +59,7 @@ extension WidgetLocation on GlobalKey {
     if (translation != null && renderObject?.paintBounds != null) {
       final offset = Offset(translation.x, translation.y);
       final tempRect = renderObject!.paintBounds.shift(offset);
-      return Rect.fromLTRB(tempRect.left - difference, tempRect.top,
-          tempRect.right - difference, tempRect.bottom);
+      return Rect.fromLTRB(tempRect.left - difference, tempRect.top, tempRect.right - difference, tempRect.bottom);
     } else {
       return null;
     }
@@ -126,16 +118,9 @@ extension ChatListHelpers on RxList<Chat> {
   RxList<Chat> unknownSendersHelper(bool unknown) {
     if (!ss.settings.filterUnknownSenders.value) return this;
     if (unknown) {
-      return where(
-              (e) => !e.isGroup && e.participants.firstOrNull?.contact == null)
-          .toList()
-          .obs;
+      return where((e) => !e.isGroup && e.participants.firstOrNull?.contact == null).toList().obs;
     } else {
-      return where((e) =>
-              e.isGroup ||
-              (!e.isGroup && e.participants.firstOrNull?.contact != null))
-          .toList()
-          .obs;
+      return where((e) => e.isGroup || (!e.isGroup && e.participants.firstOrNull?.contact != null)).toList().obs;
     }
   }
 }
@@ -157,7 +142,6 @@ extension LastChars on String {
 extension UrlParsing on String {
   bool get hasUrl => urlRegex.hasMatch(this) && !kIsWeb;
 }
-
 extension ShortenString on String {
   String shorten(int length) {
     if (this.length <= length) return this;

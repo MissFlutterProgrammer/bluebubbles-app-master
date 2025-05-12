@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+
 import 'package:bluebubbles/app/layouts/settings/widgets/content/next_button.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/app/layouts/settings/widgets/settings_widgets.dart';
@@ -17,11 +18,13 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPanel extends StatefulWidget {
+
   @override
   State<StatefulWidget> createState() => _AboutPanelState();
 }
 
 class _AboutPanelState extends OptimizedState<AboutPanel> {
+
   @override
   Widget build(BuildContext context) {
     return SettingsScaffold(
@@ -39,76 +42,60 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                   backgroundColor: tileColor,
                   children: [
                     SettingsTile(
-                        title: "BlueBubbles Website",
-                        subtitle: "Visit the BlueBubbles Homepage",
-                        onTap: () async {
-                          await launchUrl(
-                              Uri(scheme: "https", host: "bluebubbles.app"),
-                              mode: LaunchMode.externalApplication);
-                        },
-                        leading: const SettingsLeadingIcon(
-                          iosIcon: CupertinoIcons.globe,
-                          materialIcon: Icons.language,
-                          containerColor: Colors.green,
-                        ),
-                        trailing: const NextButton()),
+                      title: "BlueBubbles Website",
+                      subtitle: "Visit the BlueBubbles Homepage",
+                      onTap: () async {
+                        await launchUrl(Uri(scheme: "https", host: "bluebubbles.app"), mode: LaunchMode.externalApplication);
+                      },
+                      leading: const SettingsLeadingIcon(
+                        iosIcon: CupertinoIcons.globe,
+                        materialIcon: Icons.language,
+                        containerColor: Colors.green,
+                      ),
+                      trailing: const NextButton()
+                    ),
                     const SettingsDivider(),
                     SettingsTile(
-                        title: "Documentation",
-                        subtitle:
-                            "RTFM: Read the [Fine] Manual and learn how to use BlueBubbles or fix common issues",
-                        onTap: () async {
-                          await launchUrl(
-                              Uri(
-                                  scheme: "https",
-                                  host: "docs.bluebubbles.app"),
-                              mode: LaunchMode.externalApplication);
-                        },
-                        leading: const SettingsLeadingIcon(
-                          iosIcon: CupertinoIcons.doc_append,
-                          materialIcon: Icons.document_scanner,
-                          containerColor: Colors.blueAccent,
-                        ),
-                        trailing: const NextButton()),
+                      title: "Documentation",
+                      subtitle: "RTFM: Read the [Fine] Manual and learn how to use BlueBubbles or fix common issues",
+                      onTap: () async {
+                        await launchUrl(Uri(scheme: "https", host: "docs.bluebubbles.app"), mode: LaunchMode.externalApplication);
+                      },
+                      leading: const SettingsLeadingIcon(
+                        iosIcon: CupertinoIcons.doc_append,
+                        materialIcon: Icons.document_scanner,
+                        containerColor: Colors.blueAccent,
+                      ),
+                      trailing: const NextButton()
+                    ),
                     const SettingsDivider(),
                     SettingsTile(
-                        title: "Source Code",
-                        subtitle:
-                            "View the source code for BlueBubbles, and contribute!",
-                        onTap: () async {
-                          await launchUrl(
-                              Uri(
-                                  scheme: "https",
-                                  host: "github.com",
-                                  path: "BlueBubblesApp"),
-                              mode: LaunchMode.externalApplication);
-                        },
-                        leading: const SettingsLeadingIcon(
-                          iosIcon:
-                              CupertinoIcons.chevron_left_slash_chevron_right,
-                          materialIcon: Icons.code,
-                          containerColor: Colors.orange,
-                        ),
-                        trailing: const NextButton()),
+                      title: "Source Code",
+                      subtitle: "View the source code for BlueBubbles, and contribute!",
+                      onTap: () async {
+                        await launchUrl(Uri(scheme: "https", host: "github.com", path: "BlueBubblesApp"), mode: LaunchMode.externalApplication);
+                      },
+                      leading: const SettingsLeadingIcon(
+                        iosIcon: CupertinoIcons.chevron_left_slash_chevron_right,
+                        materialIcon: Icons.code,
+                        containerColor: Colors.orange,
+                      ),
+                      trailing: const NextButton()
+                    ),
                     const SettingsDivider(),
                     SettingsTile(
-                        title: "Report a Bug",
-                        subtitle: "Found a bug? Report it here!",
-                        onTap: () async {
-                          await launchUrl(
-                              Uri(
-                                  scheme: "https",
-                                  host: "github.com",
-                                  path:
-                                      "BlueBubblesApp/bluebubbles-app/issues"),
-                              mode: LaunchMode.externalApplication);
-                        },
-                        leading: const SettingsLeadingIcon(
-                          iosIcon: CupertinoIcons.triangle_righthalf_fill,
-                          materialIcon: Icons.bug_report,
-                          containerColor: Colors.redAccent,
-                        ),
-                        trailing: const NextButton()),
+                      title: "Report a Bug",
+                      subtitle: "Found a bug? Report it here!",
+                      onTap: () async {
+                        await launchUrl(Uri(scheme: "https", host: "github.com", path: "BlueBubblesApp/bluebubbles-app/issues"), mode: LaunchMode.externalApplication);
+                      },
+                      leading: const SettingsLeadingIcon(
+                        iosIcon: CupertinoIcons.triangle_righthalf_fill,
+                        materialIcon: Icons.bug_report,
+                        containerColor: Colors.redAccent,
+                      ),
+                      trailing: const NextButton()
+                    ),
                   ],
                 ),
                 SettingsHeader(
@@ -121,8 +108,8 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                     SettingsTile(
                       title: "Changelog",
                       onTap: () async {
-                        String changelog = await DefaultAssetBundle.of(context)
-                            .loadString('assets/changelog/changelog.md');
+                        String changelog =
+                            await DefaultAssetBundle.of(context).loadString('assets/changelog/changelog.md');
                         Navigator.of(context).push(
                           ThemeSwitcher.buildPageRoute(
                             builder: (context) => Scaffold(
@@ -139,42 +126,39 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                                       ),
                                     ),
                                 ).copyWith(
-                                  h1: context.theme.textTheme.titleLarge!
+                                  h1: context.theme
+                                      .textTheme
+                                      .titleLarge!
                                       .copyWith(fontWeight: FontWeight.bold),
-                                  h2: context.theme.textTheme.titleMedium!
+                                  h2: context.theme
+                                      .textTheme
+                                      .titleMedium!
                                       .copyWith(fontWeight: FontWeight.bold),
-                                  h3: context.theme.textTheme.titleSmall!
-                                      .copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  h3: context.theme.textTheme.titleSmall!.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
                               ),
-                              backgroundColor:
-                                  context.theme.colorScheme.surface,
+                              backgroundColor: context.theme.colorScheme.background,
                               appBar: AppBar(
                                 toolbarHeight: 50,
                                 elevation: 0,
                                 scrolledUnderElevation: 3,
-                                surfaceTintColor:
-                                    context.theme.colorScheme.primary,
+                                surfaceTintColor: context.theme.colorScheme.primary,
                                 leading: buildBackButton(context),
                                 backgroundColor: headerColor,
-                                iconTheme: IconThemeData(
-                                    color: context.theme.colorScheme.primary),
+                                iconTheme: IconThemeData(color: context.theme.colorScheme.primary),
                                 centerTitle: iOS,
                                 title: Padding(
-                                  padding:
-                                      EdgeInsets.only(top: kIsDesktop ? 20 : 0),
+                                  padding: EdgeInsets.only(top: kIsDesktop ? 20 : 0),
                                   child: Text(
                                     "Changelog",
                                     style: context.theme.textTheme.titleLarge,
                                   ),
                                 ),
-                                systemOverlayStyle:
-                                    context.theme.colorScheme.brightness ==
-                                            Brightness.dark
-                                        ? SystemUiOverlayStyle.light
-                                        : SystemUiOverlayStyle.dark,
+                                systemOverlayStyle: context.theme.colorScheme.brightness == Brightness.dark
+                                    ? SystemUiOverlayStyle.light
+                                    : SystemUiOverlayStyle.dark,
                               ),
                             ),
                           ),
@@ -204,50 +188,28 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                               style: context.theme.textTheme.titleLarge,
                               textAlign: TextAlign.center,
                             ),
-                            backgroundColor:
-                                context.theme.colorScheme.properSurface,
+                            backgroundColor: context.theme.colorScheme.properSurface,
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
-                              children: devs.entries
-                                  .map(
-                                    (e) => Container(
-                                      alignment: Alignment.center,
-                                      padding: const EdgeInsets.all(8),
-                                      child: RichText(
-                                        text: TextSpan(
-                                            text: e.key,
-                                            style: context
-                                                .theme.textTheme.bodyLarge!
-                                                .copyWith(
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                    color: context.theme
-                                                        .colorScheme.primary),
-                                            recognizer: TapGestureRecognizer()
-                                              ..onTap = () async {
-                                                await launchUrl(
-                                                    Uri(
-                                                      scheme: "https",
-                                                      host: "github.com",
-                                                      path: e.value,
-                                                    ),
-                                                    mode: LaunchMode
-                                                        .externalApplication);
-                                              }),
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
+                              children: devs.entries.map((e) => Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(8),
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: e.key,
+                                    style: context.theme.textTheme.bodyLarge!.copyWith(decoration: TextDecoration.underline, color: context.theme.colorScheme.primary),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () async {
+                                        await launchUrl(Uri(scheme: "https", host: "github.com", path: e.value), mode: LaunchMode.externalApplication);
+                                      }),
+                                ),
+                              )).toList(),
                             ),
                             actions: [
                               TextButton(
                                 child: Text(
                                   "Close",
-                                  style: context.theme.textTheme.bodyLarge!
-                                      .copyWith(
-                                    color: context.theme.colorScheme.primary,
-                                  ),
-                                ),
+                                style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
                                 onPressed: () => Navigator.of(context).pop(),
                               ),
                             ],
@@ -261,7 +223,8 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                         containerColor: Colors.green,
                       ),
                     ),
-                    if (kIsWeb || kIsDesktop) const SettingsDivider(),
+                    if (kIsWeb || kIsDesktop)
+                      const SettingsDivider(),
                     if (kIsWeb || kIsDesktop)
                       SettingsTile(
                         title: "Keyboard Shortcuts",
@@ -270,27 +233,18 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: Text(
-                                    'Keyboard Shortcuts',
-                                    style: context.theme.textTheme.titleLarge,
-                                  ),
+                                  title: Text('Keyboard Shortcuts', style: context.theme.textTheme.titleLarge),
                                   scrollable: true,
-                                  backgroundColor:
-                                      context.theme.colorScheme.properSurface,
+                                  backgroundColor: context.theme.colorScheme.properSurface,
                                   content: Container(
-                                    height:
-                                        MediaQuery.of(context).size.height / 2,
+                                    height: MediaQuery.of(context).size.height / 2,
                                     child: SingleChildScrollView(
                                       child: DataTable(
                                         columnSpacing: 5,
                                         dataRowMinHeight: 75,
                                         dataRowMaxHeight: 75,
-                                        dataTextStyle:
-                                            context.theme.textTheme.bodyLarge,
-                                        headingTextStyle: context
-                                            .theme.textTheme.bodyLarge!
-                                            .copyWith(
-                                                fontStyle: FontStyle.italic),
+                                        dataTextStyle: context.theme.textTheme.bodyLarge,
+                                        headingTextStyle: context.theme.textTheme.bodyLarge!.copyWith(fontStyle: FontStyle.italic),
                                         columns: const <DataColumn>[
                                           DataColumn(
                                             label: Text(
@@ -313,8 +267,7 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                                           DataRow(
                                             cells: <DataCell>[
                                               DataCell(Text('CTRL + N')),
-                                              DataCell(Text(
-                                                  'Start new chat (Desktop only)')),
+                                              DataCell(Text('Start new chat (Desktop only)')),
                                             ],
                                           ),
                                           DataRow(
@@ -326,15 +279,14 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                                           DataRow(
                                             cells: <DataCell>[
                                               DataCell(Text('CTRL + F')),
-                                              DataCell(
-                                                  Text('Open search page')),
+                                              DataCell(Text('Open search page')),
                                             ],
                                           ),
                                           DataRow(
                                             cells: <DataCell>[
                                               DataCell(Text('ALT + R')),
-                                              DataCell(Text(
-                                                  'Reply to most recent message in the currently selected chat')),
+                                              DataCell(
+                                                  Text('Reply to most recent message in the currently selected chat')),
                                             ],
                                           ),
                                           DataRow(
@@ -347,39 +299,32 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                                           DataRow(
                                             cells: <DataCell>[
                                               DataCell(Text('ALT + G')),
-                                              DataCell(
-                                                  Text('Sync from server')),
+                                              DataCell(Text('Sync from server')),
                                             ],
                                           ),
                                           DataRow(
                                             cells: <DataCell>[
-                                              DataCell(
-                                                  Text('CTRL + SHIFT + R')),
-                                              DataCell(Text(
-                                                  'Sync from server (Desktop only)')),
+                                              DataCell(Text('CTRL + SHIFT + R')),
+                                              DataCell(Text('Sync from server (Desktop only)')),
                                             ],
                                           ),
                                           DataRow(
                                             cells: <DataCell>[
                                               DataCell(Text('CTRL + G')),
-                                              DataCell(Text(
-                                                  'Sync from server (Desktop only)')),
+                                              DataCell(Text('Sync from server (Desktop only)')),
                                             ],
                                           ),
                                           DataRow(
                                             cells: <DataCell>[
-                                              DataCell(
-                                                  Text('CTRL + SHIFT + 1-6')),
+                                              DataCell(Text('CTRL + SHIFT + 1-6')),
                                               DataCell(Text(
                                                   'Apply reaction to most recent message in the currently selected chat')),
                                             ],
                                           ),
                                           DataRow(
                                             cells: <DataCell>[
-                                              DataCell(
-                                                  Text('CTRL + ARROW DOWN')),
-                                              DataCell(Text(
-                                                  'Switch to the chat below the currently selected one')),
+                                              DataCell(Text('CTRL + ARROW DOWN')),
+                                              DataCell(Text('Switch to the chat below the currently selected one')),
                                             ],
                                           ),
                                           DataRow(
@@ -392,14 +337,12 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                                           DataRow(
                                             cells: <DataCell>[
                                               DataCell(Text('CTRL + ARROW UP')),
-                                              DataCell(Text(
-                                                  'Switch to the chat above the currently selected one')),
+                                              DataCell(Text('Switch to the chat above the currently selected one')),
                                             ],
                                           ),
                                           DataRow(
                                             cells: <DataCell>[
-                                              DataCell(
-                                                  Text('CTRL + SHIFT + TAB')),
+                                              DataCell(Text('CTRL + SHIFT + TAB')),
                                               DataCell(Text(
                                                   'Switch to the chat above the currently selected one (Desktop only)')),
                                             ],
@@ -407,8 +350,7 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                                           DataRow(
                                             cells: <DataCell>[
                                               DataCell(Text('CTRL + I')),
-                                              DataCell(Text(
-                                                  'Open chat details page')),
+                                              DataCell(Text('Open chat details page')),
                                             ],
                                           ),
                                           DataRow(
@@ -447,8 +389,7 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                           builder: (BuildContext context) {
                             return FutureBuilder<PackageInfo>(
                                 future: PackageInfo.fromPlatform(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<PackageInfo> snapshot) {
+                                builder: (BuildContext context, AsyncSnapshot<PackageInfo> snapshot) {
                                   return AlertDialog(
                                     contentPadding: const EdgeInsets.only(
                                       top: 24,
@@ -462,13 +403,11 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                                       ),
                                     ),
                                     scrollable: true,
-                                    backgroundColor:
-                                        context.theme.colorScheme.properSurface,
+                                    backgroundColor: context.theme.colorScheme.properSurface,
                                     content: ListBody(
                                       children: <Widget>[
                                         Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: <Widget>[
                                             IconTheme(
                                               data: context.theme.iconTheme,
@@ -480,37 +419,28 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                                             ),
                                             Expanded(
                                               child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 24.0),
+                                                padding: const EdgeInsets.symmetric(horizontal: 24.0),
                                                 child: ListBody(
                                                   children: <Widget>[
                                                     Text(
                                                       "BlueBubbles",
-                                                      style: context.theme
-                                                          .textTheme.titleLarge,
+                                                      style: context.theme.textTheme.titleLarge,
                                                     ),
                                                     if (!kIsDesktop)
                                                       Text(
                                                           "Version Number: ${snapshot.hasData ? snapshot.data!.version : "N/A"}",
-                                                          style: context
-                                                              .theme
-                                                              .textTheme
-                                                              .bodyLarge),
+                                                          style: context.theme.textTheme.bodyLarge),
                                                     if (!kIsDesktop)
                                                       Text(
-                                                          "Version Code: ${snapshot.hasData ? snapshot.data!.buildNumber.toString().lastChars(min(4, snapshot.data!.buildNumber.length)) : "N/A"}",
-                                                          style: context
-                                                              .theme
-                                                              .textTheme
-                                                              .bodyLarge),
+                                                          "Version Code: ${snapshot.hasData
+                                                                  ? snapshot.data!.buildNumber.toString().lastChars(
+                                                                      min(4, snapshot.data!.buildNumber.length))
+                                                                  : "N/A"}",
+                                                          style: context.theme.textTheme.bodyLarge),
                                                     if (kIsDesktop)
                                                       Text(
                                                         "${fs.packageInfo.version}_${Platform.operatingSystem.capitalizeFirst!}${isSnap ? "_Snap" : isFlatpak ? "_Flatpak" : ""}",
-                                                        style: context
-                                                            .theme
-                                                            .textTheme
-                                                            .bodyLarge,
+                                                        style: context.theme.textTheme.bodyLarge,
                                                       ),
                                                   ],
                                                 ),
@@ -522,24 +452,14 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                                     ),
                                     actions: <Widget>[
                                       TextButton(
-                                        child: Text("View Licenses",
-                                            style: context
-                                                .theme.textTheme.bodyLarge!
-                                                .copyWith(
-                                                    color: context.theme
-                                                        .colorScheme.primary)),
+                                        child: Text("View Licenses", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
                                         onPressed: () {
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute<void>(
-                                            builder: (BuildContext context) =>
-                                                Theme(
+                                          Navigator.of(context).push(MaterialPageRoute<void>(
+                                            builder: (BuildContext context) => Theme(
                                               data: context.theme,
                                               child: LicensePage(
                                                 applicationName: "BlueBubbles",
-                                                applicationVersion:
-                                                    snapshot.hasData
-                                                        ? snapshot.data!.version
-                                                        : "",
+                                                applicationVersion: snapshot.hasData ? snapshot.data!.version : "",
                                                 applicationIcon: Image.asset(
                                                   "assets/icon/icon.png",
                                                   width: 30,
@@ -551,12 +471,7 @@ class _AboutPanelState extends OptimizedState<AboutPanel> {
                                         },
                                       ),
                                       TextButton(
-                                        child: Text("Close",
-                                            style: context
-                                                .theme.textTheme.bodyLarge!
-                                                .copyWith(
-                                                    color: context.theme
-                                                        .colorScheme.primary)),
+                                        child: Text("Close", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
                                         onPressed: () {
                                           Navigator.pop(context);
                                         },

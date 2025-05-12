@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/services/backend/settings/settings_service.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
@@ -53,8 +54,7 @@ const Map<DetailsMenuAction, PlatformSupport> _actionPlatformSupport = {
   DetailsMenuAction.OpenDirectMessage: PlatformSupport(true, true, true, true),
   DetailsMenuAction.ViewThread: PlatformSupport(true, true, true, true),
   DetailsMenuAction.Share: PlatformSupport(true, false, false, false),
-  DetailsMenuAction.ReDownloadFromServer:
-      PlatformSupport(true, true, true, true),
+  DetailsMenuAction.ReDownloadFromServer: PlatformSupport(true, true, true, true),
   DetailsMenuAction.RemindLater: PlatformSupport(true, false, false, false),
   DetailsMenuAction.CreateContact: PlatformSupport(true, false, false, false),
   DetailsMenuAction.UndoSend: PlatformSupport(true, true, true, true),
@@ -71,64 +71,25 @@ const Map<DetailsMenuAction, PlatformSupport> _actionPlatformSupport = {
 const Map<DetailsMenuAction, (IconData, IconData)> _actionToIcon = {
   DetailsMenuAction.Reply: (CupertinoIcons.reply, Icons.reply),
   DetailsMenuAction.Save: (CupertinoIcons.cloud_download, Icons.file_download),
-  DetailsMenuAction.OpenInBrowser: (
-    CupertinoIcons.macwindow,
-    Icons.open_in_browser
-  ),
-  DetailsMenuAction.OpenInNewTab: (
-    CupertinoIcons.macwindow,
-    Icons.open_in_browser
-  ),
-  DetailsMenuAction.CopyText: (
-    CupertinoIcons.doc_on_clipboard,
-    Icons.content_copy
-  ),
-  DetailsMenuAction.SaveOriginal: (
-    CupertinoIcons.cloud_download,
-    Icons.file_download
-  ),
-  DetailsMenuAction.SaveLivePhoto: (
-    CupertinoIcons.photo,
-    Icons.motion_photos_on_outlined
-  ),
-  DetailsMenuAction.OpenDirectMessage: (
-    CupertinoIcons.arrow_up_right_square,
-    Icons.open_in_new
-  ),
-  DetailsMenuAction.ViewThread: (
-    CupertinoIcons.bubble_left_bubble_right,
-    Icons.forum
-  ),
+  DetailsMenuAction.OpenInBrowser: (CupertinoIcons.macwindow, Icons.open_in_browser),
+  DetailsMenuAction.OpenInNewTab: (CupertinoIcons.macwindow, Icons.open_in_browser),
+  DetailsMenuAction.CopyText: (CupertinoIcons.doc_on_clipboard, Icons.content_copy),
+  DetailsMenuAction.SaveOriginal: (CupertinoIcons.cloud_download, Icons.file_download),
+  DetailsMenuAction.SaveLivePhoto: (CupertinoIcons.photo, Icons.motion_photos_on_outlined),
+  DetailsMenuAction.OpenDirectMessage: (CupertinoIcons.arrow_up_right_square, Icons.open_in_new),
+  DetailsMenuAction.ViewThread: (CupertinoIcons.bubble_left_bubble_right, Icons.forum),
   DetailsMenuAction.Share: (CupertinoIcons.share, Icons.share),
-  DetailsMenuAction.ReDownloadFromServer: (
-    CupertinoIcons.refresh,
-    Icons.refresh
-  ),
+  DetailsMenuAction.ReDownloadFromServer: (CupertinoIcons.refresh, Icons.refresh),
   DetailsMenuAction.RemindLater: (CupertinoIcons.alarm, Icons.alarm),
-  DetailsMenuAction.CreateContact: (
-    CupertinoIcons.person_crop_circle_badge_plus,
-    Icons.contact_page_outlined
-  ),
+  DetailsMenuAction.CreateContact: (CupertinoIcons.person_crop_circle_badge_plus, Icons.contact_page_outlined),
   DetailsMenuAction.UndoSend: (CupertinoIcons.arrow_uturn_left, Icons.undo),
   DetailsMenuAction.Edit: (CupertinoIcons.pencil, Icons.edit_outlined),
   DetailsMenuAction.Forward: (CupertinoIcons.arrow_right, Icons.forward),
-  DetailsMenuAction.StartConversation: (
-    CupertinoIcons.chat_bubble,
-    Icons.message
-  ),
-  DetailsMenuAction.CopySelection: (
-    CupertinoIcons.text_cursor,
-    Icons.content_copy
-  ),
+  DetailsMenuAction.StartConversation: (CupertinoIcons.chat_bubble, Icons.message),
+  DetailsMenuAction.CopySelection: (CupertinoIcons.text_cursor, Icons.content_copy),
   DetailsMenuAction.Delete: (CupertinoIcons.trash, Icons.delete_outlined),
-  DetailsMenuAction.Bookmark: (
-    CupertinoIcons.bookmark,
-    Icons.bookmark_outlined
-  ),
-  DetailsMenuAction.SelectMultiple: (
-    CupertinoIcons.checkmark_square,
-    Icons.check_box_outlined
-  ),
+  DetailsMenuAction.Bookmark: (CupertinoIcons.bookmark, Icons.bookmark_outlined),
+  DetailsMenuAction.SelectMultiple: (CupertinoIcons.checkmark_square, Icons.check_box_outlined),
   DetailsMenuAction.MessageInfo: (CupertinoIcons.info, Icons.info),
 };
 
@@ -158,40 +119,27 @@ const Map<DetailsMenuAction, String> _actionToText = {
 };
 
 class _DetailsMenuActionUtils {
-  static final List<DetailsMenuAction> _androidActions = DetailsMenuAction
-      .values
-      .where((action) => _actionPlatformSupport[action]!.android)
-      .toList();
+  static final List<DetailsMenuAction> _androidActions =
+      DetailsMenuAction.values.where((action) => _actionPlatformSupport[action]!.android).toList();
 
-  static final List<DetailsMenuAction> _windowsActions = DetailsMenuAction
-      .values
-      .where((action) => _actionPlatformSupport[action]!.windows)
-      .toList();
+  static final List<DetailsMenuAction> _windowsActions =
+      DetailsMenuAction.values.where((action) => _actionPlatformSupport[action]!.windows).toList();
 
-  static final List<DetailsMenuAction> _linuxActions = DetailsMenuAction.values
-      .where((action) => _actionPlatformSupport[action]!.linux)
-      .toList();
+  static final List<DetailsMenuAction> _linuxActions =
+      DetailsMenuAction.values.where((action) => _actionPlatformSupport[action]!.linux).toList();
 
-  static final List<DetailsMenuAction> _webActions = DetailsMenuAction.values
-      .where((action) => _actionPlatformSupport[action]!.web)
-      .toList();
+  static final List<DetailsMenuAction> _webActions =
+      DetailsMenuAction.values.where((action) => _actionPlatformSupport[action]!.web).toList();
 }
 
 extension DetailsMenuActionExtension on List<DetailsMenuAction> {
   List<DetailsMenuAction> get platformSupportedActions => (kIsWeb
-          ? where(
-              (action) => _DetailsMenuActionUtils._webActions.contains(action))
-          : Platform.isAndroid
-              ? where((action) =>
-                  _DetailsMenuActionUtils._androidActions.contains(action))
-              : Platform.isWindows
-                  ? where((action) =>
-                      _DetailsMenuActionUtils._windowsActions.contains(action))
-                  : where(
-                      (action) => _DetailsMenuActionUtils._linuxActions
-                          .contains(action),
-                    ))
-      .toList();
+      ? where((action) => _DetailsMenuActionUtils._webActions.contains(action))
+      : Platform.isAndroid
+          ? where((action) => _DetailsMenuActionUtils._androidActions.contains(action))
+          : Platform.isWindows
+              ? where((action) => _DetailsMenuActionUtils._windowsActions.contains(action))
+              : where((action) => _DetailsMenuActionUtils._linuxActions.contains(action))).toList();
 }
 
 class CustomDetailsMenuActionWidget extends StatelessWidget {
@@ -213,8 +161,7 @@ class CustomDetailsMenuActionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDisabled = shouldDisable ?? false;
-    Color color =
-        isDisabled ? Colors.grey : context.theme.colorScheme.properOnSurface;
+    Color color = isDisabled ? Colors.grey : context.theme.colorScheme.properOnSurface;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -248,9 +195,8 @@ class DetailsMenuActionWidget extends CustomDetailsMenuActionWidget {
     required this.action,
     this.shouldDisableBtn,
   }) : super(
-          title: customTitle ?? _actionToText[action]!,
-          iosIcon: _actionToIcon[action]!.$1,
-          nonIosIcon: _actionToIcon[action]!.$2,
-          shouldDisable: shouldDisableBtn,
-        );
+            title: customTitle ?? _actionToText[action]!,
+            iosIcon: _actionToIcon[action]!.$1,
+            nonIosIcon: _actionToIcon[action]!.$2,
+            shouldDisable: shouldDisableBtn);
 }

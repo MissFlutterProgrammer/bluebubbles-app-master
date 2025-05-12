@@ -4,8 +4,7 @@ import 'package:dio/dio.dart';
 
 Message handleSendError(dynamic error, Message m) {
   if (error is Response) {
-    m.guid = m.guid!.replaceAll("temp",
-        "error-${error.data['error']['message'] ?? error.data.toString()}");
+    m.guid = m.guid!.replaceAll("temp", "error-${error.data['error']['message'] ?? error.data.toString()}");
     m.error = error.statusCode ?? MessageError.BAD_REQUEST.code;
   } else if (error is DioException) {
     String _error;
@@ -21,8 +20,7 @@ Message handleSendError(dynamic error, Message m) {
     m.guid = m.guid!.replaceAll("temp", "error-$_error");
     m.error = error.response?.statusCode ?? MessageError.BAD_REQUEST.code;
   } else {
-    m.guid = m.guid!.replaceAll("temp",
-        "error-Connection timeout, please check your internet connection and try again");
+    m.guid = m.guid!.replaceAll("temp", "error-Connection timeout, please check your internet connection and try again");
     m.error = MessageError.BAD_REQUEST.code;
   }
 

@@ -22,9 +22,7 @@ class UnsupportedInteractive extends StatefulWidget {
   State<UnsupportedInteractive> createState() => _UnsupportedInteractiveState();
 }
 
-class _UnsupportedInteractiveState
-    extends OptimizedState<UnsupportedInteractive>
-    with AutomaticKeepAliveClientMixin {
+class _UnsupportedInteractiveState extends OptimizedState<UnsupportedInteractive> with AutomaticKeepAliveClientMixin {
   iMessageAppData? get data => widget.payloadData;
   Message get message => widget.message;
   dynamic get file => File(content.path!);
@@ -37,8 +35,7 @@ class _UnsupportedInteractiveState
     updateObx(() async {
       final attachment = widget.message.attachments.firstOrNull;
       if (attachment != null) {
-        content =
-            as.getContent(attachment, autoDownload: true, onComplete: (file) {
+        content = as.getContent(attachment, autoDownload: true, onComplete: (file) {
           setState(() {
             content = file;
           });
@@ -71,10 +68,7 @@ class _UnsupportedInteractiveState
     } else if (temp is IconData) {
       icon = temp;
     }
-    return icon ??
-        (ss.settings.skin.value == Skins.iOS
-            ? CupertinoIcons.square_grid_3x2
-            : Icons.apps);
+    return icon ?? (ss.settings.skin.value == Skins.iOS ? CupertinoIcons.square_grid_3x2 : Icons.apps);
   }
 
   @override
@@ -93,25 +87,17 @@ class _UnsupportedInteractiveState
             filterQuality: FilterQuality.none,
             errorBuilder: (context, object, stacktrace) => Center(
               heightFactor: 1,
-              child: Text(
-                "Failed to display image",
-                style: context.theme.textTheme.bodyLarge,
-              ),
+              child: Text("Failed to display image", style: context.theme.textTheme.bodyLarge),
             ),
           ),
-        if (content is PlatformFile &&
-            content.bytes == null &&
-            content.path != null)
+        if (content is PlatformFile && content.bytes == null && content.path != null)
           Image.file(
             file,
             gaplessPlayback: true,
             filterQuality: FilterQuality.none,
             errorBuilder: (context, object, stacktrace) => Center(
               heightFactor: 1,
-              child: Text(
-                "Failed to display image",
-                style: context.theme.textTheme.bodyLarge,
-              ),
+              child: Text("Failed to display image", style: context.theme.textTheme.bodyLarge),
             ),
           ),
         Padding(
@@ -126,8 +112,7 @@ class _UnsupportedInteractiveState
                   children: [
                     Text(
                       data?.appName ?? getAppName(),
-                      style: context.theme.textTheme.bodyLarge!
-                          .apply(fontWeightDelta: 2),
+                      style: context.theme.textTheme.bodyLarge!.apply(fontWeightDelta: 2),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -135,31 +120,22 @@ class _UnsupportedInteractiveState
                       const SizedBox(height: 2.5),
                     if (!isNullOrEmpty(data?.userInfo?.caption))
                       Text(
-                        data!.userInfo!.caption!,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: context.theme.textTheme.labelMedium!.copyWith(
-                          fontWeight: FontWeight.normal,
-                        ),
+                          data!.userInfo!.caption!,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.theme.textTheme.labelMedium!.copyWith(fontWeight: FontWeight.normal)
                       ),
                     const SizedBox(height: 5),
                     Text(
                       "Unsupported interactive message",
-                      style: context.theme.textTheme.labelMedium!.copyWith(
-                        fontWeight: FontWeight.normal,
-                        color: context.theme.colorScheme.outline,
-                      ),
+                      style: context.theme.textTheme.labelMedium!.copyWith(fontWeight: FontWeight.normal, color: context.theme.colorScheme.outline),
                       overflow: TextOverflow.clip,
                       maxLines: 2,
                     ),
-                  ],
+                  ]
                 ),
               ),
-              Icon(
-                getIcon(),
-                color: context.theme.colorScheme.properOnSurface,
-                size: 48,
-              ),
+              Icon(getIcon(), color: context.theme.colorScheme.properOnSurface, size: 48),
             ],
           ),
         ),

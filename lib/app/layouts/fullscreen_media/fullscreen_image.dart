@@ -1,7 +1,6 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
 import 'dart:isolate';
+
 import 'package:bluebubbles/app/layouts/fullscreen_media/dialogs/metadata_dialog.dart';
 import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
 import 'package:bluebubbles/utils/share.dart';
@@ -37,8 +36,7 @@ class FullscreenImage extends StatefulWidget {
   State<FullscreenImage> createState() => _FullscreenImageState();
 }
 
-class _FullscreenImageState extends OptimizedState<FullscreenImage>
-    with AutomaticKeepAliveClientMixin {
+class _FullscreenImageState extends OptimizedState<FullscreenImage> with AutomaticKeepAliveClientMixin {
   final PhotoViewController controller = PhotoViewController();
   bool showOverlay = true;
   bool hasError = false;
@@ -61,13 +59,7 @@ class _FullscreenImageState extends OptimizedState<FullscreenImage>
     if (kIsWeb || file.path == null) {
       if (attachment.mimeType?.contains("image/tif") ?? false) {
         final receivePort = ReceivePort();
-        await Isolate.spawn(
-          unsupportedToPngIsolate,
-          IsolateData(
-            file,
-            receivePort.sendPort,
-          ),
-        );
+        await Isolate.spawn(unsupportedToPngIsolate, IsolateData(file, receivePort.sendPort));
         // Get the processed image from the isolate.
         final image = await receivePort.first as Uint8List?;
         bytes = image;
@@ -134,12 +126,8 @@ class _FullscreenImageState extends OptimizedState<FullscreenImage>
                         color: context.theme.colorScheme.onSecondary,
                       ),
                       onPressed: () async {
-                        if (widget.file.path == null) {
-                          return showSnackbar(
-                            "Error",
-                            "Failed to find a path to share attachment!",
-                          );
-                        }
+                        if (widget.file.path == null)
+                          return showSnackbar("Error", "Failed to find a path to share attachment!");
                         Share.file(
                           "Shared ${widget.attachment.mimeType!.split("/")[0]} from BlueBubbles: ${widget.attachment.transferName}",
                           widget.file.path!,
@@ -156,63 +144,49 @@ class _FullscreenImageState extends OptimizedState<FullscreenImage>
           : Theme(
               data: context.theme.copyWith(
                 navigationBarTheme: context.theme.navigationBarTheme.copyWith(
-                  indicatorColor: samsung
-                      ? Colors.black
-                      : context.theme.colorScheme.properSurface,
+                  indicatorColor: samsung ? Colors.black : context.theme.colorScheme.properSurface,
                 ),
               ),
               child: NavigationBar(
                 selectedIndex: 0,
-                backgroundColor: samsung
-                    ? Colors.black
-                    : context.theme.colorScheme.properSurface,
+                backgroundColor: samsung ? Colors.black : context.theme.colorScheme.properSurface,
                 elevation: 0,
                 labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
                 height: 60,
                 destinations: [
                   NavigationDestination(
-                    icon: Icon(
-                      iOS ? CupertinoIcons.cloud_download : Icons.file_download,
-                      color: samsung
-                          ? Colors.white
-                          : context.theme.colorScheme.primary,
-                    ),
-                    label: 'Download',
-                  ),
+                      icon: Icon(
+                        iOS ? CupertinoIcons.cloud_download : Icons.file_download,
+                        color: samsung ? Colors.white : context.theme.colorScheme.primary,
+                      ),
+                      label: 'Download'),
                   if (!kIsWeb && !kIsDesktop)
                     NavigationDestination(
-                      icon: Icon(
-                        iOS ? CupertinoIcons.share : Icons.share,
-                        color: samsung
-                            ? Colors.white
-                            : context.theme.colorScheme.primary,
-                      ),
-                      label: 'Share',
-                    ),
+                        icon: Icon(
+                          iOS ? CupertinoIcons.share : Icons.share,
+                          color: samsung ? Colors.white : context.theme.colorScheme.primary,
+                        ),
+                        label: 'Share'),
                   if (iOS)
                     NavigationDestination(
-                      icon: Icon(
-                        iOS ? CupertinoIcons.info : Icons.info,
-                        color: context.theme.colorScheme.primary,
-                      ),
-                      label: 'Metadata',
-                    ),
+                        icon: Icon(
+                          iOS ? CupertinoIcons.info : Icons.info,
+                          color: context.theme.colorScheme.primary,
+                        ),
+                        label: 'Metadata'),
                   if (iOS)
                     NavigationDestination(
-                      icon: Icon(
-                        iOS ? CupertinoIcons.refresh : Icons.refresh,
-                        color: context.theme.colorScheme.primary,
-                      ),
-                      label: 'Refresh',
-                    ),
+                        icon: Icon(
+                          iOS ? CupertinoIcons.refresh : Icons.refresh,
+                          color: context.theme.colorScheme.primary,
+                        ),
+                        label: 'Refresh'),
                 ],
                 onDestinationSelected: (value) async {
                   if (value == 0) {
                     await as.saveToDisk(widget.file);
                   } else if (value == 1) {
-                    if (kIsWeb || kIsDesktop) {
-                      return showMetadataDialog(widget.attachment, context);
-                    }
+                    if (kIsWeb || kIsDesktop) return showMetadataDialog(widget.attachment, context);
                     if (widget.file.path == null) return;
                     Share.file(
                       "Shared ${widget.attachment.mimeType!.split("/")[0]} from BlueBubbles: ${widget.attachment.transferName}",
@@ -245,50 +219,35 @@ class _FullscreenImageState extends OptimizedState<FullscreenImage>
           children: [
             bytes != null
                 ? Padding(
-                    padding: EdgeInsets.only(
-                        bottom: widget.showInteractions ? 60 : 0),
+                    padding: EdgeInsets.only(bottom: widget.showInteractions ? 60.0 : 0),
                     child: PhotoView(
                       gaplessPlayback: true,
                       minScale: PhotoViewComputedScale.contained,
                       maxScale: PhotoViewComputedScale.contained * 10,
                       controller: controller,
                       imageProvider: MemoryImage(bytes!),
-                      loadingBuilder:
-                          (BuildContext context, ImageChunkEvent? ev) {
+                      loadingBuilder: (BuildContext context, ImageChunkEvent? ev) {
                         return Center(child: buildProgressIndicator(context));
                       },
                       scaleStateChangedCallback: (scale) {
                         if (scale == PhotoViewScaleState.zoomedIn ||
                             scale == PhotoViewScaleState.covering ||
                             scale == PhotoViewScaleState.originalSize) {
-                          widget.updatePhysics(
-                              const NeverScrollableScrollPhysics());
+                          widget.updatePhysics(const NeverScrollableScrollPhysics());
                         } else {
-                          widget
-                              .updatePhysics(ThemeSwitcher.getScrollPhysics());
+                          widget.updatePhysics(ThemeSwitcher.getScrollPhysics());
                         }
                       },
-                      errorBuilder: (context, object, stacktrace) => Center(
-                        child: Text(
-                          "Failed to display image",
-                          style: context.theme.textTheme.bodyLarge,
-                        ),
-                      ),
+                      errorBuilder: (context, object, stacktrace) =>
+                          Center(child: Text("Failed to display image", style: context.theme.textTheme.bodyLarge)),
                       filterQuality: FilterQuality.high,
                     ),
                   )
                 : hasError
-                    ? Center(
-                        child: Text(
-                          "Failed to load image",
-                          style: context.theme.textTheme.bodyLarge,
-                        ),
-                      )
+                    ? Center(child: Text("Failed to load image", style: context.theme.textTheme.bodyLarge))
                     : Center(
                         child: Padding(
-                        padding: EdgeInsets.only(
-                          bottom: widget.showInteractions ? 60 : 0,
-                        ),
+                        padding: EdgeInsets.only(bottom: widget.showInteractions ? 60.0 : 0),
                         child: buildProgressIndicator(context),
                       )),
             if (!iOS)
@@ -298,122 +257,91 @@ class _FullscreenImageState extends OptimizedState<FullscreenImage>
                 child: Container(
                   height: kIsDesktop ? 80 : 100.0,
                   width: ns.width(context),
-                  color: context.theme.colorScheme.shadow
-                      .withOpacity(samsung ? 1 : 0.65),
+                  color: context.theme.colorScheme.shadow.withOpacity(samsung ? 1 : 0.65),
                   child: SafeArea(
                     left: false,
                     right: false,
                     bottom: false,
                     child: SizedBox(
                       height: kIsDesktop ? 80 : 50,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 5),
-                                child: CupertinoButton(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 5),
-                                  onPressed: () async {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Icon(
-                                    Icons.close,
-                                    color: Colors.white,
-                                  ),
+                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5),
+                              child: CupertinoButton(
+                                padding: const EdgeInsets.symmetric(horizontal: 5),
+                                onPressed: () async {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
                                 ),
                               ),
-                              if (widget.showInteractions)
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 5.0),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
+                            ),
+                            if (widget.showInteractions)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
                                         (message?.isFromMe ?? false)
                                             ? 'You'
-                                            : message?.handle?.displayName ??
-                                                "Unknown",
-                                        style: context
-                                            .theme.textTheme.titleLarge!
-                                            .copyWith(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      if (message?.dateCreated != null)
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 2.0),
-                                          child: Text(
+                                            : message?.handle?.displayName ?? "Unknown",
+                                        style: context.theme.textTheme.titleLarge!.copyWith(color: Colors.white)),
+                                    if (message?.dateCreated != null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 2.0),
+                                        child: Text(
                                             samsung
-                                                ? intl.DateFormat.jm()
-                                                    .add_MMMd()
-                                                    .format(
-                                                        message!.dateCreated!)
-                                                : intl.DateFormat('EEE')
-                                                    .add_jm()
-                                                    .format(
-                                                      message!.dateCreated!,
-                                                    ),
-                                            style: context
-                                                .theme.textTheme.bodyLarge!
-                                                .copyWith(
-                                              color: samsung
-                                                  ? Colors.grey
-                                                  : Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                            ],
-                          ),
-                          !widget.showInteractions
-                              ? const SizedBox.shrink()
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 10.0),
-                                      child: CupertinoButton(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 5),
-                                        onPressed: () async {
-                                          showMetadataDialog(
-                                            widget.attachment,
-                                            context,
-                                          );
-                                        },
-                                        child: const Icon(
-                                          Icons.info_outlined,
-                                          color: Colors.white,
-                                        ),
+                                                ? intl.DateFormat.jm().add_MMMd().format(message!.dateCreated!)
+                                                : intl.DateFormat('EEE').add_jm().format(message!.dateCreated!),
+                                            style: context.theme.textTheme.bodyLarge!
+                                                .copyWith(color: samsung ? Colors.grey : Colors.white)),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 10.0),
-                                      child: CupertinoButton(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 5),
-                                        onPressed: () async {
-                                          refreshAttachment();
-                                        },
-                                        child: const Icon(
-                                          Icons.refresh,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
                                   ],
                                 ),
-                        ],
-                      ),
+                              ),
+                          ],
+                        ),
+                        !widget.showInteractions
+                            ? const SizedBox.shrink()
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 10.0),
+                                    child: CupertinoButton(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                                      onPressed: () async {
+                                        showMetadataDialog(widget.attachment, context);
+                                      },
+                                      child: const Icon(
+                                        Icons.info_outlined,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 10.0),
+                                    child: CupertinoButton(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                                      onPressed: () async {
+                                        refreshAttachment();
+                                      },
+                                      child: const Icon(
+                                        Icons.refresh,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      ]),
                     ),
                   ),
                 ),

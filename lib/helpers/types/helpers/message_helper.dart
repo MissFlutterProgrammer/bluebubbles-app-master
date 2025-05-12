@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/utils/logger/logger.dart';
 import 'package:bluebubbles/database/models.dart';
@@ -10,10 +11,8 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class MessageHelper {
-  static Future<List<Message>> bulkAddMessages(
-      Chat? chat, List<dynamic> messages,
-      {bool checkForLatestMessageText = true,
-      Function(int progress, int length)? onProgress}) async {
+  static Future<List<Message>> bulkAddMessages(Chat? chat, List<dynamic> messages,
+      {bool checkForLatestMessageText = true, Function(int progress, int length)? onProgress}) async {
     // Create master list for all the messages and a chat cache
     List<Message> _messages = <Message>[];
     Map<String, Chat> chats = <String, Chat>{};
@@ -36,8 +35,7 @@ class MessageHelper {
       // Pull the chats out of the message, if there isnt a default
       Chat? msgChat = chat;
       if (msgChat == null) {
-        List<Chat> msgChats =
-            (item['chats'] as List? ?? []).map((e) => Chat.fromMap(e)).toList();
+        List<Chat> msgChats = (item['chats'] as List? ?? []).map((e) => Chat.fromMap(e)).toList();
         msgChat = msgChats.isNotEmpty ? msgChats.first : null;
 
         // If there is a cached chat, get it. Otherwise, save the new one
@@ -80,8 +78,7 @@ class MessageHelper {
       // Every 50 messages synced, who a message
       index += 1;
       if (index % 50 == 0) {
-        Logger.info('Saved $index of ${messages.length} messages',
-            tag: "BulkIngest");
+        Logger.info('Saved $index of ${messages.length} messages', tag: "BulkIngest");
       } else if (index == messages.length) {
         Logger.info('Saved ${messages.length} messages', tag: "BulkIngest");
       }
@@ -91,8 +88,7 @@ class MessageHelper {
     return _messages;
   }
 
-  static Future<void> handleNotification(Message message, Chat chat,
-      {bool findExisting = true}) async {
+  static Future<void> handleNotification(Message message, Chat chat, {bool findExisting = true}) async {
     // if from me
     if (message.isFromMe! || message.handle == null) return;
     // if it is a "kept audio" message
@@ -104,17 +100,11 @@ class MessageHelper {
     // if the chat is active
     if (ls.isAlive && cm.isChatActive(chat.guid)) return;
     // if app is alive, on chat list, but notifying on chat list is disabled
-    if (ls.isAlive &&
-        cm.activeChat == null &&
-        Get.rawRoute?.settings.name == "/" &&
-        !ss.settings.notifyOnChatList.value) {
-      return;
-    }
+    if (ls.isAlive && cm.activeChat == null && Get.rawRoute?.settings.name == "/" && !ss.settings.notifyOnChatList.value) return;
     await notif.createNotification(chat, message);
   }
 
-  static Future<void> handleSummaryNotification(List<Message> messages,
-      {bool findExisting = true}) async {
+  static Future<void> handleSummaryNotification(List<Message> messages, {bool findExisting = true}) async {
     Set<String> chats = {};
     for (int i = 0; i < messages.length; i++) {
       final message = messages[i];
@@ -124,13 +114,9 @@ class MessageHelper {
       // if it is a "kept audio" message
       if (message.itemType == 5 && message.subject != null) remove = true;
       // See if there is an existing message for the given GUID
-      if (findExisting && Message.findOne(guid: message.guid) != null) {
-        remove = true;
-      }
+      if (findExisting && Message.findOne(guid: message.guid) != null) remove = true;
       // if needing to mute
-      if (message.chat.target?.shouldMuteNotification(message) ?? false) {
-        remove = true;
-      }
+      if (message.chat.target?.shouldMuteNotification(message) ?? false) remove = true;
       if (remove) {
         messages.remove(message);
         i--;
@@ -144,32 +130,25 @@ class MessageHelper {
 
     List<int> selectedIndices = ss.settings.selectedActionIndices;
     List<String> _actions = ss.settings.actionList;
-    List<String> actions =
-        _actions.whereIndexed((i, e) => selectedIndices.contains(i)).toList();
+    List<String> actions = _actions.whereIndexed((i, e) => selectedIndices.contains(i)).toList();
     bool showMarkRead = actions.contains("Mark Read");
     await notif.showSummaryNotifDesktop(messages.length, chats, showMarkRead);
   }
 
-  static String getNotificationText(Message message,
-      {bool withSender = false}) {
+  static String getNotificationText(Message message, {bool withSender = false}) {
     if (message.isGroupEvent) return message.groupEventText;
-    if (message.expressiveSendStyleId ==
-        "com.apple.MobileSMS.expressivesend.invisibleink") {
+    if (message.expressiveSendStyleId == "com.apple.MobileSMS.expressivesend.invisibleink") {
       return "Message sent with Invisible Ink";
     }
     if (kIsWeb && !message.isFromMe! && message.handle == null) {
       message.handle = message.getHandle();
     }
-    String sender = !withSender
-        ? ""
-        : "${message.isFromMe! ? "You: " : (message.handle?.displayName ?? "Someone")}: ";
+    String sender = !withSender ? "" : "${message.isFromMe! ? "You: " : (message.handle?.displayName ?? "Someone")}: ";
 
     if (message.isInteractive) {
       return "$sender${message.interactiveText}";
     }
-    if (isNullOrEmpty(message.fullText) &&
-        !message.hasAttachments &&
-        isNullOrEmpty(message.associatedMessageGuid)) {
+    if (isNullOrEmpty(message.fullText) && !message.hasAttachments && isNullOrEmpty(message.associatedMessageGuid)) {
       if (message.dateEdited != null) {
         return "${sender}Unsent message";
       }
@@ -187,53 +166,34 @@ class MessageHelper {
       return "$output: ${_getAttachmentText(message.realAttachments)}";
     } else if (!isNullOrEmpty(message.associatedMessageGuid)) {
       // It's a reaction message, get the sender
-      String sender = message.isFromMe!
-          ? 'You'
-          : (message.handle?.displayName ?? "Someone");
+      String sender = message.isFromMe! ? 'You' : (message.handle?.displayName ?? "Someone");
       // fetch the associated message object
-      Message? associatedMessage =
-          Message.findOne(guid: message.associatedMessageGuid);
+      Message? associatedMessage = Message.findOne(guid: message.associatedMessageGuid);
       if (associatedMessage != null) {
         // grab the verb we'll use from the reactionToVerb map
-        String? verb =
-            ReactionTypes.reactionToVerb[message.associatedMessageType];
+        String? verb = ReactionTypes.reactionToVerb[message.associatedMessageType];
         // we need to check balloonBundleId first because for some reason
         // game pigeon messages have the text "�"
         if (associatedMessage.isInteractive) {
           return "$sender $verb ${message.interactiveText}";
           // now we check if theres a subject or text and construct out message based off that
-        } else if (associatedMessage.expressiveSendStyleId ==
-            "com.apple.MobileSMS.expressivesend.invisibleink") {
+        } else if (associatedMessage.expressiveSendStyleId == "com.apple.MobileSMS.expressivesend.invisibleink") {
           return "$sender $verb a message with Invisible Ink";
         } else {
           String? messageText;
           bool attachment = false;
-          if (message.associatedMessagePart != null &&
-              associatedMessage.attributedBody.firstOrNull != null) {
+          if (message.associatedMessagePart != null && associatedMessage.attributedBody.firstOrNull != null) {
             final attrBod = associatedMessage.attributedBody.first;
-            final ranges = attrBod.runs
-                .where((e) =>
-                    e.attributes?.messagePart == message.associatedMessagePart)
-                .map((e) => e.range)
-                .sorted((a, b) => a.first.compareTo(b.first));
-            final attachmentGuids = attrBod.runs
-                .where((e) =>
-                    e.attributes?.messagePart ==
-                        message.associatedMessagePart &&
-                    e.attributes?.attachmentGuid != null)
-                .map((e) => e.attributes?.attachmentGuid)
-                .toSet();
+            final ranges = attrBod.runs.where((e) => e.attributes?.messagePart == message.associatedMessagePart).map((e) => e.range).sorted((a, b) => a.first.compareTo(b.first));
+            final attachmentGuids = attrBod.runs.where((e) => e.attributes?.messagePart == message.associatedMessagePart && e.attributes?.attachmentGuid != null)
+                .map((e) => e.attributes?.attachmentGuid).toSet();
             if (attachmentGuids.isNotEmpty) {
               attachment = true;
-              messageText = _getAttachmentText(associatedMessage
-                  .fetchAttachments()!
-                  .where((e) => attachmentGuids.contains(e?.guid))
-                  .toList());
+              messageText = _getAttachmentText(associatedMessage.fetchAttachments()!.where((e) => attachmentGuids.contains(e?.guid)).toList());
             } else if (ranges.isNotEmpty) {
               messageText = "";
               for (List range in ranges) {
-                final substring = attrBod.string
-                    .substring(range.first, range.first + range.last);
+                final substring = attrBod.string.substring(range.first, range.first + range.last);
                 messageText = messageText! + substring;
               }
             }
@@ -242,14 +202,11 @@ class MessageHelper {
           if (messageText == null) {
             if (associatedMessage.hasAttachments) {
               attachment = true;
-              messageText =
-                  _getAttachmentText(associatedMessage.fetchAttachments()!);
+              messageText = _getAttachmentText(associatedMessage.fetchAttachments()!);
             } else {
-              messageText = (associatedMessage.subject ?? "") +
-                  (!isNullOrEmpty(associatedMessage.subject?.trim())
-                      ? "\n"
-                      : "") +
-                  (associatedMessage.text ?? "");
+              messageText = (associatedMessage.subject ?? "")
+                + (!isNullOrEmpty(associatedMessage.subject?.trim()) ? "\n" : "")
+                + (associatedMessage.text ?? "");
             }
           }
           return '$sender $verb ${attachment ? "" : "“"}$messageText${attachment ? "" : "”"}';
@@ -258,8 +215,7 @@ class MessageHelper {
       // if we can't fetch the associated message for some reason
       // (or none of the above conditions about it are true)
       // then we should fallback to unparsed reaction messages
-      Logger.info(
-          "Couldn't fetch associated message for message: ${message.guid}");
+      Logger.info("Couldn't fetch associated message for message: ${message.guid}");
       return "$sender ${message.text}";
     } else {
       // It's all other message types
@@ -273,7 +229,9 @@ class MessageHelper {
     for (Attachment? attachment in attachments) {
       String? mime = attachment!.mimeType;
       String key;
-      if (mime!.contains("vcard")) {
+      if (mime == null) {
+        key = "link";
+      } else if (mime.contains("vcard")) {
         key = "contact card";
       } else if (mime.contains("location")) {
         key = "location";
@@ -303,8 +261,7 @@ class MessageHelper {
   }
 
   /// Removes duplicate associated message guids from a list of [associatedMessages]
-  static List<Message> normalizedAssociatedMessages(
-      List<Message> associatedMessages) {
+  static List<Message> normalizedAssociatedMessages(List<Message> associatedMessages) {
     Set<String> guids = associatedMessages.map((e) => e.guid!).toSet();
     List<Message> normalized = [];
 
@@ -323,23 +280,16 @@ class MessageHelper {
     if (text.codeUnits.length == 1 && text.codeUnits.first == 9786) return true;
 
     final darkSunglasses = RegExp('\u{1F576}');
-    if (emojiRegex.firstMatch(text) == null && !text.contains(darkSunglasses)) {
-      return false;
-    }
+    if (emojiRegex.firstMatch(text) == null && !text.contains(darkSunglasses)) return false;
 
     List<RegExpMatch> matches = emojiRegex.allMatches(text).toList();
     List<String> items = matches.map((m) => m.toString()).toList();
 
-    String replaced = text
-        .replaceAll(emojiRegex, "")
-        .replaceAll(String.fromCharCode(65039), "")
-        .replaceAll(darkSunglasses, "")
-        .trim();
+    String replaced = text.replaceAll(emojiRegex, "").replaceAll(String.fromCharCode(65039), "").replaceAll(darkSunglasses, "").trim();
     return items.length <= 3 && replaced.isEmpty;
   }
 
-  static List<TextSpan> buildEmojiText(String text, TextStyle style,
-      {TapGestureRecognizer? recognizer}) {
+  static List<TextSpan> buildEmojiText(String text, TextStyle style, {TapGestureRecognizer? recognizer}) {
     if (!fs.fontExistsOnDisk.value) {
       return [
         TextSpan(
@@ -395,11 +345,13 @@ class MessageHelper {
       previousEnd += chunk.length;
     }
     if (previousEnd < text.length) {
-      children.add(TextSpan(
-        text: text.substring(previousEnd),
-        style: style,
-        recognizer: recognizer,
-      ));
+      children.add(
+        TextSpan(
+          text: text.substring(previousEnd),
+          style: style,
+          recognizer: recognizer,
+        )
+      );
     }
 
     return children;

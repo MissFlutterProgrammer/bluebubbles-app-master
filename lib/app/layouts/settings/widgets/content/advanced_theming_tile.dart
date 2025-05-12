@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:bluebubbles/app/wrappers/stateful_boilerplate.dart';
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/database/models.dart';
@@ -10,11 +8,7 @@ import 'package:get/get.dart';
 import 'package:tuple/tuple.dart';
 
 class AdvancedThemingTile extends StatefulWidget {
-  AdvancedThemingTile(
-      {super.key,
-      required this.currentTheme,
-      required this.tuple,
-      required this.editable});
+  AdvancedThemingTile({super.key, required this.currentTheme, required this.tuple, required this.editable});
   final ThemeStruct currentTheme;
   final Tuple2<MapEntry<String, Color>, MapEntry<String, Color>?> tuple;
   final bool editable;
@@ -34,86 +28,59 @@ class _AdvancedThemingTileState extends OptimizedState<AdvancedThemingTile> {
         child: Material(
           color: widget.tuple.item1.value,
           child: Container(
-            decoration: widget.tuple.item1.value.computeDifference(
-                      ts.inDarkMode(context) ||
-                              ss.settings.skin.value == Skins.Samsung
-                          ? context.theme.colorScheme.background
-                          : context.theme.colorScheme.properSurface,
-                    ) <
-                    15
-                ? BoxDecoration(
-                    border: Border.all(
-                      width: 0.5,
-                      color: context.theme.colorScheme.outline,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                  )
-                : null,
+            decoration: widget.tuple.item1.value.computeDifference(ts.inDarkMode(context)
+                || ss.settings.skin.value == Skins.Samsung
+                ? context.theme.colorScheme.background : context.theme.colorScheme.properSurface) < 15 ? BoxDecoration(
+              border: Border.all(width: 0.5, color: context.theme.colorScheme.outline),
+              borderRadius: BorderRadius.circular(20)
+            ) : null,
             child: InkWell(
               onTap: () async {
                 BuildContext _context = context;
                 if (widget.editable) {
-                  final result =
-                      await showThemeDialog(widget.tuple.item1.value);
+                  final result = await showThemeDialog(widget.tuple.item1.value);
                   if (result != null) {
                     final map = widget.currentTheme.toMap();
-                    map["data"]["colorScheme"][widget.tuple.item1.key] =
-                        result.value;
+                    map["data"]["colorScheme"][widget.tuple.item1.key] = result.value;
                     widget.currentTheme.data = ThemeStruct.fromMap(map).data;
                     widget.currentTheme.save();
-                    if (widget.currentTheme.name ==
-                        ss.prefs.getString("selected-dark")) {
+                    if (widget.currentTheme.name == ss.prefs.getString("selected-dark")) {
                       await ts.changeTheme(_context, dark: widget.currentTheme);
-                    } else if (widget.currentTheme.name ==
-                        ss.prefs.getString("selected-light")) {
-                      await ts.changeTheme(_context,
-                          light: widget.currentTheme);
+                    } else if (widget.currentTheme.name == ss.prefs.getString("selected-light")) {
+                      await ts.changeTheme(_context, light: widget.currentTheme);
                     }
                   }
                 } else {
                   if (ss.settings.monetTheming.value != Monet.none) {
-                    showSnackbar('Notice',
-                        "Turn off Material You to start customizing!");
+                    showSnackbar('Notice', "Turn off Material You to start customizing!");
                   } else {
-                    showSnackbar(
-                        'Notice', "Create a new theme to start customizing!");
+                    showSnackbar('Notice', "Create a new theme to start customizing!");
                   }
                 }
               },
-              onLongPress: widget.tuple.item2 != null
-                  ? () async {
-                      BuildContext _context = context;
-                      if (widget.editable) {
-                        final result =
-                            await showThemeDialog(widget.tuple.item2!.value);
-                        if (result != null) {
-                          final map = widget.currentTheme.toMap();
-                          map["data"]["colorScheme"][widget.tuple.item2!.key] =
-                              result.value;
-                          widget.currentTheme.data =
-                              ThemeStruct.fromMap(map).data;
-                          widget.currentTheme.save();
-                          if (widget.currentTheme.name ==
-                              ss.prefs.getString("selected-dark")) {
-                            await ts.changeTheme(_context,
-                                dark: widget.currentTheme);
-                          } else if (widget.currentTheme.name ==
-                              ss.prefs.getString("selected-light")) {
-                            await ts.changeTheme(_context,
-                                light: widget.currentTheme);
-                          }
-                        }
-                      } else {
-                        if (ss.settings.monetTheming.value != Monet.none) {
-                          showSnackbar('Notice',
-                              "Turn off Material You to start customizing!");
-                        } else {
-                          showSnackbar('Notice',
-                              "Create a new theme to start customizing!");
-                        }
-                      }
+              onLongPress: widget.tuple.item2 != null ? () async {
+                BuildContext _context = context;
+                if (widget.editable) {
+                  final result = await showThemeDialog(widget.tuple.item2!.value);
+                  if (result != null) {
+                    final map = widget.currentTheme.toMap();
+                    map["data"]["colorScheme"][widget.tuple.item2!.key] = result.value;
+                    widget.currentTheme.data = ThemeStruct.fromMap(map).data;
+                    widget.currentTheme.save();
+                    if (widget.currentTheme.name == ss.prefs.getString("selected-dark")) {
+                      await ts.changeTheme(_context, dark: widget.currentTheme);
+                    } else if (widget.currentTheme.name == ss.prefs.getString("selected-light")) {
+                      await ts.changeTheme(_context, light: widget.currentTheme);
                     }
-                  : null,
+                  }
+                } else {
+                  if (ss.settings.monetTheming.value != Monet.none) {
+                    showSnackbar('Notice', "Turn off Material You to start customizing!");
+                  } else {
+                    showSnackbar('Notice', "Create a new theme to start customizing!");
+                  }
+                }
+              } : null,
               onDoubleTap: () {
                 showDialog(
                   context: context,
@@ -132,12 +99,7 @@ class _AdvancedThemingTileState extends OptimizedState<AdvancedThemingTile> {
                       ),
                       actions: <Widget>[
                         TextButton(
-                          child: Text(
-                            "OK",
-                            style: context.theme.textTheme.bodyLarge!.copyWith(
-                              color: context.theme.colorScheme.primary,
-                            ),
-                          ),
+                          child: Text("OK", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
@@ -154,34 +116,21 @@ class _AdvancedThemingTileState extends OptimizedState<AdvancedThemingTile> {
                   Icon(
                     Icons.color_lens,
                     size: 40,
-                    color:
-                        textColor.computeDifference(widget.tuple.item1.value) <
-                                15
-                            ? widget.tuple.item1.value.lightenOrDarken(50)
-                            : textColor,
+                    color: textColor.computeDifference(widget.tuple.item1.value) < 15 ? widget.tuple.item1.value.lightenOrDarken(50) : textColor,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      widget.tuple.item1.key +
-                          (widget.tuple.item2 != null
-                              ? " / ${widget.tuple.item2!.key}"
-                              : ""),
-                      style: context.textTheme.titleMedium?.copyWith(
-                        color: textColor.computeDifference(
-                                    widget.tuple.item1.value) <
-                                15
-                            ? widget.tuple.item1.value.lightenOrDarken(20)
-                            : textColor,
-                      ),
+                      widget.tuple.item1.key + (widget.tuple.item2 != null ? " / ${widget.tuple.item2!.key}" : ""),
+                      style: context.textTheme.titleMedium?.copyWith(color: textColor.computeDifference(widget.tuple.item1.value) < 15 ? widget.tuple.item1.value.lightenOrDarken(20) : textColor),
                       textAlign: TextAlign.center,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ),
+          )
+        )
       ),
     );
   }
@@ -199,10 +148,7 @@ class _AdvancedThemingTileState extends OptimizedState<AdvancedThemingTile> {
               },
               title: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(
-                  'Choose a Color',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+                child: Text('Choose a Color', style: Theme.of(context).textTheme.titleLarge)
               ),
               width: 40,
               height: 40,
@@ -238,6 +184,7 @@ class _AdvancedThemingTileState extends OptimizedState<AdvancedThemingTile> {
               ),
             ],
           );
-        });
+        }
+    );
   }
 }

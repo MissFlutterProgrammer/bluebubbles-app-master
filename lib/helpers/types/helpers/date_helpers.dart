@@ -12,31 +12,23 @@ DateTime? parseDate(dynamic value) {
 
 String buildDate(DateTime? dateTime) {
   if (dateTime == null || dateTime.millisecondsSinceEpoch == 0) return "";
-  String time = ss.settings.use24HrFormat.value
-      ? DateFormat.Hm().format(dateTime)
-      : DateFormat.jm().format(dateTime);
+  String time = ss.settings.use24HrFormat.value ? DateFormat.Hm().format(dateTime) : DateFormat.jm().format(dateTime);
   String date;
-  if (ss.settings.skin.value != Skins.iOS &&
-      DateTime.now().difference(dateTime.toLocal()).inMinutes < 1) {
+  if (ss.settings.skin.value != Skins.iOS && DateTime.now().difference(dateTime.toLocal()).inMinutes < 1) {
     date = "Just Now";
-  } else if (ss.settings.skin.value != Skins.iOS &&
-      DateTime.now().difference(dateTime.toLocal()).inHours < 1) {
+  } else if (ss.settings.skin.value != Skins.iOS && DateTime.now().difference(dateTime.toLocal()).inHours < 1) {
     date = "${DateTime.now().difference(dateTime.toLocal()).inMinutes} min";
   } else if (dateTime.isToday()) {
     date = time;
   } else if (ss.settings.skin.value == Skins.iOS && dateTime.isYesterday()) {
     date = "Yesterday";
   } else if (DateTime.now().difference(dateTime.toLocal()).inDays <= 7) {
-    date =
-        "${DateFormat(ss.settings.skin.value != Skins.iOS ? "EEE" : "EEEE").format(dateTime)}${ss.settings.skin.value != Skins.iOS ? " $time" : ""}";
-  } else if (ss.settings.skin.value == Skins.Material &&
-      DateTime.now().difference(dateTime.toLocal()).inDays <= 365) {
+    date = "${DateFormat(ss.settings.skin.value != Skins.iOS ? "EEE" : "EEEE").format(dateTime)}${ss.settings.skin.value != Skins.iOS ? " $time" : ""}";
+  } else if (ss.settings.skin.value == Skins.Material && DateTime.now().difference(dateTime.toLocal()).inDays <= 365) {
     date = "${DateFormat.MMMd().format(dateTime)}, $time";
-  } else if (ss.settings.skin.value == Skins.Samsung &&
-      DateTime.now().year == dateTime.toLocal().year) {
+  } else if (ss.settings.skin.value == Skins.Samsung && DateTime.now().year == dateTime.toLocal().year) {
     date = DateFormat.MMMd().format(dateTime);
-  } else if (ss.settings.skin.value == Skins.Samsung &&
-      DateTime.now().year != dateTime.toLocal().year) {
+  } else if (ss.settings.skin.value == Skins.Samsung && DateTime.now().year != dateTime.toLocal().year) {
     date = DateFormat.yMMMd().format(dateTime);
   } else {
     date = DateFormat.yMd().format(dateTime);
@@ -53,14 +45,11 @@ String buildChatListDateMaterial(DateTime? dateTime) {
     date = "${DateTime.now().difference(dateTime.toLocal()).inMinutes} min";
   } else if (DateTime.now().difference(dateTime.toLocal()).inDays <= 7) {
     date = DateFormat("EEE").format(dateTime);
-  } else if (ss.settings.skin.value == Skins.Material &&
-      DateTime.now().difference(dateTime.toLocal()).inDays <= 365) {
+  } else if (ss.settings.skin.value == Skins.Material && DateTime.now().difference(dateTime.toLocal()).inDays <= 365) {
     date = DateFormat.MMMd().format(dateTime);
-  } else if (ss.settings.skin.value == Skins.Samsung &&
-      DateTime.now().year == dateTime.toLocal().year) {
+  } else if (ss.settings.skin.value == Skins.Samsung && DateTime.now().year == dateTime.toLocal().year) {
     date = DateFormat.MMMd().format(dateTime);
-  } else if (ss.settings.skin.value == Skins.Samsung &&
-      DateTime.now().year != dateTime.toLocal().year) {
+  } else if (ss.settings.skin.value == Skins.Samsung && DateTime.now().year != dateTime.toLocal().year) {
     date = DateFormat.yMMMd().format(dateTime);
   } else {
     date = DateFormat.yMd().format(dateTime);
@@ -78,14 +67,11 @@ String buildSeparatorDateSamsung(DateTime dateTime) {
 
 String buildTime(DateTime? dateTime) {
   if (dateTime == null || dateTime.millisecondsSinceEpoch == 0) return "";
-  String time = ss.settings.use24HrFormat.value
-      ? DateFormat.Hm().format(dateTime)
-      : DateFormat.jm().format(dateTime);
+  String time = ss.settings.use24HrFormat.value ? DateFormat.Hm().format(dateTime) : DateFormat.jm().format(dateTime);
   return time;
 }
 
-String buildFullDate(DateTime time,
-    {bool includeTime = true, bool useTodayYesterday = true}) {
+String buildFullDate(DateTime time, {bool includeTime = true, bool useTodayYesterday = true}) {
   if (time.millisecondsSinceEpoch == 0) return "";
 
   late String date;

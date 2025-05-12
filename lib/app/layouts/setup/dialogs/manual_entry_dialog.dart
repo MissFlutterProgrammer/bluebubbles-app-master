@@ -12,8 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart' hide Response;
 
 class ManualEntryDialog extends StatefulWidget {
-  ManualEntryDialog(
-      {super.key, required this.onConnect, required this.onClose});
+  ManualEntryDialog({super.key, required this.onConnect, required this.onClose});
   final Function() onConnect;
   final Function() onClose;
 
@@ -42,10 +41,7 @@ class _ManualEntryDialogState extends OptimizedState<ManualEntryDialog> {
       // port applied to URL
       if (":".allMatches(url).length == 2) {
         final newUrl = url.split(":")[1].split("/").last;
-        isValid = "https://${(newUrl.split(".")..removeLast()).join(".")}.com"
-                .isURL ||
-            newUrl.isIPv6 ||
-            newUrl.isIPv4;
+        isValid = "https://${(newUrl.split(".")..removeLast()).join(".")}.com".isURL || newUrl.isIPv6 || newUrl.isIPv4;
       } else {
         final newUrl = url.split(":").first;
         isValid = newUrl.isIPv6 || newUrl.isIPv4;
@@ -53,9 +49,7 @@ class _ManualEntryDialogState extends OptimizedState<ManualEntryDialog> {
     }
     // the getx regex only allows extensions up to 6 characters in length
     // this is a workaround for that
-    if (!isValid &&
-        url.split(".").last.isAlphabetOnly &&
-        url.split(".").last.length > 6) {
+    if (!isValid && url.split(".").last.isAlphabetOnly && url.split(".").last.length > 6) {
       final newUrl = (url.split(".")..removeLast()).join(".");
       isValid = ("$newUrl.com").isURL;
     }
@@ -68,12 +62,14 @@ class _ManualEntryDialogState extends OptimizedState<ManualEntryDialog> {
     }
 
     String? addr = sanitizeServerAddress(address: url);
+    if (addr == null) {
+      error = "Server address is invalid!";
+      setState(() {});
+      return;
+    }
 
     ss.settings.guidAuthKey.value = password;
-    await saveNewServerUrl(addr!,
-        restartSocket: false,
-        force: true,
-        saveAdditionalSettings: ["guidAuthKey"]);
+    await saveNewServerUrl(addr, restartSocket: false, force: true, saveAdditionalSettings: ["guidAuthKey"]);
 
     try {
       socket.restartSocket();
@@ -120,9 +116,7 @@ class _ManualEntryDialogState extends OptimizedState<ManualEntryDialog> {
             children: [
               Focus(
                 onKeyEvent: (node, event) {
-                  if (event is KeyDownEvent &&
-                      !HardwareKeyboard.instance.isShiftPressed &&
-                      event.logicalKey == LogicalKeyboardKey.tab) {
+                  if (event is KeyDownEvent && !HardwareKeyboard.instance.isShiftPressed && event.logicalKey == LogicalKeyboardKey.tab) {
                     node.nextFocus();
                     return KeyEventResult.handled;
                   }
@@ -137,27 +131,19 @@ class _ManualEntryDialogState extends OptimizedState<ManualEntryDialog> {
                   autofillHints: [AutofillHints.username, AutofillHints.url],
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: context.theme.colorScheme.outline,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                        borderSide: BorderSide(color: context.theme.colorScheme.outline),
+                        borderRadius: BorderRadius.circular(20)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: context.theme.colorScheme.primary,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                        borderSide: BorderSide(color: context.theme.colorScheme.primary),
+                        borderRadius: BorderRadius.circular(20)),
                     labelText: "URL",
                   ),
-                ),
+              ),
               ),
               const SizedBox(height: 10),
               Focus(
                 onKeyEvent: (node, event) {
-                  if (event is KeyDownEvent &&
-                      HardwareKeyboard.instance.isShiftPressed &&
-                      event.logicalKey == LogicalKeyboardKey.tab) {
+                  if (event is KeyDownEvent && HardwareKeyboard.instance.isShiftPressed && event.logicalKey == LogicalKeyboardKey.tab) {
                     node.previousFocus();
                     node.previousFocus(); // This is intentional. Should probably figure out why it's needed
                     return KeyEventResult.handled;
@@ -178,17 +164,11 @@ class _ManualEntryDialogState extends OptimizedState<ManualEntryDialog> {
                   },
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: context.theme.colorScheme.outline,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                        borderSide: BorderSide(color: context.theme.colorScheme.outline),
+                        borderRadius: BorderRadius.circular(20)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: context.theme.colorScheme.primary,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                        borderSide: BorderSide(color: context.theme.colorScheme.primary),
+                        borderRadius: BorderRadius.circular(20)),
                     labelText: "Password",
                   ),
                   obscureText: true,
@@ -199,26 +179,13 @@ class _ManualEntryDialogState extends OptimizedState<ManualEntryDialog> {
         ),
         actions: [
           TextButton(
-            child: Text(
-              "Cancel",
-              style: context.theme.textTheme.bodyLarge!.copyWith(
-                color: context.theme.colorScheme.primary,
-              ),
-            ),
+            child: Text("Cancel", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
             onPressed: widget.onClose,
           ),
           TextButton(
-            child: Text(
-              "OK",
-              style: context.theme.textTheme.bodyLarge!.copyWith(
-                color: context.theme.colorScheme.primary,
-              ),
-            ),
+            child: Text("OK", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
             onPressed: () {
-              connect(
-                urlController.text,
-                passwordController.text,
-              );
+              connect(urlController.text, passwordController.text);
               connecting = true;
               if (mounted) setState(() {});
             },
@@ -227,9 +194,9 @@ class _ManualEntryDialogState extends OptimizedState<ManualEntryDialog> {
       );
     } else if (error == 'Google Services file not found.') {
       return const FailedToScanDialog(
-          title: "Connected! However...",
-          exception:
-              'Google Services file not found! If you plan to use Firebase for notifications, please setup Firebase via the BlueBubbles Server.');
+        title: "Connected! However...",
+        exception: 'Google Services file not found! If you plan to use Firebase for notifications, please setup Firebase via the BlueBubbles Server.'
+      );
     } else if (error != null) {
       return FailedToScanDialog(
         title: "An error occured while trying to retreive data!",
@@ -244,7 +211,7 @@ class _ManualEntryDialogState extends OptimizedState<ManualEntryDialog> {
             if (mounted) {
               setState(() {
                 error =
-                    "Failed to connect to ${sanitizeServerAddress()}! Please check that the url is correct (including http://) and the server logs for more info.";
+                "Failed to connect to ${sanitizeServerAddress()}! Please check that the url is correct (including http://) and the server logs for more info.";
               });
             }
           }

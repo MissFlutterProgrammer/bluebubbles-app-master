@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:bluebubbles/helpers/ui/theme_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,13 +27,8 @@ class FailedToConnectDialog extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            child: Text(
-              "OK",
-              style: context.theme.textTheme.bodyLarge!.copyWith(
-                color: context.theme.colorScheme.primary,
-              ),
-            ),
-            onPressed: onDismiss,
+            child: Text("OK", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
+            onPressed: onDismiss
           ),
         ],
       ),

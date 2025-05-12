@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+
 import 'package:bluebubbles/app/layouts/settings/pages/advanced/private_api_panel.dart';
 import 'package:bluebubbles/app/layouts/settings/settings_page.dart';
 import 'package:bluebubbles/app/wrappers/scrollbar_wrapper.dart';
@@ -22,9 +23,7 @@ import 'package:universal_io/io.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:version/version.dart';
 
-SettingsService ss = Get.isRegistered<SettingsService>()
-    ? Get.find<SettingsService>()
-    : Get.put(SettingsService());
+SettingsService ss = Get.isRegistered<SettingsService>() ? Get.find<SettingsService>() : Get.put(SettingsService());
 
 class SettingsService extends GetxService {
   late Settings settings;
@@ -34,9 +33,7 @@ class SettingsService extends GetxService {
   late final SharedPreferences prefs;
   Completer<void> initCompleted = Completer<void>();
 
-  bool get canAuthenticate =>
-      _canAuthenticate &&
-      (Platform.isWindows || (fs.androidInfo?.version.sdkInt ?? 0) > 28);
+  bool get canAuthenticate => _canAuthenticate && (Platform.isWindows || (fs.androidInfo?.version.sdkInt ?? 0) > 28);
 
   Future<void> init({bool headless = false}) async {
     prefs = await SharedPreferences.getInstance();
@@ -58,8 +55,7 @@ class SettingsService extends GetxService {
         DeviceOrientation.landscapeRight,
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.portraitUp,
-        if (settings.allowUpsideDownRotation.value)
-          DeviceOrientation.portraitDown,
+        if (settings.allowUpsideDownRotation.value) DeviceOrientation.portraitDown,
       ]);
     }
     // launch at startup
@@ -69,21 +65,17 @@ class SettingsService extends GetxService {
           _canAuthenticate = await LocalAuthentication().isDeviceSupported();
         } catch (_) {}
       }
-      ss.settings.launchAtStartup.value = await setupLaunchAtStartup(
-          ss.settings.launchAtStartup.value,
-          ss.settings.launchAtStartupMinimized.value);
+      ss.settings.launchAtStartup.value = await setupLaunchAtStartup(ss.settings.launchAtStartup.value, ss.settings.launchAtStartupMinimized.value);
     }
 
     initCompleted.complete();
   }
 
   /// Returns true if LaunchAtStartup is enabled and false if it is disabled
-  Future<bool> setupLaunchAtStartup(
-      bool launchAtStartup, bool minimized) async {
+  Future<bool> setupLaunchAtStartup(bool launchAtStartup, bool minimized) async {
     // Can't use fs here because it hasn't been initialized yet
     if (!isMsix) {
-      LaunchAtStartup.setup(
-          (await PackageInfo.fromPlatform()).appName, minimized);
+      LaunchAtStartup.setup((await PackageInfo.fromPlatform()).appName, minimized);
       if (launchAtStartup) {
         await LaunchAtStartup.enable();
         return true;
@@ -129,8 +121,7 @@ class SettingsService extends GetxService {
     fcmData = FCMData.getFCM();
   }
 
-  Future<void> saveSettings(
-      [Settings? newSettings, bool updateDisplayMode = false]) async {
+  Future<void> saveSettings([Settings? newSettings, bool updateDisplayMode = false]) async {
     // Set the new settings as the current settings in the manager
     settings = newSettings ?? settings;
     settings.save();
@@ -147,46 +138,34 @@ class SettingsService extends GetxService {
     await fcmData.save(wait: true);
   }
 
-  Future<Tuple4<int, int, String, int>> getServerDetails(
-      {bool refresh = false}) async {
+  Future<Tuple4<int, int, String, int>> getServerDetails({bool refresh = false}) async {
     if (refresh) {
       final response = await http.serverInfo();
       if (response.statusCode == 200) {
-        if (settings.iCloudAccount.isEmpty &&
-            response.data['data']['detected_icloud'] is String) {
-          settings.iCloudAccount.value =
-              response.data['data']['detected_icloud'];
+        if (settings.iCloudAccount.isEmpty && response.data['data']['detected_icloud'] is String) {
+          settings.iCloudAccount.value = response.data['data']['detected_icloud'];
           settings.save();
         }
 
         if (response.data['data']['private_api'] is bool) {
-          settings.serverPrivateAPI.value =
-              response.data['data']['private_api'];
+          settings.serverPrivateAPI.value = response.data['data']['private_api'];
           settings.save();
         }
 
-        final version =
-            int.tryParse(response.data['data']['os_version'].split(".")[0]);
-        final minorVersion =
-            int.tryParse(response.data['data']['os_version'].split(".")[1]);
+        final version = int.tryParse(response.data['data']['os_version'].split(".")[0]);
+        final minorVersion = int.tryParse(response.data['data']['os_version'].split(".")[1]);
         final serverVersion = response.data['data']['server_version'];
         final code = Version.parse(serverVersion ?? "0.0.0");
         final versionCode = code.major * 100 + code.minor * 21 + code.patch;
         if (version != null) await prefs.setInt("macos-version", version);
-        if (minorVersion != null) {
-          await prefs.setInt("macos-minor-version", minorVersion);
-        }
-        if (serverVersion != null) {
-          await prefs.setString("server-version", serverVersion);
-        }
+        if (minorVersion != null) await prefs.setInt("macos-minor-version", minorVersion);
+        if (serverVersion != null) await prefs.setString("server-version", serverVersion);
         await prefs.setInt("server-version-code", versionCode);
 
-        if (settings.finishedSetup.value &&
-            settings.reachedConversationList.value) {
+        if (settings.finishedSetup.value && settings.reachedConversationList.value) {
           if (settings.enablePrivateAPI.value) {
             await prefs.setBool('private-api-enable-tip', true);
-          } else if (settings.serverPrivateAPI.value == true &&
-              prefs.getBool('private-api-enable-tip') != true) {
+          } else if (settings.serverPrivateAPI.value == true && prefs.getBool('private-api-enable-tip') != true) {
             final ScrollController controller = ScrollController();
             if (_showingPapiPopup) Navigator.of(Get.context!).pop();
             _showingPapiPopup = true;
@@ -200,9 +179,7 @@ class SettingsService extends GetxService {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ConstrainedBox(
-                        constraints: BoxConstraints(
-                            maxHeight: min(
-                                context.height / 3, Get.context!.height - 300)),
+                        constraints: BoxConstraints(maxHeight: min(context.height / 3, Get.context!.height - 300)),
                         child: ScrollbarWrapper(
                           controller: controller,
                           showScrollbar: true,
@@ -212,44 +189,26 @@ class SettingsService extends GetxService {
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                    "You've enabled Private API Features on your server!"),
+                                const Text("You've enabled Private API Features on your server!"),
                                 const SizedBox(height: 10),
-                                const Text(
-                                    "Private API features give you the ability to:"),
-                                const Text(
-                                    " - Send & Receive typing indicators"),
-                                const Text(
-                                    " - Send tapbacks, effects, and mentions"),
-                                const Text(
-                                    " - Send messages with subject lines"),
-                                if (isMinBigSurSync)
-                                  const Text(" - Send replies"),
-                                if (isMinVenturaSync)
-                                  const Text(" - Edit & Unsend messages"),
+                                const Text("Private API features give you the ability to:"),
+                                const Text(" - Send & Receive typing indicators"),
+                                const Text(" - Send tapbacks, effects, and mentions"),
+                                const Text(" - Send messages with subject lines"),
+                                if (isMinBigSurSync) const Text(" - Send replies"),
+                                if (isMinVenturaSync) const Text(" - Edit & Unsend messages"),
                                 const SizedBox(height: 10),
-                                const Text(
-                                    " - Mark chats read on the Mac server"),
-                                if (isMinVenturaSync)
-                                  const Text(
-                                      " - Mark chats as unread on the Mac server"),
+                                const Text(" - Mark chats read on the Mac server"),
+                                if (isMinVenturaSync) const Text(" - Mark chats as unread on the Mac server"),
                                 const SizedBox(height: 10),
                                 const Text(" - Rename group chats"),
-                                const Text(
-                                    " - Add & remove people from group chats"),
-                                if (isMinBigSurSync)
-                                  const Text(" - Change the group chat photo"),
+                                const Text(" - Add & remove people from group chats"),
+                                if (isMinBigSurSync) const Text(" - Change the group chat photo"),
                                 if (isMinBigSurSync) const SizedBox(height: 10),
-                                if (isMinMontereySync)
-                                  const Text(" - View Focus statuses"),
-                                if (isMinBigSurSync)
-                                  const Text(" - Use Find My Friends"),
-                                if (isMinBigSurSync)
-                                  const Text(
-                                      " - Be notified of incoming FaceTime calls"),
-                                if (isMinVenturaSync)
-                                  const Text(
-                                      " - Answer FaceTime calls (experimental)"),
+                                if (isMinMontereySync) const Text(" - View Focus statuses"),
+                                if (isMinBigSurSync) const Text(" - Use Find My Friends"),
+                                if (isMinBigSurSync) const Text(" - Be notified of incoming FaceTime calls"),
+                                if (isMinVenturaSync) const Text(" - Answer FaceTime calls (experimental)"),
                                 const SizedBox(height: 10),
                               ],
                             ),
@@ -264,8 +223,7 @@ class SettingsService extends GetxService {
                             alignment: Alignment.center,
                             child: ElevatedButton(
                               onPressed: () async {
-                                await prefs.setBool(
-                                    'private-api-enable-tip', true);
+                                await prefs.setBool('private-api-enable-tip', true);
                                 Navigator.of(context).pop();
                                 ns.closeSettings(context);
                                 ns.closeAllConversationView(context);
@@ -296,8 +254,7 @@ class SettingsService extends GetxService {
                             alignment: Alignment.center,
                             child: TextButton(
                               onPressed: () async {
-                                await prefs.setBool(
-                                    'private-api-enable-tip', true);
+                                await prefs.setBool('private-api-enable-tip', true);
                                 Navigator.of(context).pop();
                               },
                               child: const Text("Don't ask again"),
@@ -314,8 +271,7 @@ class SettingsService extends GetxService {
           }
         }
 
-        return Tuple4(
-            version ?? 11, minorVersion ?? 0, serverVersion, versionCode);
+        return Tuple4(version ?? 11, minorVersion ?? 0, serverVersion, versionCode);
       } else {
         return const Tuple4(11, 0, "0.0.0", 0);
       }
@@ -324,11 +280,8 @@ class SettingsService extends GetxService {
     }
   }
 
-  Tuple4<int, int, String, int> serverDetailsSync() => Tuple4(
-      prefs.getInt("macos-version") ?? 11,
-      prefs.getInt("macos-minor-version") ?? 0,
-      prefs.getString("server-version") ?? "0.0.0",
-      prefs.getInt("server-version-code") ?? 0);
+  Tuple4<int, int, String, int> serverDetailsSync() => Tuple4(prefs.getInt("macos-version") ?? 11, prefs.getInt("macos-minor-version") ?? 0,
+      prefs.getString("server-version") ?? "0.0.0", prefs.getInt("server-version-code") ?? 0);
 
   Future<bool> get isMinSierra async {
     final val = await getServerDetails();
@@ -388,8 +341,7 @@ class SettingsService extends GetxService {
   /// if the Private API is enabled, and the server supports it (v1.8.0).
   Future<bool> canCreateGroupChat() async {
     int serverVersion = (await ss.getServerDetails()).item4;
-    bool isMin_1_8_0 =
-        serverVersion >= 268; // Server: v1.8.0 (1 * 100 + 8 * 21 + 0)
+    bool isMin_1_8_0 = serverVersion >= 268; // Server: v1.8.0 (1 * 100 + 8 * 21 + 0)
     bool papiEnabled = settings.enablePrivateAPI.value;
     return (isMin_1_8_0 && papiEnabled) || !isMinBigSurSync;
   }
@@ -398,8 +350,7 @@ class SettingsService extends GetxService {
   /// if the Private API is enabled, and the server supports it (v1.8.0).
   bool canCreateGroupChatSync() {
     int serverVersion = ss.serverDetailsSync().item4;
-    bool isMin_1_8_0 =
-        serverVersion >= 268; // Server: v1.8.0 (1 * 100 + 8 * 21 + 0)
+    bool isMin_1_8_0 = serverVersion >= 268; // Server: v1.8.0 (1 * 100 + 8 * 21 + 0)
     bool papiEnabled = settings.enablePrivateAPI.value;
     return (isMin_1_8_0 && papiEnabled) || !isMinBigSurSync;
   }
@@ -409,16 +360,12 @@ class SettingsService extends GetxService {
     if (response.statusCode == 200) {
       bool available = response.data['data']['available'] ?? false;
       Map<String, dynamic> metadata = response.data['data']['metadata'] ?? {};
-      if (!available ||
-          prefs.getString("server-update-check") == metadata['version']) {
-        return;
-      }
+      if (!available || prefs.getString("server-update-check") == metadata['version']) return;
       showDialog(
         context: Get.context!,
         builder: (context) => AlertDialog(
           backgroundColor: context.theme.colorScheme.properSurface,
-          title: Text("Server Update Check",
-              style: context.theme.textTheme.titleLarge),
+          title: Text("Server Update Check", style: context.theme.textTheme.titleLarge),
           content: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
@@ -426,11 +373,7 @@ class SettingsService extends GetxService {
               const SizedBox(
                 height: 15.0,
               ),
-              Text(
-                  available
-                      ? "Updates available:"
-                      : "Your server is up-to-date!",
-                  style: context.theme.textTheme.bodyLarge),
+              Text(available ? "Updates available:" : "Your server is up-to-date!", style: context.theme.textTheme.bodyLarge),
               const SizedBox(
                 height: 15.0,
               ),
@@ -442,22 +385,16 @@ class SettingsService extends GetxService {
           ),
           actions: [
             TextButton(
-              child: Text("OK",
-                  style: context.theme.textTheme.bodyLarge!
-                      .copyWith(color: context.theme.colorScheme.primary)),
+              child: Text("OK", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
               onPressed: () async {
-                await prefs.setString(
-                    "server-update-check", metadata['version']);
+                await prefs.setString("server-update-check", metadata['version']);
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text("Install",
-                  style: context.theme.textTheme.bodyLarge!
-                      .copyWith(color: context.theme.colorScheme.primary)),
+              child: Text("Install", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
               onPressed: () async {
-                await prefs.setString(
-                    "server-update-check", metadata['version']);
+                await prefs.setString("server-update-check", metadata['version']);
                 http.installUpdate();
                 Navigator.of(context).pop();
               },
@@ -469,34 +406,20 @@ class SettingsService extends GetxService {
   }
 
   Future<void> checkClientUpdate() async {
-    if (!kIsDesktop &&
-        (kIsWeb ||
-            (await StoreChecker.getSource) !=
-                Source.IS_INSTALLED_FROM_LOCAL_SOURCE)) {
-      return;
-    }
+    if (!kIsDesktop && (kIsWeb || (await StoreChecker.getSource) != Source.IS_INSTALLED_FROM_LOCAL_SOURCE)) return;
     if (kIsDesktop) return; // todo
     final github = GitHub();
-    final stream = github.repositories
-        .listReleases(RepositorySlug('bluebubblesapp', 'bluebubbles-app'));
-    final release = await stream.firstWhere((element) =>
-        !(element.isDraft ?? false) &&
-        !(element.isPrerelease ?? false) &&
-        element.tagName != null);
+    final stream = github.repositories.listReleases(RepositorySlug('bluebubblesapp', 'bluebubbles-app'));
+    final release = await stream.firstWhere((element) => !(element.isDraft ?? false) && !(element.isPrerelease ?? false) && element.tagName != null);
     final version = release.tagName!.split("+").first.replaceAll("v", "");
     final code = release.tagName!.split("+").last;
-    final buildNumber = fs.packageInfo.buildNumber
-        .lastChars(min(4, fs.packageInfo.buildNumber.length));
-    if (int.parse(code) <= int.parse(buildNumber) ||
-        prefs.getString("client-update-check") == code) {
-      return;
-    }
+    final buildNumber = fs.packageInfo.buildNumber.lastChars(min(4, fs.packageInfo.buildNumber.length));
+    if (int.parse(code) <= int.parse(buildNumber) || prefs.getString("client-update-check") == code) return;
     showDialog(
       context: Get.context!,
       builder: (context) => AlertDialog(
         backgroundColor: context.theme.colorScheme.properSurface,
-        title:
-            Text("App Update Check", style: context.theme.textTheme.titleLarge),
+        title: Text("App Update Check", style: context.theme.textTheme.titleLarge),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -504,31 +427,24 @@ class SettingsService extends GetxService {
             const SizedBox(
               height: 15.0,
             ),
-            Text("Updates available:",
-                style: context.theme.textTheme.bodyLarge),
+            Text("Updates available:", style: context.theme.textTheme.bodyLarge),
             const SizedBox(
               height: 15.0,
             ),
-            Text(
-                "Version: $version\nRelease Date: ${buildDate(release.createdAt)}\nRelease Name: ${release.name}",
+            Text("Version: $version\nRelease Date: ${buildDate(release.createdAt)}\nRelease Name: ${release.name}",
                 style: context.theme.textTheme.bodyLarge)
           ],
         ),
         actions: [
           if (release.htmlUrl != null)
             TextButton(
-              child: Text("Download",
-                  style: context.theme.textTheme.bodyLarge!
-                      .copyWith(color: context.theme.colorScheme.primary)),
+              child: Text("Download", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
               onPressed: () async {
-                await launchUrl(Uri.parse(release.htmlUrl!),
-                    mode: LaunchMode.externalApplication);
+                await launchUrl(Uri.parse(release.htmlUrl!), mode: LaunchMode.externalApplication);
               },
             ),
           TextButton(
-            child: Text("OK",
-                style: context.theme.textTheme.bodyLarge!
-                    .copyWith(color: context.theme.colorScheme.primary)),
+            child: Text("OK", style: context.theme.textTheme.bodyLarge!.copyWith(color: context.theme.colorScheme.primary)),
             onPressed: () async {
               await prefs.setString("client-update-check", code);
               Navigator.of(context).pop();
